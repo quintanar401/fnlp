@@ -44,21 +44,34 @@ spacy.explain('punct')
 # Default spacy tokenizer doesn't split by ( ) ; and etc in the infix position, and similar things for prefixes
 # on the other hand it is useful to extract emails, urls and etc
 tokenizer = nlp.tokenizer
-INFIX_RULES = ["[\[\]\(\)\{\}\!\.\:\,;]"]
+INFIX_RULES1 = ["[\[\]\(\)\{\}\!\.\:\,;]"]
+INFIX_RULES2 = ["[\[\]\(\)\{\}\!\:\,;]"]
 PREFIX_RULES = ["[\.]"]
+EMAIL = "([\\w\\._+-]+@[\\w_-]+(\\.[\\w_-]+)+)" + "|" +\
+        "([\\w_+-]+(?:(?: dot |\\.)[\\w_+-]+){0,10})(?: at |@)([a-zA-Z]+(?:(?:\\.| dot )[\\w_-]+){1,10})"
+URL = "((([a-zA-Z]+)://)?(w{2,3}[0-9]*\\.)?(([\\w_-]+\\.)+[a-z]{2,4})(:(\\d+))?(/[^?\\s#]*)?(\\?[^\\s#]+)?(#[\\-,*=&a-z0-9]+)?)" + "|" +\
+    "((([a-zA-Z]+)://)?localhost(:(\\d+))?(/[^?\\s#]*)?(\\?[^\\s#]+)?)" + "|" +\
+    "(([a-zA-Z]+)://([\\w_-]+)(:(\\d+))?(/[^?\\s#]*)?(\\?[^\\s#]+)?)"
+FXRIC = "(?:[A-Z]{6}|[A-Z]{3})=[WR]?"
+STOCKRIC = "[A-Z\d][A-Za-z\d]*-?[A-Za-z\d]*_?[A-Za-z\d]*\.(?:[A-Z]{1,3}|xbo|[A-Z]{2}f)"
+FUTURERIC = "[A-Z]{3,5}(?:[A-Z]\d|c\d\d?|cv\d|cvoi\d|coi\d)(?:=LX)?"
+SPREADRIC = "[A-Z]{2,4}(?:c\d-[A-Z]{2,4}c\d|-[A-Z]{3,5}\d|[A-Z]\d-[A-Z]\d)"
+ISIN = "[A-Z]{2}[A-Z\d]{9}\d"
+    
+
 def extend_tokenizer(nlp,pref,inf,suf):
     pref = tuple(pref + list(nlp.Defaults.prefixes)) if pref else nlp.Defaults.prefixes
     suf = tuple(suf + list(nlp.Defaults.suffixes)) if suf else nlp.Defaults.suffixes
     inf = tuple(inf + list(nlp.Defaults.infixes)) if inf else nlp.Defaults.infixes
-    nlp.tokenizer = Tokenizer(nlp.vocab,
+    tok = "^(?:"+"|".join([EMAIL,URL,FXRIC,STOCKRIC,SPREADRIC])+")$"
+    return Tokenizer(nlp.vocab,
                        rules = nlp.Defaults.tokenizer_exceptions,
                        prefix_search=spacyUtil.compile_prefix_regex(pref).search,
                        suffix_search=spacyUtil.compile_suffix_regex(suf).search,
                        infix_finditer=spacyUtil.compile_infix_regex(inf).finditer,
-                       token_match=nlp.tokenizer.token_match)
-    return nlp
+                       token_match=re.compile(tok).match)
 
-extend_tokenizer(nlp,PREFIX_RULES,INFIX_RULES,None)
+fnlpTok = extend_tokenizer(nlp,PREFIX_RULES,INFIX_RULES2,None)
 
 
 class TextProxy:
@@ -87,6 +100,8 @@ class Rule:
         self.subst = subst
         self.regexp = re.compile(regexp)
     def match(self,doc,i):
+        if i is len(doc):
+            return (i,None)
         r = self.regexp.fullmatch(doc[i].text)
         return (i+1,RuleResult(doc,i,self.subst)) if r else (i,None)
     
@@ -100,7 +115,7 @@ class OrRule:
         return (i,None)
 
 class StrictAndRule:
-    def __init__(self, name, *rules, subst):
+    def __init__(self, name, subst, *rules):
         self.rules = rules
         self.name = name
         self.subst = subst
@@ -109,6 +124,9 @@ class StrictAndRule:
         for r in self.rules:
             i, res = r.match(doc,i)
             if not res:
+                return (start,None)
+        for j in range(start,i-1):
+            if len(doc[j].whitespace_)>0:
                 return (start,None)
         return (i,RuleResultSpan(doc,start,i-start,self.subst))
                 
@@ -136,12 +154,13 @@ class RuleResultSpan:
 
 
 ruleSet = OrRule(
-  Rule("email1","([\\w\\._+-]+@[\\w_-]+(\\.[\\w_-]+)+)","email"),
-  Rule("email2","([\\w_+-]+(?:(?: dot |\\.)[\\w_+-]+){0,10})(?: at |@)([a-zA-Z]+(?:(?:\\.| dot )[\\w_-]+){1,10})","email"),
-  Rule("URL","((([a-zA-Z]+)://)?(w{2,3}[0-9]*\\.)?(([\\w_-]+\\.)+[a-z]{2,4})(:(\\d+))?(/[^?\\s#]*)?(\\?[^\\s#]+)?(#[\\-,*=&a-z0-9]+)?)","page"),
-  Rule("Localhost URL","((([a-zA-Z]+)://)?localhost(:(\\d+))?(/[^?\\s#]*)?(\\?[^\\s#]+)?)","page"),
-  Rule("Local URL","(([a-zA-Z]+)://([\\w_-]+)(:(\\d+))?(/[^?\\s#]*)?(\\?[^\\s#]+)?)","page"),
-  Rule("FX RIC","[A-Z]{3,6}=R?","symbol"))
+  Rule("email",EMAIL,"email"),
+  Rule("URL",URL,"page"),
+  Rule("FXRIC",FXRIC,"symbol"),
+  Rule("STOCKRIC",STOCKRIC,"symbol"),
+  Rule("FUTURERIC",FUTURERIC,"symbol"),
+  Rule("SPREADRIC",SPREADRIC,"symbol"),
+  Rule("ISIN",ISIN,"code"))
 
 
 TextProxy(txt)

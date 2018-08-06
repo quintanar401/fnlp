@@ -1,0 +1,18 @@
+UAT
+PROD
+DR
+DEV
+QA
+RES
+
+RIC
+ticker bb_ticker
+
+HDB
+RDB
+
+EMEA
+US
+APAC
+ASIA
+JPN

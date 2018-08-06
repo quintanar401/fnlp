@@ -12,6 +12,7 @@ from spacy.tokenizer import Tokenizer
 from spacy import util as spacyUtil
 import re
 import json
+import ftfy
 
 with open('c:/github/fnlp/ccy.json') as f:
     ccyInfo = json.load(f)
@@ -45,7 +46,7 @@ spacy.explain('punct')
 # on the other hand it is useful to extract emails, urls and etc
 tokenizer = nlp.tokenizer
 INFIX_RULES1 = ["[\[\]\(\)\{\}\!\.\:\,;]"]
-INFIX_RULES2 = ["[\[\]\(\)\{\}\!\:\,;]"]
+INFIX_RULES2 = ["[\[\]\(\)\{\}\!`\:\,;+=<>]"]
 PREFIX_RULES = ["[\.]"]
 EMAIL = "([\\w\\._+-]+@[\\w_-]+(\\.[\\w_-]+)+)" + "|" +\
         "([\\w_+-]+(?:(?: dot |\\.)[\\w_+-]+){0,10})(?: at |@)([a-zA-Z]+(?:(?:\\.| dot )[\\w_-]+){1,10})"
@@ -54,16 +55,21 @@ URL = "((([a-zA-Z]+)://)?(w{2,3}[0-9]*\\.)?(([\\w_-]+\\.)+[a-z]{2,4})(:(\\d+))?(
     "(([a-zA-Z]+)://([\\w_-]+)(:(\\d+))?(/[^?\\s#]*)?(\\?[^\\s#]+)?)"
 FXRIC = "(?:[A-Z]{6}|[A-Z]{3})=[WR]?"
 STOCKRIC = "[A-Z\d][A-Za-z\d]*-?[A-Za-z\d]*_?[A-Za-z\d]*\.(?:[A-Z]{1,3}|xbo|[A-Z]{2}f)"
-FUTURERIC = "[A-Z]{3,5}(?:[A-Z]\d|c\d\d?|cv\d|cvoi\d|coi\d)(?:=LX)?"
+FUTURERIC = "[A-Z]{2,5}(?:[A-Z]\d|c\d\d?|cv\d|cvoi\d|coi\d)(?:=LX)?"
 SPREADRIC = "[A-Z]{2,4}(?:c\d-[A-Z]{2,4}c\d|-[A-Z]{3,5}\d|[A-Z]\d-[A-Z]\d)"
 ISIN = "[A-Z]{2}[A-Z\d]{9}\d"
+DATE = "[12]\d\d\d[\.-][01]\d[\.-][0-3]\d"
+QSPAN = "\d+D\d([\d:\.])+"
+QDATETIME = "\d\d\d\d{4}\.[01]\d\.[0-3]\dD\d([\d:\.])+"
+ARROWS = "-+>+|<+-+|<+-+>+"
+UNKNOWN = "[A-Z]\w*[A-Z\d]\w*|\d\w*[A-Z]\w*"
     
 
 def extend_tokenizer(nlp,pref,inf,suf):
     pref = tuple(pref + list(nlp.Defaults.prefixes)) if pref else nlp.Defaults.prefixes
     suf = tuple(suf + list(nlp.Defaults.suffixes)) if suf else nlp.Defaults.suffixes
     inf = tuple(inf + list(nlp.Defaults.infixes)) if inf else nlp.Defaults.infixes
-    tok = "^(?:"+"|".join([EMAIL,URL,FXRIC,STOCKRIC,SPREADRIC])+")$"
+    tok = "^(?:"+"|".join([EMAIL,URL,FXRIC,STOCKRIC,SPREADRIC,DATE,QSPAN,QDATETIME,ARROWS])+")$"
     return Tokenizer(nlp.vocab,
                        rules = nlp.Defaults.tokenizer_exceptions,
                        prefix_search=spacyUtil.compile_prefix_regex(pref).search,
@@ -81,7 +87,7 @@ class TextProxy:
         self.doc = None
         self.process()
     def process(self):
-        self.doc = tokenizer(self.origTxt)
+        self.doc = fnlpTok(self.origTxt)
         i = 0; r = []
         while i<len(self.doc):
             i,res = ruleSet.match(self.doc,i)
@@ -96,14 +102,24 @@ class TextProxy:
 
 class Rule:
     def __init__(self,name,regexp,subst):
-        self.name = name
+        self.name = nlp.vocab.strings.add(name)
         self.subst = subst
-        self.regexp = re.compile(regexp)
+        self.regexp = re.compile("^(?:"+regexp+")$")
     def match(self,doc,i):
         if i is len(doc):
             return (i,None)
-        r = self.regexp.fullmatch(doc[i].text)
-        return (i+1,RuleResult(doc,i,self.subst)) if r else (i,None)
+        r = self.regexp.match(doc[i].text)
+        return (i+1,RuleResult(doc,i,self.name,self.subst)) if r else (i,None)
+    
+class CondRule(Rule):
+    def __init__(self,name,regexp,checkFn,subst):
+        self.checkFn = checkFn
+        super().__init__(name,regexp,subst)
+    def match(self,doc,i):
+        j,res = super().match(doc,i)
+        if res and self.checkFn(res.doc[res.pos].text):
+            return (j,res)
+        return (i,None)
     
 class OrRule:
     def __init__(self, *rules):
@@ -117,7 +133,7 @@ class OrRule:
 class StrictAndRule:
     def __init__(self, name, subst, *rules):
         self.rules = rules
-        self.name = name
+        self.name = nlp.vocab.strings.add(name)
         self.subst = subst
     def match(self,doc,i):
         start = i
@@ -128,14 +144,15 @@ class StrictAndRule:
         for j in range(start,i-1):
             if len(doc[j].whitespace_)>0:
                 return (start,None)
-        return (i,RuleResultSpan(doc,start,i-start,self.subst))
+        return (i,RuleResultSpan(doc,start,i-start,self.name,self.subst))
                 
 
 class RuleResult:
-    def __init__(self,doc,pos,subst):
+    def __init__(self,doc,pos,name,subst):
         self.pos = pos
         self.doc = doc
         self.text = subst
+        self.name = name
     def __str__(self):
         return self.text
     def __repr__(self):
@@ -152,6 +169,8 @@ class RuleResultSpan:
     def __repr__(self):
         return self.text + "[" + "".join([self.doc[self.pos+i].text for i in range(self.len)]) + "]"
 
+def check_ccypair(pair):
+    return pair[:3] in ccys and pair[3:] in ccys
 
 ruleSet = OrRule(
   Rule("email",EMAIL,"email"),
@@ -160,7 +179,14 @@ ruleSet = OrRule(
   Rule("STOCKRIC",STOCKRIC,"symbol"),
   Rule("FUTURERIC",FUTURERIC,"symbol"),
   Rule("SPREADRIC",SPREADRIC,"symbol"),
-  Rule("ISIN",ISIN,"code"))
+  Rule("ISIN",ISIN,"code"),
+  Rule("DATE",DATE,"date"),
+  Rule("QSPAN",QSPAN,"span"),
+  Rule("QDATETIME",QDATETIME,"time"),
+  Rule("ARROW",ARROWS,""),
+  CondRule("CCYPAIR","[A-Z]{6}",check_ccypair,"symbol"),
+  CondRule("CCY","[A-Z]{3}",lambda x: x in ccys,"currency"),
+  Rule("UNKNOWN",UNKNOWN,"unknown"))
 
 
 TextProxy(txt)

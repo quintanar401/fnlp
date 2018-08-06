@@ -1,0 +1,24 @@
+currency_pair is symbol
+RIC is symbol
+bb_ticker is symbol
+
+PROD is environment
+UAT is environment
+DR is environment
+QA is environment
+DEV is environment
+RES is environment
+
+HDB is database
+RDB is database
+
+EMEA is region
+US is region
+APAC is region
+ASIA is region
+JPN is region
+
+stock_ric is RIC
+future_ric is RIC
+fx_ric is RIC
+tweb_ric is RIC

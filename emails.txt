@@ -1,0 +1,138 @@
+Date: Thu, 2 Aug 2018 22:43:19 -0700 (PDT)
+From: Michael He <mymicha...@gmail.com>
+To: Kdb+ Personal Developers <personal...@googlegroups.com>
+Subject: Error in installing v3.6
+
+Dear all,
+
+I encountered some problem trying to install v3.6 on my PC. Could someone
+please point out how to fix it? Do I need to remove v3.5 first or it is
+because of something else?
+
+Thanks,
+
+Michael
+
+<MAIL-DELIM>
+
+Date: Thu, 2 Aug 2018 23:45:38 -0700 (PDT)
+From: Flying <flyi...@gmail.com>
+To: Kdb+ Personal Developers <personal...@googlegroups.com>
+Subject: Re: Error in installing v3.6
+
+Extract the complete folder from the downloaded package, and replace all
+existing files. If not sure, remove the existing q directory and get a new
+copy from the downloaded ZIP file.
+
+<MAIL-DELIM>
+
+Date: Wed, 4 Jul 2018 22:35:13 -0700 (PDT)
+From: Michael He <mymicha...@gmail.com>
+To: Kdb+ Personal Developers <personal...@googlegroups.com>
+Subject: sql server database to kdb+ database
+
+Hi everyone,
+
+I'm new to kdb+. What I have now is huge amount of intraday equity data
+stored in sql server database, and I would like to store them in kdb+
+dababase format. I learned that the best way to do it is through
+partitioned tables with date or trading code as my partition domain.
+
+My question is that is it really necessary to convert from sql server
+format to kdb+ format? And if so, is it simple like "query from sql server
+and save the fields into different columns" or do I get something wrong?
+
+Thanks in advance,
+
+Michael
+
+<MAIL-DELIM>
+
+Date: Thu, 5 Jul 2018 00:05:13 -0700 (PDT)
+From: Flying <flyi...@gmail.com>
+To: Kdb+ Personal Developers <personal...@googlegroups.com>
+Subject: Re: sql server database to kdb+ database
+
+Looks like you'll have some study to catch up first. You've got to
+understand the basic conceptual differences between a traditional RDBMS and
+kdb+ in order to effectively work out the work flow you need.
+
+The short answer is: From kdb+, you can indeed run sql queries on you
+existing data in order to extract data into kdb+ for further processing.
+But in order to make full use of kdb+'s power, you'd have to make use of a
+database in kdb+'s native format.
+
+Recommended starters:
+
+   - https://code.kx.com/q4m3/
+   - https://code.kx.com/q/cookbook/splayed-tables/
+   - To export from SQL to large CSVs and import into q:
+      - https://code.kx.com/q/cookbook/loading-from-large-files/
+      - https://code.kx.com/q/cookbook/splaying-large-files/
+      - Or, to query SQL from within q:
+      - https://code.kx.com/q/interfaces/q-client-for-odbc/
+
+<MAIL-DELIM>
+
+From: Terry Lynch <tlyn...@gmail.com>
+Date: Tue, 31 Jul 2018 07:18:45 -0400
+Subject: Re: [personal kdb+] hopen just hangs
+To: personal-kdbplus@googlegroups.com
+
+A few things could have caused the hopen to hang:
+
+1. you were running a query that caused the instance to be busy (hopen has
+to wait until your query finishes)
+
+2. you were working in debug mode on the instance. The instance will not
+accept hopens or queries until you exit debug mode.
+
+3. You altered .z.pw or .z.po
+
+As for how you could try to catch this issue in future - modify .z.pw and
+.z.po to capture/log the incoming hopen request.
+
+Terry
+
+<MAIL-DELIM>
+
+Date: Thu, 26 Jul 2018 18:05:16 -0700 (PDT)
+From: William Mayott <wma...@gmail.com>
+To: Kdb+ Personal Developers <personal...@googlegroups.com>
+Subject: timestamp of max and min value when using xbar for OHLC?
+
+
+
+Hi,
+
+
+I'm looking for an efficient way to easily grab the exact timestamps
+associated with the highs and the lows within a OHLC (open, high, low,
+close) aggregation via xbar
+
+
+For example:
+
+select open_timestamp: first time, open:first price, high:max price,
+low:min price, close:last price, last_timestamp: last time by
+0D00:10:00.000000000 xbar time from trade where sym=`XXXXXX
+
+
+As shown above, it's easy enough to grab the times of the first and
+the last values (open_timestamp and last_timestamp), but indexing in and
+getting the timestamp for the max and min values is less straight forward
+..
+
+
+
+I came up with  messy and verbose way to do this, but I=E2=80=99m sure there is a
+better way to do this .. via search & comparison (?) or similar which is
+eluding me at the moment.
+
+
+
+Any ideas?
+
+Thanks,
+
+Bill

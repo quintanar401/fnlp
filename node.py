@@ -28,7 +28,7 @@ class Node:
         self.links_from.append(lnk)
     def next(self,key):
         return find_first(self.links_to,key)
-    def add_to_node(self,node,ltype,lSubType=None):
+    def add_node(self,node,ltype,lSubType=None):
         Link(self,ltype,node,subType=lSubType)
         return self
 
@@ -51,6 +51,7 @@ class UnknownLinkType(BaseFNLPException):
 class DuplicateKBRef(BaseFNLPException):
     pass
 
+ESTR = re.compile("^\s*$")
 KB = {}
 def get_kb_node(name,type="kb",value=None,not_exists=False):
     try:
@@ -65,10 +66,9 @@ def get_kb_node(name,type="kb",value=None,not_exists=False):
 def load_kb(path):
     global KB
     KB = {}
-    estr = re.compile("^\s*$")
     with open(path,"rt") as f:
         for str in f:
-            if estr.match(str):
+            if ESTR.match(str):
                 continue
             tok = fnlpTok(str)
             if tok[0].text == "#":
@@ -83,25 +83,55 @@ def load_kb(path):
 
 DICT = {}
 def get_dict_entry(name):
+    name = name.lower()
     try:
         return DICT[name]
     except KeyError:
         DICT[name] = {}
         return DICT[name]
 
+def add_dict_entry(name,kb_id):
+    W = get_dict_entry(name)
+    if not name in W:
+        W[name] = [Node(name,"word_proxy").add_node(get_kb_node(kb_id),"pointer")]
+        if name.isalpha() and (name in nlp.vocab or name.lower() in nlp.vocab):
+            W[name].append(Node(name,"word_proxy").add_node(Node(name,"word"),"pointer"))
+    else:
+        if not functools.reduce(lambda x,y: x or y.next(kb_id) is not None,W[name],False):
+            W[name].append(Node(name,"word_proxy").add_node(get_kb_node(kb_id),"pointer"))
+    return W[name]
+
 def load_dict(path):
-    estr = re.compile("^\s*$")
     with open(path,"rt") as f:
         for str in f:
-            if estr.match(str):
+            if ESTR.match(str):
                 continue
             tok = fnlpTok(str)
             w = tok[0].text
             r = range(1,len(tok)) if len(tok)>2 else range(0,1)
-            W = get_dict_entry(w.lower())
-            nodes = [Node(tok[i].text,"word_proxy").add_to_node(get_kb_node(tok[i].text),"pointer") for i in r]
+            W = get_dict_entry(w)
+            nodes = [Node(tok[i].text,"word_proxy").add_node(get_kb_node(tok[i].text),"pointer") for i in r]
             if w.isalpha() and (w in nlp.vocab or w.lower() in nlp.vocab):
-                nodes.append(Node(w,"word_proxy").add_to_node(Node(w,"word"),"pointer"))
+                nodes.append(Node(w,"word_proxy").add_node(Node(w,"word"),"pointer"))
             W[w] = nodes
+
+EMAILS = []
+def load_emails(path, encoding='latin1'):
+    efield = re.compile("^(Date|From|To|Subject|CC): (.*)")
+    with codecs.open(path, encoding=encoding) as f:
+        for email in ftfy.fix_text(f.read()).split("<MAIL-DELIM>"):
+            lines = email.split("\n")
+            em = {}
+            for (j,l) in enumerate(lines):
+                if ESTR.match(l):
+                    continue
+                fi = efield.match(l)
+                if fi:
+                    em[fi[1]] = fi[2]
+                    continue
+                em["body"] = lines[j:]
+                EMAILS.append(em)
+                break
+
 # load_kb("c:/github/fnlp/rules.txt")
 # load_dict("c:/github/fnlp/dict.txt")

@@ -1,6 +1,7 @@
 currency_pair is symbol
 RIC is symbol
 bb_ticker is symbol
+ISIN is symbol
 
 PROD is environment
 UAT is environment
@@ -21,4 +22,5 @@ JPN is region
 stock_ric is RIC
 future_ric is RIC
 fx_ric is RIC
+spread_ric is RIC
 tweb_ric is RIC

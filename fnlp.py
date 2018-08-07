@@ -13,6 +13,8 @@ from spacy import util as spacyUtil
 import re
 import json
 import ftfy
+import codecs
+import functools
 
 with open('c:/github/fnlp/ccy.json') as f:
     ccyInfo = json.load(f)
@@ -80,44 +82,40 @@ def extend_tokenizer(nlp,pref,inf,suf):
 fnlpTok = extend_tokenizer(nlp,PREFIX_RULES,INFIX_RULES2,None)
 
 
-class TextProxy:
-    def __init__(self,txt):
-        self.origTxt = txt
-        self.text = None
-        self.doc = None
-        self.process()
-    def process(self):
-        self.doc = fnlpTok(self.origTxt)
-        i = 0; r = []
-        while i<len(self.doc):
-            i,res = ruleSet.match(self.doc,i)
-            if not res:
-                res = self.doc[i]
-                i+=1
-            r.append(res)
-        self.text = ' '.join([t.text for t in r])
-    def __repr__(self):
-        return self.text
+def process_text(txt):
+    doc = fnlpTok(txt)
+    i = 0; r = []
+    while i<len(doc):
+        i,res = ruleSet.match(doc,i)
+        if not res:
+            res = add_dict_entry(doc[i].text,'ENTITY')
+            i+=1
+        r.append(res)
+    return r
         
 
 class Rule:
-    def __init__(self,name,regexp,subst):
-        self.name = nlp.vocab.strings.add(name)
-        self.subst = subst
+    def __init__(self,kb_id,regexp):
+        self.kb_id = kb_id
         self.regexp = re.compile("^(?:"+regexp+")$")
     def match(self,doc,i):
         if i is len(doc):
             return (i,None)
-        r = self.regexp.match(doc[i].text)
-        return (i+1,RuleResult(doc,i,self.name,self.subst)) if r else (i,None)
+        txt = doc[i].text
+        r = self.regexp.match(txt)
+        if not r:
+            return (i,None)
+        n = Node(txt,"word_repr").add_node(Node("matches","synt",add_dict_entry(txt,self.kb_id)),"assoc")
+        n.add_node(Node("src","synt",(doc,i,i)),"assoc")
+        return (i+1,n)
     
 class CondRule(Rule):
-    def __init__(self,name,regexp,checkFn,subst):
+    def __init__(self,name,regexp,checkFn):
         self.checkFn = checkFn
-        super().__init__(name,regexp,subst)
+        super().__init__(name,regexp)
     def match(self,doc,i):
         j,res = super().match(doc,i)
-        if res and self.checkFn(res.doc[res.pos].text):
+        if res and self.checkFn(res.key):
             return (j,res)
         return (i,None)
     
@@ -131,10 +129,9 @@ class OrRule:
         return (i,None)
 
 class StrictAndRule:
-    def __init__(self, name, subst, *rules):
+    def __init__(self, kb_id, *rules):
         self.rules = rules
-        self.name = nlp.vocab.strings.add(name)
-        self.subst = subst
+        self.kb_id = kb_id
     def match(self,doc,i):
         start = i
         for r in self.rules:
@@ -144,49 +141,25 @@ class StrictAndRule:
         for j in range(start,i-1):
             if len(doc[j].whitespace_)>0:
                 return (start,None)
-        return (i,RuleResultSpan(doc,start,i-start,self.name,self.subst))
+        return (i,res)
                 
-
-class RuleResult:
-    def __init__(self,doc,pos,name,subst):
-        self.pos = pos
-        self.doc = doc
-        self.text = subst
-        self.name = name
-    def __str__(self):
-        return self.text
-    def __repr__(self):
-        return self.text + "[" + self.doc[self.pos].text + "]"
-
-class RuleResultSpan:
-    def __init__(self,doc,pos,len,subst):
-        self.pos = pos
-        self.len = len
-        self.doc = doc
-        self.text = subst
-    def __str__(self):
-        return self.text
-    def __repr__(self):
-        return self.text + "[" + "".join([self.doc[self.pos+i].text for i in range(self.len)]) + "]"
 
 def check_ccypair(pair):
     return pair[:3] in ccys and pair[3:] in ccys
 
 ruleSet = OrRule(
-  Rule("email",EMAIL,"email"),
-  Rule("URL",URL,"page"),
-  Rule("FXRIC",FXRIC,"symbol"),
-  Rule("STOCKRIC",STOCKRIC,"symbol"),
-  Rule("FUTURERIC",FUTURERIC,"symbol"),
-  Rule("SPREADRIC",SPREADRIC,"symbol"),
-  Rule("ISIN",ISIN,"code"),
-  Rule("DATE",DATE,"date"),
-  Rule("QSPAN",QSPAN,"span"),
-  Rule("QDATETIME",QDATETIME,"time"),
-  Rule("ARROW",ARROWS,""),
-  CondRule("CCYPAIR","[A-Z]{6}",check_ccypair,"symbol"),
-  CondRule("CCY","[A-Z]{3}",lambda x: x in ccys,"currency"),
-  Rule("UNKNOWN",UNKNOWN,"unknown"))
-
-
-TextProxy(txt)
+  Rule("email",EMAIL),
+  Rule("URL",URL),
+  Rule("fx_ric",FXRIC),
+  Rule("stock_ric",STOCKRIC),
+  Rule("future_ric",FUTURERIC),
+  Rule("spread_ric",SPREADRIC),
+  Rule("ISIN",ISIN),
+  Rule("date",DATE),
+  Rule("q_span",QSPAN),
+  Rule("q_datetime",QDATETIME),
+  Rule("ARROW",ARROWS),
+  CondRule("ccy_pair","[A-Z]{6}",check_ccypair),
+  CondRule("ccy","[A-Z]{3}",lambda x: x in ccys),
+  Rule("symbol",UNKNOWN),
+  Rule("ENTITY",".*"))

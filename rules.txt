@@ -10,8 +10,15 @@ QA is environment
 DEV is environment
 RES is environment
 
-HDB is database
-RDB is database
+HDB is q_database
+RDB is q_database
+RDBMS is classic_database
+
+SQL is computer_language
+QSQL is computer_language
+
+PC is personal_computer
+ZIP is file_format
 
 EMEA is region
 US is region
@@ -24,3 +31,7 @@ future_ric is RIC
 fx_ric is RIC
 spread_ric is RIC
 tweb_ric is RIC
+
+ICE is exchange
+NYSE is exchange
+LSE is exchange

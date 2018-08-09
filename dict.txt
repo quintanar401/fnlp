@@ -10,6 +10,13 @@ ticker bb_ticker
 
 HDB
 RDB
+RDBMS
+
+SQL
+QSQL
+
+PC
+ZIP
 
 EMEA
 US

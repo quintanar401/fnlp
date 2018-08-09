@@ -20,28 +20,22 @@ with open('c:/github/fnlp/ccy.json') as f:
     ccyInfo = json.load(f)
 ccys = set(ccy['code'] for ccy in ccyInfo)
 
-txt = u"Symlinks were originally introduced to maintain backwards compatibility, as older versions expected model data to live within spacy/data. However, we decided to keep using them in v2.0 instead of opting for a config file. There'll always be a need for assigning and saving custom model names or IDs. And your system already comes with a native solution to mapping unicode aliases to file paths: symbolic links."
-
-txt = u"I sent email to mary@zzz.ac and then opened the page http://some.zzz.es"
-
 nlp = spacy.load('en_core_web_md')
-
-doc = nlp(txt)
 
 # displacy.serve(doc2, style='dep')
 
-for t in doc.noun_chunks:
-    print(t.text)
+#for t in doc.noun_chunks:
+#    print(t.text)
 
-for t in doc.ents:
-    print(t.text + " " + t.label_)
+#for t in doc.ents:
+#    print(t.text + " " + t.label_)
     
-for token in doc:
-    print(token.text, token.lemma_, token.pos_, token.tag_, token.dep_,
-          token.shape_, token.is_alpha, token.is_stop, token.head.text, token.norm_)
+#for token in doc:
+#    print(token.text, token.lemma_, token.pos_, token.tag_, token.dep_,
+#          token.shape_, token.is_alpha, token.is_stop, token.head.text, token.norm_)
     
 
-spacy.explain('punct')
+#spacy.explain('punct')
 
 
 # Default spacy tokenizer doesn't split by ( ) ; and etc in the infix position, and similar things for prefixes
@@ -63,6 +57,7 @@ ISIN = "[A-Z]{2}[A-Z\d]{9}\d"
 DATE = "[12]\d\d\d[\.-][01]\d[\.-][0-3]\d"
 QSPAN = "\d+D\d([\d:\.])+"
 QDATETIME = "\d\d\d\d{4}\.[01]\d\.[0-3]\dD\d([\d:\.])+"
+QZNS = "\.z\.(?:[abcefhikKlnNopPqsuwWxXzZtTdD]|p[cdghimopsw]|w[cos]|zd|exit|ac|bm)"
 ARROWS = "-+>+|<+-+|<+-+>+"
 UNKNOWN = "[A-Z]\w*[A-Z\d]\w*|\d\w*[A-Z]\w*"
     
@@ -71,7 +66,7 @@ def extend_tokenizer(nlp,pref,inf,suf):
     pref = tuple(pref + list(nlp.Defaults.prefixes)) if pref else nlp.Defaults.prefixes
     suf = tuple(suf + list(nlp.Defaults.suffixes)) if suf else nlp.Defaults.suffixes
     inf = tuple(inf + list(nlp.Defaults.infixes)) if inf else nlp.Defaults.infixes
-    tok = "^(?:"+"|".join([EMAIL,URL,FXRIC,STOCKRIC,SPREADRIC,DATE,QSPAN,QDATETIME,ARROWS])+")$"
+    tok = "^(?:"+"|".join([EMAIL,URL,FXRIC,STOCKRIC,SPREADRIC,DATE,QSPAN,QDATETIME,QZNS,ARROWS])+")$"
     return Tokenizer(nlp.vocab,
                        rules = nlp.Defaults.tokenizer_exceptions,
                        prefix_search=spacyUtil.compile_prefix_regex(pref).search,
@@ -87,10 +82,7 @@ def process_text(txt):
     i = 0; r = []
     while i<len(doc):
         i,res = ruleSet.match(doc,i)
-        if not res:
-            res = add_dict_entry(doc[i].text,'ENTITY')
-            i+=1
-        r.append(res)
+        r.append(res.next('matches').value[0].lnext('pointer').key)
     return r
         
 
@@ -105,18 +97,16 @@ class Rule:
         r = self.regexp.match(txt)
         if not r:
             return (i,None)
-        n = Node(txt,"word_repr").add_node(Node("matches","synt",add_dict_entry(txt,self.kb_id)),"assoc")
-        n.add_node(Node("src","synt",(doc,i,i)),"assoc")
-        return (i+1,n)
+        return (i+1,(txt,(doc,i,i),self.kb_id))
     
 class CondRule(Rule):
     def __init__(self,name,regexp,checkFn):
         self.checkFn = checkFn
-        super().__init__(name,regexp)
+        Rule.__init__(self,name,regexp)
     def match(self,doc,i):
-        j,res = super().match(doc,i)
-        if res and self.checkFn(res.key):
-            return (j,res)
+        j,r = Rule.match(self,doc,i)
+        if r and self.checkFn(r[0]):
+            return (j,r)
         return (i,None)
     
 class OrRule:
@@ -158,8 +148,8 @@ ruleSet = OrRule(
   Rule("date",DATE),
   Rule("q_span",QSPAN),
   Rule("q_datetime",QDATETIME),
+  Rule("q_dot_z",QZNS),
   Rule("ARROW",ARROWS),
   CondRule("ccy_pair","[A-Z]{6}",check_ccypair),
   CondRule("ccy","[A-Z]{3}",lambda x: x in ccys),
-  Rule("symbol",UNKNOWN),
-  Rule("ENTITY",".*"))
+  Rule("symbol",UNKNOWN))

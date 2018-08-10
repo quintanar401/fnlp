@@ -100,7 +100,7 @@ class Dict:
                 nodes = [Node(tok[i].text,"word_proxy").add_node(get_kb_node(tok[i].text),"pointer") for i in r]
                 if w.isalpha() and (w in nlp.vocab or w.lower() in nlp.vocab):
                     nodes.append(Node(w,"word_proxy").add_node(Node(w,"word"),"pointer"))
-                    W[w] = nodes
+                W[w] = nodes
 
     def __contains__(self, val):
         return val in self.dict

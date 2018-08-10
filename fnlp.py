@@ -10,6 +10,7 @@ import spacy
 from spacy import displacy
 from spacy.tokenizer import Tokenizer
 from spacy import util as spacyUtil
+from spacy.symbols import ORTH, LEMMA
 import re
 import json
 import ftfy
@@ -57,6 +58,7 @@ ISIN = "[A-Z]{2}[A-Z\d]{9}\d"
 DATE = "[12]\d\d\d[\.-][01]\d[\.-][0-3]\d"
 QSPAN = "\d+D\d([\d:\.])+"
 QDATETIME = "\d\d\d\d{4}\.[01]\d\.[0-3]\dD\d([\d:\.])+"
+QTIME = "\d\d:\d\d(?::\d\d(?:\.\d+)?)?"
 QZNS = "\.z\.(?:[abcefhikKlnNopPqsuwWxXzZtTdD]|p[cdghimopsw]|w[cos]|zd|exit|ac|bm)"
 ARROWS = "-+>+|<+-+|<+-+>+"
 UNKNOWN = "[A-Z]\w*[A-Z\d]\w*|\d\w*[A-Z]\w*"
@@ -66,7 +68,7 @@ def extend_tokenizer(nlp,pref,inf,suf):
     pref = tuple(pref + list(nlp.Defaults.prefixes)) if pref else nlp.Defaults.prefixes
     suf = tuple(suf + list(nlp.Defaults.suffixes)) if suf else nlp.Defaults.suffixes
     inf = tuple(inf + list(nlp.Defaults.infixes)) if inf else nlp.Defaults.infixes
-    tok = "^(?:"+"|".join([EMAIL,URL,FXRIC,STOCKRIC,SPREADRIC,DATE,QSPAN,QDATETIME,QZNS,ARROWS])+")$"
+    tok = "^(?:"+"|".join([EMAIL,URL,FXRIC,STOCKRIC,SPREADRIC,DATE,QSPAN,QDATETIME,QTIME,QZNS,ARROWS])+")$"
     return Tokenizer(nlp.vocab,
                        rules = nlp.Defaults.tokenizer_exceptions,
                        prefix_search=spacyUtil.compile_prefix_regex(pref).search,
@@ -75,6 +77,8 @@ def extend_tokenizer(nlp,pref,inf,suf):
                        token_match=re.compile(tok).match)
 
 fnlpTok = extend_tokenizer(nlp,PREFIX_RULES,INFIX_RULES2,None)
+for r in special_rules:
+    fnlpTok.add_special_case(r[0],r[1])
 
 
 def process_text(txt):
@@ -97,7 +101,7 @@ class Rule:
         r = self.regexp.match(txt)
         if not r:
             return (i,None)
-        return (i+1,(txt,(doc,i,i),self.kb_id))
+        return (i+1,(txt,doc[i:i+1],self.kb_id))
     
 class CondRule(Rule):
     def __init__(self,name,regexp,checkFn):
@@ -132,12 +136,26 @@ class StrictAndRule:
             if len(doc[j].whitespace_)>0:
                 return (start,None)
         return (i,res)
-                
+
+class AndRule:
+    def __init__(self, kb_id, conv_fn, *rules):
+        self.rules = rules
+        self.kb_id = kb_id
+        self.fn = conv_fn
+    def match(self,doc,i):
+        start = i
+        for r in self.rules:
+            i, res = r.match(doc,i)
+            if not res:
+                return (start,None)
+        return (i,(self.fn(doc[start:i]),doc[start:i],self.kb_id))                
 
 def check_ccypair(pair):
     return pair[:3] in ccys and pair[3:] in ccys
 
+ccyRule = CondRule("ccy","[A-Z]{3}",lambda x: x in ccys)
 ruleSet = OrRule(
+  AndRule("ccy",lambda x: x[0].text+x[2].text,ccyRule,Rule("","/"),ccyRule),
   Rule("email",EMAIL),
   Rule("URL",URL),
   Rule("fx_ric",FXRIC),
@@ -148,8 +166,9 @@ ruleSet = OrRule(
   Rule("date",DATE),
   Rule("q_span",QSPAN),
   Rule("q_datetime",QDATETIME),
+  Rule("q_datetime",QTIME),
   Rule("q_dot_z",QZNS),
   Rule("ARROW",ARROWS),
   CondRule("ccy_pair","[A-Z]{6}",check_ccypair),
-  CondRule("ccy","[A-Z]{3}",lambda x: x in ccys),
+  ccyRule,
   Rule("symbol",UNKNOWN))

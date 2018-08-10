@@ -211,6 +211,8 @@
  {"country":"Solomon Island","code":"SBD","ncode":90,"conv":-2,"name":"Solomon Islands Dollar"},
  {"country":"Somalia","code":"SOS","ncode":706,"conv":-2,"name":"Somalia Shilling"},
  {"country":"South Africa","code":"ZAR","ncode":710,"conv":-2,"name":"South African Rand"},
+ {"country":"South Africa","code":"ZAr","ncode":710,"conv":-2,"name":"South African Rand"},
+ {"country":"South Africa","code":"ZAc","ncode":710,"conv":-2,"name":"South African Rand"},
  {"country":"Spain","code":"ESP","ncode":724,"conv":0,"name":"Spanish Peseta"},
  {"country":"Sri Lanka","code":"LKR","ncode":144,"conv":-2,"name":"Sri Lanka Rupee"},
  {"country":"Sudan","code":"SDP","ncode":736,"conv":-2,"name":"Sudanese Dinar"},
@@ -254,4 +256,6 @@
  {"country":"Yugoslavia","code":"YUN","ncode":891,"conv":-2,"name":"Yugoslavian Dinar"},
  {"country":"Zaire","code":"ZRN","ncode":180,"conv":-2,"name":"Unknown"},
  {"country":"Zambia","code":"ZMK","ncode":894,"conv":-2,"name":"Zambia Kwacha"},
- {"country":"Zimbabwe","code":"ZWD","ncode":716,"conv":-2,"name":"Zimbabwe Dollar"}]
+ {"country":"Zimbabwe","code":"ZWD","ncode":716,"conv":-2,"name":"Zimbabwe Dollar"},
+ {"country":"virtual","code":"BTC","ncode":0,"conv":0,"name":"Bitcoin"},
+ {"country":"virtual","code":"USB","ncode":0,"conv":0,"name":"USB"}]

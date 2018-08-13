@@ -15,7 +15,9 @@ import re
 import json
 import ftfy
 import codecs
-import functools
+import functools as func
+import itertools as itr
+import operator as op
 
 with open('c:/github/fnlp/ccy.json') as f:
     ccyInfo = json.load(f)
@@ -43,8 +45,9 @@ nlp = spacy.load('en_core_web_md')
 # on the other hand it is useful to extract emails, urls and etc
 tokenizer = nlp.tokenizer
 INFIX_RULES1 = ["[\[\]\(\)\{\}\!\.\:\,;]"]
-INFIX_RULES2 = ["[\[\]\(\)\{\}\!`\:\,;+=<>]"]
-PREFIX_RULES = ["[\.]"]
+INFIX_RULES2 = ["[\[\]\(\)\{\}\!`\:\,;+=<>\\\\/]"]
+PREFIX_RULES = ["[\./\\\\]"]
+SUFFIX_RULES = ["[\/\\\\]"]
 EMAIL = "([\\w\\._+-]+@[\\w_-]+(\\.[\\w_-]+)+)" + "|" +\
         "([\\w_+-]+(?:(?: dot |\\.)[\\w_+-]+){0,10})(?: at |@)([a-zA-Z]+(?:(?:\\.| dot )[\\w_-]+){1,10})"
 URL = "((([a-zA-Z]+)://)?(w{2,3}[0-9]*\\.)?(([\\w_-]+\\.)+[a-z]{2,4})(:(\\d+))?(/[^?\\s#]*)?(\\?[^\\s#]+)?(#[\\-,*=&a-z0-9]+)?)" + "|" +\
@@ -57,11 +60,12 @@ SPREADRIC = "[A-Z]{2,4}(?:c\d-[A-Z]{2,4}c\d|-[A-Z]{3,5}\d|[A-Z]\d-[A-Z]\d)"
 ISIN = "[A-Z]{2}[A-Z\d]{9}\d"
 DATE = "[12]\d\d\d[\.-][01]\d[\.-][0-3]\d"
 QSPAN = "\d+D\d([\d:\.])+"
-QDATETIME = "\d\d\d\d{4}\.[01]\d\.[0-3]\dD\d([\d:\.])+"
+QDATETIME = "\d{4}\.[01]\d\.[0-3]\dD\d([\d:\.])+"
 QTIME = "\d\d:\d\d(?::\d\d(?:\.\d+)?)?"
+DATE_dWd = "(?i)\d\d-(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)-\d\d"
 QZNS = "\.z\.(?:[abcefhikKlnNopPqsuwWxXzZtTdD]|p[cdghimopsw]|w[cos]|zd|exit|ac|bm)"
 ARROWS = "-+>+|<+-+|<+-+>+"
-UNKNOWN = "[A-Z]\w*[A-Z\d]\w*|\d\w*[A-Z]\w*"
+UNKNOWN = "[A-Z]\w*[A-Z\d]\w*|\d\w*[A-Z]\w*|[a-z]\w*[A-Z\d]\w*"
     
 
 def extend_tokenizer(nlp,pref,inf,suf):
@@ -76,7 +80,7 @@ def extend_tokenizer(nlp,pref,inf,suf):
                        infix_finditer=spacyUtil.compile_infix_regex(inf).finditer,
                        token_match=re.compile(tok).match)
 
-fnlpTok = extend_tokenizer(nlp,PREFIX_RULES,INFIX_RULES2,None)
+fnlpTok = extend_tokenizer(nlp,PREFIX_RULES,INFIX_RULES2,SUFFIX_RULES)
 for r in special_rules:
     fnlpTok.add_special_case(r[0],r[1])
 
@@ -135,7 +139,7 @@ class StrictAndRule:
         for j in range(start,i-1):
             if len(doc[j].whitespace_)>0:
                 return (start,None)
-        return (i,res)
+        return (i,(doc[start:i].text,doc[start:i],self.kb_id))
 
 class AndRule:
     def __init__(self, kb_id, conv_fn, *rules):
@@ -156,6 +160,7 @@ def check_ccypair(pair):
 ccyRule = CondRule("ccy","[A-Z]{3}",lambda x: x in ccys)
 ruleSet = OrRule(
   AndRule("ccy",lambda x: x[0].text+x[2].text,ccyRule,Rule("","/"),ccyRule),
+  StrictAndRule("index_ric",Rule("","\."),Rule("",UNKNOWN)),
   Rule("email",EMAIL),
   Rule("URL",URL),
   Rule("fx_ric",FXRIC),
@@ -166,7 +171,8 @@ ruleSet = OrRule(
   Rule("date",DATE),
   Rule("q_span",QSPAN),
   Rule("q_datetime",QDATETIME),
-  Rule("q_datetime",QTIME),
+  Rule("q_time",QTIME),
+  Rule("date_dWd",DATE_dWd),
   Rule("q_dot_z",QZNS),
   Rule("ARROW",ARROWS),
   CondRule("ccy_pair","[A-Z]{6}",check_ccypair),

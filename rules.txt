@@ -1,4 +1,5 @@
 currency_pair is symbol
+ccy is currency
 RIC is symbol
 bb_ticker is symbol
 ISIN is symbol
@@ -13,6 +14,7 @@ RES is environment
 HDB is q_database
 RDB is q_database
 RDBMS is classic_database
+Oracle is classic_database
 
 SQL is computer_language
 QSQL is computer_language
@@ -26,12 +28,51 @@ APAC is region
 ASIA is region
 JPN is region
 
+US_country is country
+Brazil is country
+Japan is country
+
+new_york is city
+sao_paulo is city
+
 stock_ric is RIC
 future_ric is RIC
 fx_ric is RIC
 spread_ric is RIC
+index_ric is RIC
 tweb_ric is RIC
 
 ICE is exchange
 NYSE is exchange
 LSE is exchange
+BMF is exchange
+BOVESPA is exchange
+
+Excel is application
+QPad is application
+KDB is application
+
+bid_price is price
+bid_column is column
+ask_price is price
+ask_column is column
+bidPrice_column is column
+askPrice_column is column
+bid_size is size
+bidSize_column is column
+ask_size is size
+askSize_column is column
+max_price is price
+high_column is column
+min_price is price
+low_column is column
+open_price is price
+open_column is column
+close_price is price
+close_column is column
+price_column is column
+size_column is column
+
+trade is table
+quote is table
+depth is table

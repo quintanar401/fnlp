@@ -5,21 +5,124 @@ DEV
 QA
 RES
 
+# symbology
 RIC
 ticker bb_ticker
+ISIN
 
+# DBs
 HDB
 RDB
 RDBMS
+Oracle
 
 SQL
 QSQL
 
-PC
-ZIP
+# IT related
+PC personal_computer
+ZIP file_format
+CSV file_format
+IT information_technology
+script
+IP internet_address
+server
+computer
 
+# pronouns
+it pronoun
+It pronoun
+us pronoun
+Us pronoun
+
+# regions
 EMEA
 US
 APAC
 ASIA
 JPN
+
+# countries
+US US_country
+Brazil
+Japan
+EU european_union
+
+# cities
+NewYork new_york
+"New York" new_york
+SaoPaulo sao_paulo
+"Sao Paulo" sao_paulo
+
+# exchanges
+LSE
+NYSE
+BMF
+BOVESPA
+ICE
+market
+exchange
+"stock exchange" exchange
+
+# applications
+Excel
+application
+QPad
+KDB
+KDB+ KDB
+
+# table columns
+bid bid_price bid_column
+ask ask_price ask_column
+bidPrice bid_price bidPrice_column
+askPrice ask_price askPrice_column
+bidSize bid_size bidSize_column
+askSize ask_size askSize_column
+cond
+high max_price high_column
+low min_price low_column
+open open_price open_column
+close close_price close_column
+price price price_column
+size size size_column
+
+# tables
+trade
+quote
+depth
+
+# financial terms
+Libor
+curve
+rate
+rateset
+risk
+yield
+currency
+ccy
+OHLC
+
+share
+stock
+index
+spot
+future
+fx
+spread
+
+trader
+desk
+
+# data
+data
+Bloomberg Bloomberg_company
+Reuters Reuters_company
+ION
+
+# time
+date
+time
+timezone
+BST
+DST
+GMT

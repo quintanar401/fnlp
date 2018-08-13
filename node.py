@@ -57,6 +57,7 @@ class DuplicateKBRef(BaseFNLPException):
     pass
 
 ESTR = re.compile("^\s*$")
+ESTR2 = re.compile("^(\s*|\s*#.*)\r?\n?$")
 
 def get_kb_node(name,type="kb",value=None,not_exists=False):
     try:
@@ -73,14 +74,13 @@ def load_kb(path, encoding='latin1'):
     KB = {}
     with codecs.open(path, encoding=encoding) as f:
         for str in f:
-            if ESTR.match(str):
+            if ESTR2.match(str):
                 continue
             tok = fnlpTok(str)
             if tok[0].text == "#":
                 t1, rel, t2, ex = (tok[1].text, tok[2].text, tok[3].text, False)
             else:
                 t1, rel, t2, ex = (tok[0].text, tok[1].text, tok[2].text, True)
-            print(tok)
             if rel == "is":
                 Link(get_kb_node(t1, not_exists=ex),"kb",get_kb_node(t2))
             else:
@@ -89,18 +89,49 @@ def load_kb(path, encoding='latin1'):
 class Dict:
     def __init__(self, path, encoding='latin1'):
         self.dict = {}
+        self.add_dict(path, encoding)
+    def add_dict(self, path, encoding='latin1'):
         with codecs.open(path, encoding=encoding) as f:
             for str in f:
-                if ESTR.match(str):
+                if ESTR2.match(str):
                     continue
-                tok = fnlpTok(str)
-                w = tok[0].text
-                r = range(1,len(tok)) if len(tok)>2 else range(0,1)
-                W = self.get_entry(w)
-                nodes = [Node(tok[i].text,"word_proxy").add_node(get_kb_node(tok[i].text),"pointer") for i in r]
-                if w.isalpha() and (w in nlp.vocab or w.lower() in nlp.vocab):
-                    nodes.append(Node(w,"word_proxy").add_node(Node(w,"word"),"pointer"))
-                W[w] = nodes
+                self.add_dict_entry(str.strip("\r\n"))
+    def add_dict_entry(self,str):
+        toks = []; brk = None; esc = False; i = 0; doc = fnlpTok(str)
+        for t in doc:
+            i += 1
+            if esc:
+                esc = False
+            elif t.text == "\\":
+                esc = True
+                continue
+            elif t.text in ["'",'"']:
+                if brk:
+                    break
+                brk = t.text
+                continue
+            ntok = { "word": t.text, "lword": t.text.lower(), "lemma": t.lemma_.lower(), "ws": len(t.whitespace_)>0 }
+            toks.append(ntok)
+            if (not brk) and ntok["ws"]:
+                break
+        toks[-1]["ws"] = None
+        kbw = [toks[-1]["word"]] if i is len(doc) else [t.text for t in doc[i:]]
+        W = self.get_entry(toks[0]["lemma"])
+        entry = self.match_exact_entry_tokens(W,toks) if len(W) else None
+        if entry:
+            kbw = [f for f in filter(lambda x: not any(map(lambda y: y.next(x),entry["ids"])),kbw)]
+            entry["ids"] += [Node(t,"word_proxy").add_node(get_kb_node(t),"pointer") for t in kbw]
+            return entry["ids"]
+        W.append({ "tokens": toks, "ids": [Node(t,"word_proxy").add_node(get_kb_node(t),"pointer") for t in kbw]})
+        return W[-1]["ids"]
+    def match_exact_entry_tokens(self, entry, tokens):
+        for e in entry:
+            ent = e["tokens"]
+            if not len(ent) is len(tokens):
+                continue
+            if func.reduce(lambda x,y: x and (ent[y]["word"] == tokens[y]["word"] and ent[y]["ws"] is tokens[y]["ws"]), range(len(tokens)), True):
+                return e
+        return None
 
     def __contains__(self, val):
         return val in self.dict
@@ -109,38 +140,34 @@ class Dict:
         return self.dict[name.lower()]
 
     def get_entry(self, name):
-        name = name.lower()
         try:
             return self.dict[name]
         except KeyError:
-            self.dict[name] = {}
+            self.dict[name] = []
             return self.dict[name]
 
-    def add_entry(self, name, kb_id):
-        W = self.get_entry(name)
-        if not name in W:
-            W[name] = [Node(name,"word_proxy").add_node(get_kb_node(kb_id),"pointer")]
-            if name.isalpha() and (name in nlp.vocab or name.lower() in nlp.vocab):
-                W[name].append(Node(name,"word_proxy").add_node(Node(name,"word"),"pointer"))
-        else:
-            if not functools.reduce(lambda x,y: x or y.next(kb_id) is not None,W[name],False):
-                W[name].append(Node(name,"word_proxy").add_node(get_kb_node(kb_id),"pointer"))
-        return W[name]
-
     def get_repr(self, txt, src, kb_id):
-        n = Node(txt,"word_repr").add_node(Node("matches","synt",self.add_entry(txt,kb_id)),"assoc")
+        n = Node(txt,"word_repr").add_node(Node("matches","synt",self.add_dict_entry(txt+" "+kb_id)),"assoc")
         n.add_node(Node("src","synt",src),"assoc")
         return n
 
-    def match(self,entry):
+    def match(self,doc):
         try:
-            art = self.dict[entry.text.lower()]
+            art = self.dict[doc[0].lemma_.lower()]
         except KeyError:
-            try:
-                art = self.dict[entry.lemma_.lower()]
-            except KeyError:
-                return None
-        return functools.reduce(lambda x,y: x or (art[y] if y in art else None),[entry.text,entry.lemma_,entry.text.lower(),entry.lemma_.lower()],None)
+            return (0,None)
+        score = 0; entry = None
+        for a in art:
+            ns = self.calc_score(doc, a["tokens"])
+            if ns>score:
+                entry = a
+                score = ns
+        return (len(entry["tokens"]),entry["ids"]) if entry else (0,None)
+    def calc_score(self, doc, ent):
+        if len(doc)<len(ent):
+            return 0
+        return func.reduce(op.add, map(lambda x,y: (-3 if not (x["ws"] is None or (len(y.whitespace_)>0) is x["ws"]) else 0) +
+            1 if x["word"] == y.text else 0.95 if x["lword"] == y.text.lower() else 0.9 if x["lemma"] == y.lemma_.lower() else -10,ent,doc))
 
 def load_emails(path, encoding='latin1'):
     global EMAILS
@@ -163,15 +190,15 @@ def load_emails(path, encoding='latin1'):
 
 def process_email(e):
     r = {}
-    for l in e:
+    for l in e['body']:
         doc = fnlpTok(l)
         i = 0
         while i<len(doc):
-            res = DICT.match(doc[i])
+            j,res = DICT.match(doc[i:])
             if res:
                 key = res[0].lnext('pointer').key
-                val = doc[i].text
-                i += 1
+                val = doc[i:i+j].text
+                i += j
             else:
                 i,res = ruleSet.match(doc,i)
                 if not res:
@@ -194,3 +221,4 @@ def process_email(e):
 
 # load_kb("c:/github/fnlp/rules.txt")
 # DICT = Dict("c:/github/fnlp/dict.txt")
+# exec(open("c:/github/fnlp/node.py").read())

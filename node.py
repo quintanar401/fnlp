@@ -97,7 +97,7 @@ class Dict:
                     continue
                 self.add_dict_entry(str.strip("\r\n"))
     def add_dict_entry(self,str):
-        toks = []; brk = None; esc = False; i = 0; doc = fnlpTok(str)
+        toks = []; brk = None; esc = False; i = 0; doc = fnlpTok(str); nolemma = False
         for t in doc:
             i += 1
             if esc:
@@ -105,18 +105,21 @@ class Dict:
             elif t.text == "\\":
                 esc = True
                 continue
+            elif t.text == "!"
+                nolemma = True
+                continue
             elif t.text in ["'",'"']:
                 if brk:
                     break
                 brk = t.text
                 continue
-            ntok = { "word": t.text, "lword": t.text.lower(), "lemma": t.lemma_.lower(), "ws": len(t.whitespace_)>0 }
+            ntok = { "word": t.text, "lword": t.text.lower(), "lemma": "**nolemma**" if nolemma else fnlpTok(t.text.lower())[0].lemma_, "ws": len(t.whitespace_)>0 }
             toks.append(ntok)
             if (not brk) and ntok["ws"]:
                 break
         toks[-1]["ws"] = None
         kbw = [toks[-1]["word"]] if i is len(doc) else [t.text for t in doc[i:]]
-        W = self.get_entry(toks[0]["lemma"])
+        W = self.get_entry(fnlpTok(toks[0]["lword"])[0].lemma_)
         entry = self.match_exact_entry_tokens(W,toks) if len(W) else None
         if entry:
             kbw = [f for f in filter(lambda x: not any(map(lambda y: y.next(x),entry["ids"])),kbw)]
@@ -153,7 +156,7 @@ class Dict:
 
     def match(self,doc):
         try:
-            art = self.dict[doc[0].lemma_.lower()]
+            art = self.dict[fnlpTok(doc[0].text.lower())[0].lemma_]
         except KeyError:
             return (0,None)
         score = 0; entry = None
@@ -167,7 +170,7 @@ class Dict:
         if len(doc)<len(ent):
             return 0
         return func.reduce(op.add, map(lambda x,y: (-3 if not (x["ws"] is None or (len(y.whitespace_)>0) is x["ws"]) else 0) +
-            1 if x["word"] == y.text else 0.95 if x["lword"] == y.text.lower() else 0.9 if x["lemma"] == y.lemma_.lower() else -10,ent,doc))
+            1 if x["word"] == y.text else 0.95 if x["lword"] == y.text.lower() else 0.9 if x["lemma"] == fnlpTok(y.text.lower())[0].lemma_ else -10,ent,doc[0:len(ent)]))
 
 def load_emails(path, encoding='latin1'):
     global EMAILS
@@ -202,6 +205,7 @@ def process_email(e):
             else:
                 i,res = ruleSet.match(doc,i)
                 if not res:
+                    print(doc[i].text+doc[i].whitespace_)
                     i += 1
                     continue
                 if res[2] in ['FXRIC','STOCKRIC','FUTURERIC','SPREADRIC','ISIN','QZNS']:
@@ -211,12 +215,14 @@ def process_email(e):
                 else:
                     key = res[2]
                     val = res[0]
+            print(val+"<"+key+">"+doc[i-1].whitespace_)
             if key in r:
                 rk = r[key]
                 if not val in rk:
                     rk.append(val)
             else:
                 r[key] = [val]
+        print("")
     return r
 
 # load_kb("c:/github/fnlp/rules.txt")

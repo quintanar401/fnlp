@@ -1,33 +1,173 @@
-UAT
-PROD
-DR
-DEV
-QA
-RES
+!UAT
+!PROD
+!DR
+!DEV
+!QA
+!RES
+production
+environment
+research
 
 # symbology
-RIC
+!RIC
 ticker bb_ticker
-ISIN
+!ISIN
+symbol
+instrument
+security
+"Kospi 100" index
+"Kospi 200" index
+!FID reuters_fid
 
 # DBs
 HDB
 RDB
 RDBMS
 Oracle
+Sybase
+database
+
+query
+table
+"splayed table" table
+"partitioned table" table
+row
+field
+column
+cell
+record
+mapping
+dict dictionary
+dictionary
 
 SQL
 QSQL
+Q q_language
+C++ cpp_language
+variable
+assign
+define
+comment
+example
 
 # IT related
 PC personal_computer
 ZIP file_format
 CSV file_format
-IT information_technology
+!IT information_technology
+scp unix_cmd
+Linux
+Unix
+Windows
+!Mac
+file
+jira
+API
+code
+source
 script
+technology
 IP internet_address
 server
+host server
+box server
+firmware
 computer
+function
+adapter
+error
+exception
+outage
+fail
+fatal
+incident
+issue
+problem
+ticket
+DNS
+"Excel spreadsheet" spreadsheet
+spreadsheet
+release
+project
+patch
+backfill
+update
+upgrade
+check
+change
+test
+fix
+config
+user
+username
+"user name" username
+password
+access
+unauthorized
+authorized
+deny
+URL
+website
+webpage
+site
+page
+address
+port
+hostname
+remote
+email
+e-mail email
+online
+upstream
+link
+permission
+account
+dev developer
+developer
+firewall
+monitor
+send
+sender
+reply
+response
+respond
+recipient
+attach
+start
+stop
+finish
+complete
+exit
+move
+alias
+cron
+crontab
+log
+download
+invoke
+process
+system
+instance
+team
+connect
+run
+help
+communication
+command
+dependency
+archive
+setup
+timeout
+screenshot
+job
+directory
+gateway
+execution
+exec
+message
+output
+downtime
+rollover
 
 # pronouns
 it pronoun
@@ -37,29 +177,40 @@ Us pronoun
 
 # regions
 EMEA
-US
+!US
 APAC
 ASIA
 JPN
+region
+regional
 
 # countries
-US US_country
+!US US_country
 Brazil
 Japan
+Russia
+Luxembourg
+Singapore
+"United Kingdom" united_kingdom
+UK united_kingdom
 EU european_union
 
 # cities
 NewYork new_york
 "New York" new_york
+NY new_york
 SaoPaulo sao_paulo
 "Sao Paulo" sao_paulo
+London
+Moscow
+Sydney
 
 # exchanges
 LSE
 NYSE
 BMF
 BOVESPA
-ICE
+!ICE
 market
 exchange
 "stock exchange" exchange
@@ -67,9 +218,14 @@ exchange
 # applications
 Excel
 application
+app application
 QPad
+"Q Pad" QPad
+"KDB Studio" kdb_studio
 KDB
 KDB+ KDB
+"BlackBerry Works" application
+Geneos
 
 # table columns
 bid bid_price bid_column
@@ -85,11 +241,14 @@ open open_price open_column
 close close_price close_column
 price price price_column
 size size size_column
+level level_column
+sym sym_column
 
 # tables
 trade
 quote
 depth
+nbbo
 
 # financial terms
 Libor
@@ -101,6 +260,15 @@ yield
 currency
 ccy
 OHLC
+EM emerging_markets
+asset
+"corporate action" corporate_action
+!CA corporate_action
+split
+dividend
+discount
+undiscounted
+onshore
 
 share
 stock
@@ -109,20 +277,194 @@ spot
 future
 fx
 spread
+option
+bond
+
+payment
+negotiation
 
 trader
 desk
+business
+"Vice President" person
+support
+PM project_manager
+"project manager" project_manager
+manager
 
 # data
 data
+delete
+detail
+information
+info information
+feed
+feedhandler
+gap
+value
+tick
+constituent
+aggregation
+range
+amount
+usage
+capture
+search
+filter
+report
+request
+extract
+contain
+provide
+load
+save
+copy
+progress
+question
+confirm
+perform
+
 Bloomberg Bloomberg_company
+BB Bloomberg_company
 Reuters Reuters_company
 ION
+BlackBerry BlackBerry_company
+"Deutsche Bank AG" deutsche_bank
+"Deutsche Bank" deutsche_bank
+DB deutsche_bank
+LLC limited_liability_company
+bank
 
 # time
 date
 time
+hour
+minute
+second
+sec second
+weekend
+w/e weekend
+week
+weekly
+month
+monthly
+year
+yearly
+history
+historic
+historical
+delay
+realtime
+present
+past
+soon
+ETA
+!AM before_1200
+!PM after_1200
 timezone
+"time zone" timezone
 BST
 DST
 GMT
+EST
+UTC
+COB close_of_business
+day
+daily
+night
+nightly
+tomorrow
+yesterday
+today
+period
+current
+currently
+already
+early
+immediately
+now
+quick
+quickly
+recent
+recently
+always
+latest
+last
+around
+till
+after
+before
+
+Jan month
+January month
+Feb month
+February month
+Mar month
+March month
+Apr month
+April month
+May month
+Jun month
+June month
+July month
+Jul month
+Aug month
+August month
+Sept month
+September month
+Oct month
+October month
+Nov month
+November month
+Dec month
+December month
+
+weekday
+Mon weekday
+Monday weekday
+Tue weekday
+Tuesday weekday
+Wed weekday
+Wednesday weekday
+Thu weekday
+Thursday weekday
+Fri weekday
+Friday weekday
+Sat weekday
+Saturday weekday
+Sun weekday
+Sunday weekday
+
+# misc
+
+FYI for_your_information
+WRT with_regard_to
+2 two
+
+# math
+
+calculate
+calculation
+calc calculation
+result
+formula
+number
+max
+min
+set
+operation
+analyze
+equal
+match
+correct
+deduce
+
+# greetings
+
+Hi greetings
+"Kind Regards" thank_you
+Regards thank_you
+Thanks thank_you
+"Thank you" thank_you
+okay okey
+okey

@@ -1,0 +1,52 @@
+{
+  "patterns" : {
+    "EMAL1": "([\\w\\._+-]+@[\\w_-]+(\\.[\\w_-]+)+)",
+    "EMAIL2": "([\\w_+-]+(?:(?: dot |\\.)[\\w_+-]+){0,10})(?: at |@)([a-zA-Z]+(?:(?:\\.| dot )[\\w_-]+){1,10})",
+    "URL1": "((([a-zA-Z]+)://)?(w{2,3}[0-9]*\\.)?(([\\w_-]+\\.)+[a-z]{2,4})(:(\\d+))?(/[^?\\s#]*)?(\\?[^\\s#]+)?(#[\\-,*=&a-z0-9]+)?)",
+    "URL2": "((([a-zA-Z]+)://)?localhost(:(\\d+))?(/[^?\\s#]*)?(\\?[^\\s#]+)?)",
+    "URL3": "(([a-zA-Z]+)://([\\w_-]+)(:(\\d+))?(/[^?\\s#]*)?(\\?[^\\s#]+)?)",
+    "FXRIC": "(?:[A-Z]{6}|[A-Z]{3})=[WR]?",
+    "STOCKRIC": "[A-Z\\d][A-Za-z\\d]*-?[A-Za-z\\d]*_?[A-Za-z\\d]*\\.(?:[A-Z]{1,3}|xbo|[A-Z]{2}f)",
+    "FUTURERIC": "[A-Z]{2,5}(?:[A-Z]\\d|c\\d\\d?|cv\\d|cvoi\\d|coi\\d)(?:=LX)?",
+    "SPREADRIC": "[A-Z]{2,4}(?:c\\d-[A-Z]{2,4}c\\d|-[A-Z]{3,5}\\d|[A-Z]\\d-[A-Z]\\d)",
+    "TWEBRIC": "[A-Z\\d]+=TWEB",
+    "ISIN": "[A-Z]{2}[A-Z\\d]{9}\\d",
+    "DATE": "[12]\\d\\d\\d[\\.-][01]\\d[\\.-][0-3]\\d",
+    "QSPAN": "\\d+D\\d([\\d:\\.])+",
+    "QDATETIME": "\\d{4}\\.[01]\\d\\.[0-3]\\dD\\d([\\d:\\.])+",
+    "QTIME": "\\d\\d:\\d\\d(?::\\d\\d(?:\\.\\d+)?)?",
+    "DATE_dWd": "(?i)\\d\\d-(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)-\\d\\d",
+    "QZNS": "\\.z\\.(?:[abcefhikKlnNopPqsuwWxXzZtTdD]|p[cdghimopsw]|w[cos]|zd|exit|ac|bm)",
+    "ARROWS": "-+>+|<+-+|<+-+>+",
+    "UNKNOWN": "[A-Z]\\w*[A-Z\\d]\\w*|\\d\\w*[A-Z]\\w*|[a-z]\\w*[A-Z\\d]\\w*",
+    "CCY": "[A-Z]{3}",
+    "CCYPAIR": "[A-Z]{6}",
+    "IP": "((\\d\\d|[1-2]\\d\\d)\\.){3}(\\d\\d|[1-2]\\d\\d)",
+    "SLASH": "/",
+    "DOT": "\\."
+  },
+  "comp_patterns": [
+    {
+      "name": "ccy",
+      "patterns": ["CCY"],
+      "type": "conditional",
+      "function": "check_ccy"
+    },
+    {
+      "name": "ccypair",
+      "patterns": ["ccy","SLASH","ccy"],
+      "type": "and"
+    },
+    {
+      "name": "ccypair2",
+      "patterns": ["CCYPAIR"],
+      "type": "conditional",
+      "function": "check_ccypair"
+    },
+    {
+      "name": "index_ric",
+      "patterns": ["DOT","UNKNOWN"],
+      "type": "strict_and"
+    }
+  ]
+}

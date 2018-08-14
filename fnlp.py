@@ -5,7 +5,7 @@ Created on Mon Jul  9 22:17:59 2018
 @author: Andrew
 """
 
-
+from __future__ import print_function
 import spacy
 from spacy import displacy
 from spacy.tokenizer import Tokenizer
@@ -57,6 +57,7 @@ FXRIC = "(?:[A-Z]{6}|[A-Z]{3})=[WR]?"
 STOCKRIC = "[A-Z\d][A-Za-z\d]*-?[A-Za-z\d]*_?[A-Za-z\d]*\.(?:[A-Z]{1,3}|xbo|[A-Z]{2}f)"
 FUTURERIC = "[A-Z]{2,5}(?:[A-Z]\d|c\d\d?|cv\d|cvoi\d|coi\d)(?:=LX)?"
 SPREADRIC = "[A-Z]{2,4}(?:c\d-[A-Z]{2,4}c\d|-[A-Z]{3,5}\d|[A-Z]\d-[A-Z]\d)"
+TWEBRIC = "[A-Z\d]+=TWEB"
 ISIN = "[A-Z]{2}[A-Z\d]{9}\d"
 DATE = "[12]\d\d\d[\.-][01]\d[\.-][0-3]\d"
 QSPAN = "\d+D\d([\d:\.])+"
@@ -65,6 +66,7 @@ QTIME = "\d\d:\d\d(?::\d\d(?:\.\d+)?)?"
 DATE_dWd = "(?i)\d\d-(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)-\d\d"
 QZNS = "\.z\.(?:[abcefhikKlnNopPqsuwWxXzZtTdD]|p[cdghimopsw]|w[cos]|zd|exit|ac|bm)"
 ARROWS = "-+>+|<+-+|<+-+>+"
+IP = "((\\d\\d|[1-2]\\d\\d)\\.){3}(\\d\\d|[1-2]\\d\\d)"
 UNKNOWN = "[A-Z]\w*[A-Z\d]\w*|\d\w*[A-Z]\w*|[a-z]\w*[A-Z\d]\w*"
     
 
@@ -72,7 +74,7 @@ def extend_tokenizer(nlp,pref,inf,suf):
     pref = tuple(pref + list(nlp.Defaults.prefixes)) if pref else nlp.Defaults.prefixes
     suf = tuple(suf + list(nlp.Defaults.suffixes)) if suf else nlp.Defaults.suffixes
     inf = tuple(inf + list(nlp.Defaults.infixes)) if inf else nlp.Defaults.infixes
-    tok = "^(?:"+"|".join([EMAIL,URL,FXRIC,STOCKRIC,SPREADRIC,DATE,QSPAN,QDATETIME,QTIME,QZNS,ARROWS])+")$"
+    tok = "^(?:"+"|".join([EMAIL,URL,FXRIC,STOCKRIC,SPREADRIC,TWEBRIC,DATE,QSPAN,QDATETIME,QTIME,QZNS,ARROWS])+")$"
     return Tokenizer(nlp.vocab,
                        rules = nlp.Defaults.tokenizer_exceptions,
                        prefix_search=spacyUtil.compile_prefix_regex(pref).search,
@@ -167,6 +169,7 @@ ruleSet = OrRule(
   Rule("stock_ric",STOCKRIC),
   Rule("future_ric",FUTURERIC),
   Rule("spread_ric",SPREADRIC),
+  Rule("tweb_ric",TWEBRIC),
   Rule("ISIN",ISIN),
   Rule("date",DATE),
   Rule("q_span",QSPAN),
@@ -174,6 +177,7 @@ ruleSet = OrRule(
   Rule("q_time",QTIME),
   Rule("date_dWd",DATE_dWd),
   Rule("q_dot_z",QZNS),
+  Rule("internet_address",IP),
   Rule("ARROW",ARROWS),
   CondRule("ccy_pair","[A-Z]{6}",check_ccypair),
   ccyRule,

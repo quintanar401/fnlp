@@ -46,8 +46,8 @@ nlp = spacy.load('en_core_web_md')
 tokenizer = nlp.tokenizer
 INFIX_RULES1 = ["[\[\]\(\)\{\}\!\.\:\,;]"]
 INFIX_RULES2 = ["[\[\]\(\)\{\}\!`\:\,;+=<>\\\\/]"]
-PREFIX_RULES = ["[\./\\\\]"]
-SUFFIX_RULES = ["[\/\\\\]"]
+PREFIX_RULES = ["[\./\\\\~]"]
+SUFFIX_RULES = ["[\/\\\\\\-]"]
 EMAIL = "([\\w\\._+-]+@[\\w_-]+(\\.[\\w_-]+)+)" + "|" +\
         "([\\w_+-]+(?:(?: dot |\\.)[\\w_+-]+){0,10})(?: at |@)([a-zA-Z]+(?:(?:\\.| dot )[\\w_-]+){1,10})"
 URL = "((([a-zA-Z]+)://)?(w{2,3}[0-9]*\\.)?(([\\w_-]+\\.)+[a-z]{2,4})(:(\\d+))?(/[^?\\s#]*)?(\\?[^\\s#]+)?(#[\\-,*=&a-z0-9]+)?)" + "|" +\
@@ -94,91 +94,66 @@ def process_text(txt):
         i,res = ruleSet.match(doc,i)
         r.append(res.next('matches').value[0].lnext('pointer').key)
     return r
-        
 
-class Rule:
-    def __init__(self,kb_id,regexp):
-        self.kb_id = kb_id
-        self.regexp = re.compile("^(?:"+regexp+")$")
-    def match(self,doc,i):
-        if i is len(doc):
-            return (i,None)
+def load_re_rules(file, init=False):
+    global RE
+    if init:
+        RE = {}
+    with open(file) as f:
+        reg = json.load(f)
+        for p in reg["patterns"].keys():
+            RE[p] = { "type": "re", "name": p, "patterns": [re.compile("^(?:"+reg["patterns"][p]+")$")]}
+        for p in reg["comp_patterns"]:
+            # p["patterns"] = [pat for pat in map(lambda x: RE[x], p["patterns"])]
+            if "check_fn" in p:
+                p["check_fn"] = eval(p["check_fn"])
+            else:
+                p["check_fn"] = None
+            if "convert_fn" in p:
+                p["convert_fn"] = eval(p["convert_fn"])
+            else:
+                p["convert_fn"] = None
+            RE[p["name"]]= p
+            
+def match_re(doc,i,pattern = "main"):
+    if i is len(doc):
+        return (i,None)
+    p = RE[pattern]
+    pat = p["patterns"]
+    typ = p["type"]
+    if typ == "re":
         txt = doc[i].text
-        r = self.regexp.match(txt)
+        r = pat[0].match(txt)
         if not r:
             return (i,None)
-        return (i+1,(txt,doc[i:i+1],self.kb_id))
-    
-class CondRule(Rule):
-    def __init__(self,name,regexp,checkFn):
-        self.checkFn = checkFn
-        Rule.__init__(self,name,regexp)
-    def match(self,doc,i):
-        j,r = Rule.match(self,doc,i)
-        if r and self.checkFn(r[0]):
-            return (j,r)
-        return (i,None)
-    
-class OrRule:
-    def __init__(self, *rules):
-        self.rules = rules
-    def match(self,doc,i):
-        for r in self.rules:
-            j,res = r.match(doc,i)
-            if res: return (j,res)
-        return (i,None)
-
-class StrictAndRule:
-    def __init__(self, kb_id, *rules):
-        self.rules = rules
-        self.kb_id = kb_id
-    def match(self,doc,i):
-        start = i
-        for r in self.rules:
-            i, res = r.match(doc,i)
-            if not res:
+        return (i+1,(txt,doc[i:i+1],p["name"]))
+    start = i; r = None
+    for pp in pat:
+        i,r = match_re(doc,i,pp)
+        if not r:
+            if typ == "or":
+                continue
+            else:
                 return (start,None)
+        if typ == "or":
+            break
+    if start is i:
+        return (start,None)
+    if typ == "strict_and":
         for j in range(start,i-1):
             if len(doc[j].whitespace_)>0:
                 return (start,None)
-        return (i,(doc[start:i].text,doc[start:i],self.kb_id))
-
-class AndRule:
-    def __init__(self, kb_id, conv_fn, *rules):
-        self.rules = rules
-        self.kb_id = kb_id
-        self.fn = conv_fn
-    def match(self,doc,i):
-        start = i
-        for r in self.rules:
-            i, res = r.match(doc,i)
-            if not res:
-                return (start,None)
-        return (i,(self.fn(doc[start:i]),doc[start:i],self.kb_id))                
-
+    if p["check_fn"] and not p["check_fn"](doc[start:i]):
+        return (start,None)
+    if typ == "or":
+        return (i,r)
+    return (i,(p["convert_fn"](doc[start:i]) if p["convert_fn"] else doc[start:i].text,doc[start:i],p["name"]))
+        
 def check_ccypair(pair):
-    return pair[:3] in ccys and pair[3:] in ccys
-
-ccyRule = CondRule("ccy","[A-Z]{3}",lambda x: x in ccys)
-ruleSet = OrRule(
-  AndRule("ccy",lambda x: x[0].text+x[2].text,ccyRule,Rule("","/"),ccyRule),
-  StrictAndRule("index_ric",Rule("","\."),Rule("",UNKNOWN)),
-  Rule("email",EMAIL),
-  Rule("URL",URL),
-  Rule("fx_ric",FXRIC),
-  Rule("stock_ric",STOCKRIC),
-  Rule("future_ric",FUTURERIC),
-  Rule("spread_ric",SPREADRIC),
-  Rule("tweb_ric",TWEBRIC),
-  Rule("ISIN",ISIN),
-  Rule("date",DATE),
-  Rule("q_span",QSPAN),
-  Rule("q_datetime",QDATETIME),
-  Rule("q_time",QTIME),
-  Rule("date_dWd",DATE_dWd),
-  Rule("q_dot_z",QZNS),
-  Rule("internet_address",IP),
-  Rule("ARROW",ARROWS),
-  CondRule("ccy_pair","[A-Z]{6}",check_ccypair),
-  ccyRule,
-  Rule("symbol",UNKNOWN))
+    return pair[0].text[:3] in ccys and pair[0].text[3:] in ccys
+def check_ccy(ccy):
+    return ccy[0].text in ccys
+def check_year(y):
+    return 1800<int(y)<2050
+def conv_ccypair(x):
+    return x[0].text+x[2].text

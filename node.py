@@ -119,7 +119,7 @@ class Dict:
                 break
         toks[-1]["ws"] = None
         kbw = [toks[-1]["word"]] if i is len(doc) else [t.text for t in doc[i:]]
-        W = self.get_entry(fnlpTok(toks[0]["lword"])[0].lemma_)
+        W = self.get_entry(self.get_lemma(toks[0]["lword"]))
         entry = self.match_exact_entry_tokens(W,toks) if len(W) else None
         if entry:
             kbw = [f for f in filter(lambda x: not any(map(lambda y: y.next(x),entry["ids"])),kbw)]
@@ -156,7 +156,7 @@ class Dict:
 
     def match(self,doc):
         try:
-            art = self.dict[fnlpTok(doc[0].text.lower())[0].lemma_]
+            art = self.dict[self.get_lemma(doc[0].text)]
         except KeyError:
             return (0,None)
         score = 0; entry = None
@@ -171,6 +171,12 @@ class Dict:
             return 0
         return func.reduce(op.add, map(lambda x,y: (-3 if not (x["ws"] is None or (len(y.whitespace_)>0) is x["ws"]) else 0) +
             1 if x["word"] == y.text else 0.95 if x["lword"] == y.text.lower() else 0.9 if x["lemma"] == fnlpTok(y.text.lower())[0].lemma_ else -10,ent,doc[0:len(ent)]))
+    def get_lemma(self, word):
+        l = fnlpTok(word.lower())[0].lemma_
+        while not l == word:
+            word = l
+            l = fnlpTok(l)[0].lemma_
+        return l
 
 def load_emails(path, encoding='latin1'):
     global EMAILS

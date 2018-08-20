@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 def find_first(lst,key):
     for l in lst:
         res = l.next(key)
@@ -88,7 +90,7 @@ def load_kb(path, encoding='latin1'):
 
 class Dict:
     def __init__(self, path, encoding='latin1'):
-        self.dict = {}
+        self.dict = { "#re": []}
         self.add_dict(path, encoding)
     def add_dict(self, path, encoding='latin1'):
         with codecs.open(path, encoding=encoding) as f:
@@ -97,30 +99,46 @@ class Dict:
                     continue
                 self.add_dict_entry(str.strip("\r\n"))
     def add_dict_entry(self,str):
-        toks = []; brk = None; esc = False; i = 0; doc = fnlpTok(str); nolemma = False
-        for t in doc:
+        toks = []; brk = None; esc = False; i = 0; doc = fnlpTok(str); nolemma = False; re_rule = False; opts = {}
+        while i < len(doc):
+            t = doc[i]
             i += 1
             if esc:
                 esc = False
             elif t.text == "\\":
                 esc = True
                 continue
-            elif t.text == "!"
+            elif t.text == "!":
                 nolemma = True
+                continue
+            elif t.text == "$":
+                re_rule = True
+                continue
+            elif t.text == "{":
+                while doc[i].text != "}":
+                    if doc[i+1].text == "=":
+                        opts[doc[i].text] = eval(doc[i+2].text) if doc[i].text[-3:] == "_fn" else doc[i+2].text
+                        i += 3
+                    else:
+                        opts[doc[i].text] = True
+                        i += 1
+                i += 1
                 continue
             elif t.text in ["'",'"']:
                 if brk:
                     break
                 brk = t.text
                 continue
-            ntok = { "word": t.text, "lword": t.text.lower(), "lemma": "**nolemma**" if nolemma else fnlpTok(t.text.lower())[0].lemma_, "ws": len(t.whitespace_)>0 }
+            ntok = { "word": t.text, "lword": t.text.lower(), "lemma": "**nolemma**" if nolemma else fnlpTok(t.text.lower())[0].lemma_, "ws": len(t.whitespace_)>0,
+                "re": re_rule, "opts": opts }
+            re_rule = nolemma = False; opts = {}
             toks.append(ntok)
             if (not brk) and ntok["ws"]:
                 break
         toks[-1]["ws"] = None
         kbw = [toks[-1]["word"]] if i is len(doc) else [t.text for t in doc[i:]]
-        W = self.get_entry(self.get_lemma(toks[0]["lword"]))
-        entry = self.match_exact_entry_tokens(W,toks) if len(W) else None
+        W = self.get_entry("#re" if toks[0]["re"] else self.get_lemma(toks[0]["lword"]))
+        entry = self.match_exact_entry_tokens(W,toks) if len(W) and not toks[0]["re"] else None
         if entry:
             kbw = [f for f in filter(lambda x: not any(map(lambda y: y.next(x),entry["ids"])),kbw)]
             entry["ids"] += [Node(t,"word_proxy").add_node(get_kb_node(t),"pointer") for t in kbw]
@@ -155,10 +173,11 @@ class Dict:
         return n
 
     def match(self,doc):
+        art = self.dict['#re']
         try:
-            art = self.dict[self.get_lemma(doc[0].text)]
+            art += self.dict[self.get_lemma(doc[0].text)]
         except KeyError:
-            return (0,None)
+            pass
         score = 0; entry = None
         for a in art:
             ns = self.calc_score(doc, a["tokens"])
@@ -169,8 +188,20 @@ class Dict:
     def calc_score(self, doc, ent):
         if len(doc)<len(ent):
             return 0
-        return func.reduce(op.add, map(lambda x,y: (-3 if not (x["ws"] is None or (len(y.whitespace_)>0) is x["ws"]) else 0) +
-            1 if x["word"] == y.text else 0.95 if x["lword"] == y.text.lower() else 0.9 if x["lemma"] == fnlpTok(y.text.lower())[0].lemma_ else -10,ent,doc[0:len(ent)]))
+        return func.reduce(op.add, map(self._score,ent,doc[0:len(ent)]))
+    def _score(self,x,y):
+        ws_score = 0 if not x["ws"] is False or (len(y.whitespace_)>0) is x["ws"] else -3
+        if x['re']:
+            p = RE[x['word']]['patterns'][0].match
+            word_score = 1 if p(y.text) else -100
+            if p(y.text):
+                word_score = -100 if "check_fn" in x['opts'] and not x['opts']["check_fn"](y.text) else 1
+            else:
+                word_score = -100
+        else:
+            word_score = 1 if x["word"] == y.text else 0.95 if x["lword"] == y.text.lower() else 0.9 if x["lemma"] == fnlpTok(y.text.lower())[0].lemma_ else -10
+        return word_score + ws_score
+
     def get_lemma(self, word):
         l = fnlpTok(word.lower())[0].lemma_
         while not l == word:
@@ -209,9 +240,9 @@ def process_email(e):
                 val = doc[i:i+j].text
                 i += j
             else:
-                i,res = ruleSet.match(doc,i)
+                i,res = match_re(doc,i)
                 if not res:
-                    print(doc[i].text+doc[i].whitespace_)
+                    print(doc[i].text+doc[i].whitespace_, end="")
                     i += 1
                     continue
                 if res[2] in ['FXRIC','STOCKRIC','FUTURERIC','SPREADRIC','ISIN','QZNS']:
@@ -221,7 +252,7 @@ def process_email(e):
                 else:
                     key = res[2]
                     val = res[0]
-            print(val+"<"+key+">"+doc[i-1].whitespace_)
+            print(val+"<"+key+">"+doc[i-1].whitespace_, end="")
             if key in r:
                 rk = r[key]
                 if not val in rk:

@@ -136,3 +136,38 @@ Any ideas?
 Thanks,
 
 Bill
+
+<MAIL-DELIM>
+
+Get started¶
+
+Kdb+ is a database. While you can use it through interfaces such as ODBC, its power and performance are best accessed through its own language, q.
+
+Q is a general-purpose programming language. You can write programs for anything in q.
+
+You do not need prior programming experience to learn q. If you have some experience with mathematics, functional programming or SQL, you will find much that is familiar.
+Download¶
+
+Download and install (for your personal, non-commercial use) a free version of kdb+ for Linux, macOS, or Windows.
+
+These are full versions of the product. The 64-bit version (on-demand) requires an always-on Internet connection. (A free, stand-alone 32-bit version is also available.)
+Learn q¶
+
+    See Q by Examples for a quick taste of the language
+    Watch Jeffry Borror’s Q for All, a two-hour introduction to kdb+ and q in fifteen videos
+    Bookmark the Q Reference Card
+    Study Jeffry Borror’s textbook Q for Mortals, Version 3
+
+Learn kdb+¶
+
+First steps
+    Run your first query.
+In-memory queries
+    Build a more complex dataset in memory and perform some queries and joins on it. The dataset is from an imaginary desktop PC monitoring and helpdesk support system.
+On-disk queries
+    Download a set of scripts to build and run queries against a large on-disk database. The dataset is from an imaginary smart-meter network. It includes a basic HTML5 Business Intelligence tool which queries the database directly.
+Introduction to kdb+
+
+    Q for Mortals, Chapter 14 by Jeffry A. Borror.
+
+        Roughly speaking, kdb+ is what happens when q tables are persisted and then mapped back into memory for operations.

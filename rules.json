@@ -2,7 +2,7 @@
   "patterns" : {
     "EMAIL1": "([\\w\\._+-]+@[\\w_-]+(\\.[\\w_-]+)+)",
     "EMAIL2": "([\\w_+-]+(?:(?: dot |\\.)[\\w_+-]+){0,10})(?: at |@)([a-zA-Z]+(?:(?:\\.| dot )[\\w_-]+){1,10})",
-    "URL1": "((([a-zA-Z]+)://)?(w{2,3}[0-9]*\\.)?(([\\w_-]+\\.)+[a-z]{2,4})(:(\\d+))?(/[^?\\s#]*)?(\\?[^\\s#]+)?(#[\\-,*=&a-z0-9]+)?)",
+    "URL1": "((([a-zA-Z]+)://)?(w{2,3}[0-9]*\\.)?(([\\w_-]+\\.)+[a-z]{2,4})(:(\\d+))?(/[^?\\s#]*)?(\\?[^\\s#]+)?(#[\\-,*=&a-z0-9A-Z/%\\?]+)?)",
     "URL2": "((([a-zA-Z]+)://)?localhost(:(\\d+))?(/[^?\\s#]*)?(\\?[^\\s#]+)?)",
     "URL3": "(([a-zA-Z]+)://([\\w_-]+)(:(\\d+))?(/[^?\\s#]*)?(\\?[^\\s#]+)?)",
     "FXRIC": "(?:[A-Z]{6}|[A-Z]{3})=[WR]?",
@@ -11,58 +11,38 @@
     "SPREADRIC": "[A-Z]{2,4}(?:c\\d-[A-Z]{2,4}c\\d|-[A-Z]{3,5}\\d|[A-Z]\\d-[A-Z]\\d)",
     "TWEBRIC": "[A-Z\\d]+=TWEB",
     "ISIN": "[A-Z]{2}[A-Z\\d]{9}\\d",
-    "DATE": "[12]\\d\\d\\d[\\.-][01]\\d[\\.-][0-3]\\d",
+    "DATE": "[12]\\d\\d\\d[\\.-/][01]\\d[\\.-/][0-3]\\d",
+    "DATE_REV": "[0-3]\\d[\\.-/][01]\\d[\\.-/][12]\\d\\d\\d",
     "QSPAN": "\\d+D\\d([\\d:\\.])+",
     "QDATETIME": "\\d{4}\\.[01]\\d\\.[0-3]\\dD\\d([\\d:\\.])+",
     "QTIME": "\\d\\d:\\d\\d(?::\\d\\d(?:\\.\\d+)?)?",
-    "DATE_dWd": "(?i)\\d\\d-(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)-\\d\\d",
-    "QZNS": "\\.z\\.(?:[abcefhikKlnNopPqsuwWxXzZtTdD]|p[cdghimopsw]|w[cos]|zd|exit|ac|bm)",
+    "DATE_dWd": "(?i)\\d\\d-(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)-\\d\\d(\\d\\d)?",
+    "DATE_dW": "(?i)\\d\\d-(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)",
+    "ZNS": "\\.z\\.(?:[abcefhikKlnNopPqsuwWxXzZtTdD]|p[cdghimopsw]|w[cos]|zd|exit|ac|bm)",
+    "QNS": "Q\\.\\w+",
     "ARROWS": "-+>+|<+-+|<+-+>+",
     "UNKNOWN": "[A-Z]\\w*[A-Z\\d]\\w*|\\d\\w*[A-Z]\\w*|[a-z]\\w*[A-Z\\d]\\w*",
     "CCY": "[A-Z]{3}",
     "CCYPAIR": "[A-Z]{6}",
-    "IP": "((\\d\\d|[1-2]\\d\\d)\\.){3}(\\d\\d|[1-2]\\d\\d)",
-    "ORDINALNUM": "\\d+th|2nd|3d|1st",
+    "IP": "((\\d|\\d\\d|[1-2]\\d\\d)\\.){3}(\\d|\\d\\d|[1-2]\\d\\d)",
+    "ORDINALNUM": "11th|12th|13th|\\d*[04-9]th|\\d*2nd|\\d*3r?d|\\d1st",
+    "QNULLS": "0N[ghijepmdznuvtf]|0N|0n",
+    "QINF": "-?(0W[ghijepmdznuvtf]|0W|0w)",
+    "INT60": "[0-5]\\d",
+    "INT24": "[0-1]\\d|2[0-4]",
+    "INT12": "10|11|12|\\d",
+    "INT": "\\d+",
     "INTEGER": "(\\+|-)?\\d+",
-    "FLOAT": "(\\+|-)?\\d+\\.\\d+",
-    "SLASH": "/",
-    "DOT": "\\."
+    "FLOAT": "(\\+|-)?\\d+\\.\\d+"
   },
   "comp_patterns": [
     {
-      "name": "ccy",
-      "patterns": ["CCY"],
-      "type": "and",
-      "check_fn": "check_ccy"
-    },
-    {
-      "name": "ccypair",
-      "patterns": ["ccy","SLASH","ccy"],
-      "type": "and",
-      "convert_fn": "conv_ccypair"
-    },
-    {
-      "name": "ccypair2",
-      "patterns": ["CCYPAIR"],
-      "type": "and",
-      "check_fn": "check_ccypair"
-    },
-    {
-      "name": "index_ric",
-      "patterns": ["DOT","UNKNOWN"],
-      "type": "strict_and"
-    },
-    {
-      "name": "year",
-      "patterns": ["INTEGER"],
-      "type": "and",
-      "check_fn": "check_year"
-    },
-    {
       "name": "main",
-      "patterns": ["ccypair", "index_ric", "EMAIL1", "EMAIL2", "URL1", "URL2", "URL3", "FXRIC", "STOCKRIC", "FUTURERIC", "SPREADRIC", "TWEBRIC", "ISIN", "DATE",
-        "QSPAN", "QDATETIME", "QTIME", "DATE_dWd", "QZNS", "IP", "ARROWS", "ccypair2", "CCY", "ORDINALNUM", "INTEGER", "FLOAT", "UNKNOWN"],
+      "patterns": ["EMAIL1", "EMAIL2", "URL1", "URL2", "URL3", "FXRIC", "STOCKRIC", "FUTURERIC", "SPREADRIC", "TWEBRIC", "DATE", "DATE_REV",
+        "QSPAN", "QDATETIME", "QTIME", "DATE_dWd", "DATE_dW", "IP", "ARROWS", "QNULLS", "QINF",
+        "INTEGER", "FLOAT", "UNKNOWN"],
       "type": "or"
     }
-  ]
+  ],
+  "tok_patterns": ["EMAIL1","EMAIL2","URL1","URL2","URL3","FXRIC","STOCKRIC","SPREADRIC","TWEBRIC","DATE","QSPAN","QDATETIME","QTIME","ARROWS"]
 }

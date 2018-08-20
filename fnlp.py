@@ -44,48 +44,23 @@ nlp = spacy.load('en_core_web_md')
 # Default spacy tokenizer doesn't split by ( ) ; and etc in the infix position, and similar things for prefixes
 # on the other hand it is useful to extract emails, urls and etc
 tokenizer = nlp.tokenizer
+
 INFIX_RULES1 = ["[\[\]\(\)\{\}\!\.\:\,;]"]
-INFIX_RULES2 = ["[\[\]\(\)\{\}\!`\:\,;+=<>\\\\/]"]
+INFIX_RULES2 = ["[\[\]\(\)\{\}\!`\:\,;+=<>\\\\/$#\\"]"]
 PREFIX_RULES = ["[\./\\\\~]"]
-SUFFIX_RULES = ["[\/\\\\\\-]"]
-EMAIL = "([\\w\\._+-]+@[\\w_-]+(\\.[\\w_-]+)+)" + "|" +\
-        "([\\w_+-]+(?:(?: dot |\\.)[\\w_+-]+){0,10})(?: at |@)([a-zA-Z]+(?:(?:\\.| dot )[\\w_-]+){1,10})"
-URL = "((([a-zA-Z]+)://)?(w{2,3}[0-9]*\\.)?(([\\w_-]+\\.)+[a-z]{2,4})(:(\\d+))?(/[^?\\s#]*)?(\\?[^\\s#]+)?(#[\\-,*=&a-z0-9]+)?)" + "|" +\
-    "((([a-zA-Z]+)://)?localhost(:(\\d+))?(/[^?\\s#]*)?(\\?[^\\s#]+)?)" + "|" +\
-    "(([a-zA-Z]+)://([\\w_-]+)(:(\\d+))?(/[^?\\s#]*)?(\\?[^\\s#]+)?)"
-FXRIC = "(?:[A-Z]{6}|[A-Z]{3})=[WR]?"
-STOCKRIC = "[A-Z\d][A-Za-z\d]*-?[A-Za-z\d]*_?[A-Za-z\d]*\.(?:[A-Z]{1,3}|xbo|[A-Z]{2}f)"
-FUTURERIC = "[A-Z]{2,5}(?:[A-Z]\d|c\d\d?|cv\d|cvoi\d|coi\d)(?:=LX)?"
-SPREADRIC = "[A-Z]{2,4}(?:c\d-[A-Z]{2,4}c\d|-[A-Z]{3,5}\d|[A-Z]\d-[A-Z]\d)"
-TWEBRIC = "[A-Z\d]+=TWEB"
-ISIN = "[A-Z]{2}[A-Z\d]{9}\d"
-DATE = "[12]\d\d\d[\.-][01]\d[\.-][0-3]\d"
-QSPAN = "\d+D\d([\d:\.])+"
-QDATETIME = "\d{4}\.[01]\d\.[0-3]\dD\d([\d:\.])+"
-QTIME = "\d\d:\d\d(?::\d\d(?:\.\d+)?)?"
-DATE_dWd = "(?i)\d\d-(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)-\d\d"
-QZNS = "\.z\.(?:[abcefhikKlnNopPqsuwWxXzZtTdD]|p[cdghimopsw]|w[cos]|zd|exit|ac|bm)"
-ARROWS = "-+>+|<+-+|<+-+>+"
-IP = "((\\d\\d|[1-2]\\d\\d)\\.){3}(\\d\\d|[1-2]\\d\\d)"
-UNKNOWN = "[A-Z]\w*[A-Z\d]\w*|\d\w*[A-Z]\w*|[a-z]\w*[A-Z\d]\w*"
-    
+SUFFIX_RULES = ["[\/\\\\\\-|]"]
 
 def extend_tokenizer(nlp,pref,inf,suf):
     pref = tuple(pref + list(nlp.Defaults.prefixes)) if pref else nlp.Defaults.prefixes
     suf = tuple(suf + list(nlp.Defaults.suffixes)) if suf else nlp.Defaults.suffixes
     inf = tuple(inf + list(nlp.Defaults.infixes)) if inf else nlp.Defaults.infixes
-    tok = "^(?:"+"|".join([EMAIL,URL,FXRIC,STOCKRIC,SPREADRIC,TWEBRIC,DATE,QSPAN,QDATETIME,QTIME,QZNS,ARROWS])+")$"
+    tok = "^(?:"+"|".join([RE[r]["str"] for r in RE['tok_patterns']])+")$"
     return Tokenizer(nlp.vocab,
                        rules = nlp.Defaults.tokenizer_exceptions,
                        prefix_search=spacyUtil.compile_prefix_regex(pref).search,
                        suffix_search=spacyUtil.compile_suffix_regex(suf).search,
                        infix_finditer=spacyUtil.compile_infix_regex(inf).finditer,
                        token_match=re.compile(tok).match)
-
-fnlpTok = extend_tokenizer(nlp,PREFIX_RULES,INFIX_RULES2,SUFFIX_RULES)
-for r in special_rules:
-    fnlpTok.add_special_case(r[0],r[1])
-
 
 def process_text(txt):
     doc = fnlpTok(txt)
@@ -102,7 +77,7 @@ def load_re_rules(file, init=False):
     with open(file) as f:
         reg = json.load(f)
         for p in reg["patterns"].keys():
-            RE[p] = { "type": "re", "name": p, "patterns": [re.compile("^(?:"+reg["patterns"][p]+")$")]}
+            RE[p] = { "type": "re", "name": p, "patterns": [re.compile("^(?:"+reg["patterns"][p]+")$")], "str": reg["patterns"][p]}
         for p in reg["comp_patterns"]:
             # p["patterns"] = [pat for pat in map(lambda x: RE[x], p["patterns"])]
             if "check_fn" in p:
@@ -114,6 +89,7 @@ def load_re_rules(file, init=False):
             else:
                 p["convert_fn"] = None
             RE[p["name"]]= p
+        RE['tok_patterns'] = reg['tok_patterns']
             
 def match_re(doc,i,pattern = "main"):
     if i is len(doc):
@@ -150,10 +126,22 @@ def match_re(doc,i,pattern = "main"):
     return (i,(p["convert_fn"](doc[start:i]) if p["convert_fn"] else doc[start:i].text,doc[start:i],p["name"]))
         
 def check_ccypair(pair):
-    return pair[0].text[:3] in ccys and pair[0].text[3:] in ccys
+    return pair[:3] in ccys and pair[3:] in ccys
 def check_ccy(ccy):
-    return ccy[0].text in ccys
+    return ccy in ccys
 def check_year(y):
-    return 1800<int(y)<2050
+    return 1800<int(y)<2100
 def conv_ccypair(x):
     return x[0].text+x[2].text
+def check_int_date(x):
+    return len(x) is 8 and 1800<int(x[:4])<2100 and 0<int(x[4:6])<13 and 0<int(x[6:])<32
+def check_am_pm(x):
+    return 0<int(x[0].text)<13
+
+def get_tokenizer():
+    global fnlpTok
+    fnlpTok = extend_tokenizer(nlp,PREFIX_RULES,INFIX_RULES2,SUFFIX_RULES)
+    for r in get_special_rules():
+        fnlpTok.add_special_case(r[0],r[1])
+        
+get_tokenizer()

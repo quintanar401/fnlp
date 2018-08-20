@@ -11,10 +11,11 @@ env environment
 research
 
 # symbology
-!RIC
+RIC
 ticker bb_ticker
 !ISIN
 symbol
+symbology
 instrument
 security
 CUSIP
@@ -30,6 +31,7 @@ RDBMS
 Oracle
 Sybase
 database
+ranker
 
 query
 table
@@ -51,7 +53,9 @@ SQL
 QSQL
 Q q_language
 C++ cpp_language
+Java Java_language
 variable
+constant
 assign
 define
 comment
@@ -68,6 +72,7 @@ Linux
 Unix
 Windows
 !Mac
+MacOS
 file
 jira
 API
@@ -86,10 +91,14 @@ function
 adapter
 error
 err error
+warning
+warn
 exception
 outage
 fail
 fatal
+failure
+faulty
 incident
 issue
 problem
@@ -98,6 +107,7 @@ DNS
 "Excel spreadsheet" spreadsheet
 spreadsheet
 release
+"post release" release
 project
 patch
 backfill
@@ -109,15 +119,20 @@ test
 fix
 config
 configuration
+misconfiguration
+configure
 user
 username
 "user name" username
 client
+customer
 password
 access
 unauthorized
 authorized
 deny
+entitlement
+forbid
 URL
 website
 webpage
@@ -130,6 +145,7 @@ remote
 email
 e-mail email
 mail email
+mailchain
 online
 upstream
 link
@@ -137,6 +153,7 @@ permission
 account
 dev developer
 developer
+development
 firewall
 monitor
 send
@@ -147,9 +164,11 @@ respond
 recipient
 attach
 start
+restart
 stop
 finish
 complete
+completion
 exit
 move
 alias
@@ -163,6 +182,7 @@ system
 instance
 team
 connect
+connectivity
 run
 help
 communication
@@ -174,25 +194,32 @@ timeout
 screenshot
 job
 directory
+connection
 gateway
+g/w gateway
+gw gateway
 execution
 exec
 message
 output
 downtime
 rollover
+"roll over" rollover
 examine
 execute
 implement
+implementation
 migrate
 migration
-input event
+input
+event
 protocol
 extension
 version
 deploy
 deployment
 publisher
+publish
 downstream
 shutdown
 datacenter
@@ -206,7 +233,68 @@ runbook
 rule
 path
 subscribe
+subscription
 status
+review
+attachment
+default
+bucket
+basket
+CPU
+storage
+handler
+!id identification
+platform
+task
+parameter
+notification
+snapshot
+definition
+declaration
+automate
+step
+schema
+parallel
+approve
+deadline
+handle
+buffer
+restriction
+identifier
+SFTP
+FTP
+SSH
+investigate
+terminal
+echo
+deamon
+root
+setting
+disk
+signal
+stream
+memory
+dbmaintain
+dbmaint dbmaintain
+package
+build
+UDP protocol
+interface
+ODBC
+performance
+programming
+language
+"programming language" language
+install
+product
+Internet
+in-memory in_memory
+desktop
+helpdesk
+HTML5
+HTML
+persist
+OS
 
 # pronouns
 it pronoun
@@ -218,34 +306,50 @@ Us pronoun
 EMEA
 !US
 APAC
+AMER
 ASIA
 JPN
+HK
 region
 regional
 
 # countries
 !US US_country
+USA
+american
 Australia
 australian
 Brazil
 brazilian
 Japan
+japanese
 Russia
+russian
 Luxembourg
 Singapore
+SG Singapore
 "United Kingdom" united_kingdom
 UK united_kingdom
+british
+english
 EU european_union
+european
+DE Germany
+Germany
+german
+India
+indian
 
 # cities
 NewYork new_york
-"New York" new_york
+"New York" new_york new_york_state
 NY new_york
 SaoPaulo sao_paulo
 "Sao Paulo" sao_paulo
 London
 Moscow
 Sydney
+Bangalore
 
 # exchanges
 LSE
@@ -271,10 +375,12 @@ KDB+ KDB
 "BlackBerry Works" application
 Geneos
 WebEx application
+Eikon reuters_application
+WhatsApp
 
 # table columns
-bid bid_price bid_column
-ask ask_price ask_column
+!bid bid_price bid_column
+!ask ask_price ask_column
 bidPrice bid_price bidPrice_column
 askPrice ask_price askPrice_column
 bidSize bid_size bidSize_column
@@ -283,11 +389,16 @@ cond
 high max_price high_column
 low min_price low_column
 open open_price open_column
+"open price" open_price
 close close_price close_column
+"close price" close_price
 price price price_column
 size size size_column
 level level_column
 sym sym_column
+volume stats
+vwap stats
+twap stats
 
 # tables
 trade
@@ -306,7 +417,7 @@ yield
 currency
 ccy
 OHLC
-EM emerging_markets
+!EM emerging_markets
 asset
 "corporate action" corporate_action
 !CA corporate_action
@@ -316,12 +427,13 @@ discount
 undiscounted
 onshore
 "Cupom Cambial" rate
-"convertible bond" bond
 dollar
 euro
+cent
 
 share
 stock
+equity
 index
 spot
 future
@@ -329,6 +441,11 @@ fx
 spread
 option
 bond
+"convertible bond" bond
+"fixed income" bond
+warrant
+swap
+swaption
 
 payment
 negotiation
@@ -336,6 +453,13 @@ settlement
 settle
 valuation
 mark
+deal
+offer
+benefit
+auction
+volatility
+"order book" book
+book
 
 trader
 desk
@@ -345,11 +469,24 @@ support
 PM project_manager
 "project manager" project_manager
 manager
+meeting
+compliance
+sale
+lead
+company
+stakeholder
+shareholder
 
 # data
 data
+dataset
+"reference data" data
 delete
+ladder
+flow
 detail
+adjustment
+cross
 information
 info information
 feed
@@ -359,8 +496,10 @@ value
 tick
 constituent
 aggregation
+aggregator
 range
 amount
+quantity
 usage
 capture
 search
@@ -371,6 +510,8 @@ extract
 contain
 provide
 load
+snap
+reload
 save
 copy
 progress
@@ -381,6 +522,7 @@ container
 
 Bloomberg Bloomberg_company
 BB Bloomberg_company
+BBG Bloomberg_company
 Reuters Reuters_company
 ION
 BlackBerry BlackBerry_company
@@ -389,6 +531,7 @@ BlackBerry BlackBerry_company
 DB deutsche_bank
 LLC limited_liability_company
 bank
+Tradeweb
 
 # time
 date
@@ -408,8 +551,12 @@ yearly
 history
 historic
 historical
+historically
+hist historical
+moment
 delay
 realtime
+RT realtime
 present
 past
 soon
@@ -424,12 +571,18 @@ GMT
 EST
 EDT
 UTC
+JST
+IST
 COB close_of_business
 day
 daily
 night
 nightly
 midnight
+tonight
+morning
+evening
+T+1 tomorrow
 tomorrow
 yesterday
 today
@@ -455,8 +608,11 @@ old
 new
 prior
 intraday
-timestep
+timestamp
 timeline
+interval
+meantime
+meanwhile
 
 Jan month
 January month
@@ -466,7 +622,7 @@ Mar month
 March month
 Apr month
 April month
-May month
+!May month
 Jun month
 June month
 July month
@@ -487,15 +643,15 @@ Mon weekday
 Monday weekday
 Tue weekday
 Tuesday weekday
-Wed weekday
+!Wed weekday
 Wednesday weekday
 Thu weekday
 Thursday weekday
 Fri weekday
 Friday weekday
-Sat weekday
+!Sat weekday
 Saturday weekday
-Sun weekday
+!Sun weekday
 Sunday weekday
 
 # misc
@@ -507,6 +663,24 @@ e.g. for_example
 etc et_cetera
 ASAP as_soon_as_possible
 OOO out_of_office
+MTA mandatory_time_away
+PS post_script
+TBH to_be_honest
+GB gigabyte
+w/o without
+am be
+may may
+ca can
+global
+local
+suffix
+prefix
+next
+previous
+important
+name
+location
+call
 
 # math
 
@@ -525,6 +699,7 @@ analyze
 equal
 match
 correct
+correctly
 deduce
 incorrect
 logic
@@ -532,18 +707,33 @@ list
 queue
 exact
 exactly
+total
+statistic
+limit
+estimation
+add
+threshold
+count
+average
 
 # greetings
 
 Hi greetings
+Hey greetings
 "Kind Regards" thank_you
+"Warm Regards" thank_you
 Regards thank_you
 Thanks thank_you
 "Thank you" thank_you
 cheers thank_you
-okay okey
-okey
+okay ok
+okey ok
+ok
 holiday
+vacation
+please
+pls please
+plz please
 
 # numbers
 zero
@@ -578,3 +768,23 @@ hundred
 thousand
 million
 billion
+
+# re
+"$INT24 : $INT60 : $INT60" time
+"$INT24 : $INT60" time
+"$INT12 !AM" am_time
+"$INT12 !PM" pm_time
+
+.$UNKNOWN idx_ric
+"{check_fn=check_ccy}$CCY / {check_fn=check_ccy}$CCY" ccy_pair
+{check_fn=check_ccy}$CCY ccy
+{check_fn=check_ccypair}$CCYPAIR ccy_pair
+
+{check_fn=check_year}$INT integer_year
+{check_fn=check_int_date}$INT integer_date
+
+$ORDINALNUM ordinal_number
+
+.$QNS Q_namespace
+.$ZNS Z_namespace
+$ISIN isin

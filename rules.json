@@ -2,7 +2,7 @@
   "patterns" : {
     "EMAIL1": "([\\w\\._+-]+@[\\w_-]+(\\.[\\w_-]+)+)",
     "EMAIL2": "([\\w_+-]+(?:(?: dot |\\.)[\\w_+-]+){0,10})(?: at |@)([a-zA-Z]+(?:(?:\\.| dot )[\\w_-]+){1,10})",
-    "URL1": "((([a-zA-Z]+)://)?(w{2,3}[0-9]*\\.)?(([\\w_-]+\\.)+[a-z]{2,4})(:(\\d+))?(/[^?\\s#]*)?(\\?[^\\s#]+)?(#[\\-,*=&a-z0-9A-Z/%\\?]+)?)",
+    "URL1": "((([a-zA-Z]+)://)(w{2,3}[0-9]*\\.)?(([\\w_-]+\\.)+[a-z]{2,4})(:(\\d+))?(/[^?\\s#]*)?(\\?[^\\s#]+)?(#[\\-,*=&a-z0-9A-Z/%\\?]+)?)",
     "URL2": "((([a-zA-Z]+)://)?localhost(:(\\d+))?(/[^?\\s#]*)?(\\?[^\\s#]+)?)",
     "URL3": "(([a-zA-Z]+)://([\\w_-]+)(:(\\d+))?(/[^?\\s#]*)?(\\?[^\\s#]+)?)",
     "FXRIC": "(?:[A-Z]{6}|[A-Z]{3})=[WR]?",
@@ -11,17 +11,21 @@
     "SPREADRIC": "[A-Z]{2,4}(?:c\\d-[A-Z]{2,4}c\\d|-[A-Z]{3,5}\\d|[A-Z]\\d-[A-Z]\\d)",
     "TWEBRIC": "[A-Z\\d]+=TWEB",
     "ISIN": "[A-Z]{2}[A-Z\\d]{9}\\d",
-    "DATE": "[12]\\d\\d\\d[\\.-/][01]\\d[\\.-/][0-3]\\d",
-    "DATE_REV": "[0-3]\\d[\\.-/][01]\\d[\\.-/][12]\\d\\d\\d",
+    "DATE": "[12]\\d\\d\\d[\\./-]([01]\\d|\\d)[\\./-]([0-3]\\d|\\d)",
+    "DATE_REV": "([0-3]\\d|\\d)[\\./-]([0-3]\\d|\\d)[\\./-][12]\\d\\d\\d",
     "QSPAN": "\\d+D\\d([\\d:\\.])+",
     "QDATETIME": "\\d{4}\\.[01]\\d\\.[0-3]\\dD\\d([\\d:\\.])+",
     "QTIME": "\\d\\d:\\d\\d(?::\\d\\d(?:\\.\\d+)?)?",
     "DATE_dWd": "(?i)\\d\\d-(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)-\\d\\d(\\d\\d)?",
     "DATE_dW": "(?i)\\d\\d-(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)",
+    "MONTH": "(?i)(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|july|june|august)",
     "ZNS": "\\.z\\.(?:[abcefhikKlnNopPqsuwWxXzZtTdD]|p[cdghimopsw]|w[cos]|zd|exit|ac|bm)",
     "QNS": "Q\\.\\w+",
     "ARROWS": "-+>+|<+-+|<+-+>+",
     "UNKNOWN": "[A-Z]\\w*[A-Z\\d]\\w*|\\d\\w*[A-Z]\\w*|[a-z]\\w*[A-Z\\d]\\w*",
+    "INDEXRIC": "\\.([A-Z]\\w*[A-Z\\d]\\w*|\\d\\w*[A-Z]\\w*|[a-z]\\w*[A-Z\\d]\\w*)",
+    "STOCKSUFFIX": "(?:[A-Z]{1,3}|xbo|[A-Z]{2}f)",
+    "EQUALSUFFIX": "[A-Z]{1,4}",
     "CCY": "[A-Z]{3}",
     "CCYPAIR": "[A-Z]{6}",
     "IP": "((\\d|\\d\\d|[1-2]\\d\\d)\\.){3}(\\d|\\d\\d|[1-2]\\d\\d)",
@@ -29,11 +33,13 @@
     "QNULLS": "0N[ghijepmdznuvtf]|0N|0n",
     "QINF": "-?(0W[ghijepmdznuvtf]|0W|0w)",
     "INT60": "[0-5]\\d",
-    "INT24": "[0-1]\\d|2[0-4]",
-    "INT12": "10|11|12|\\d",
+    "INT24": "\\d|[0-1]\\d|2[0-4]",
+    "INT12": "10|11|12|[1-9]",
+    "INT31": "[1-9]|[0-2]\\d|30|31",
     "INT": "\\d+",
+    "TIMEFLOAT": "[0-5]\\d\\.\\d+",
     "INTEGER": "(\\+|-)?\\d+",
-    "FLOAT": "(\\+|-)?\\d+\\.\\d+"
+    "FLOAT": "(\\+|-)?\\d+\\.\\d+((e|E)(-|\\+)?\\d+)?"
   },
   "comp_patterns": [
     {
@@ -44,5 +50,5 @@
       "type": "or"
     }
   ],
-  "tok_patterns": ["EMAIL1","EMAIL2","URL1","URL2","URL3","FXRIC","STOCKRIC","SPREADRIC","TWEBRIC","DATE","QSPAN","QDATETIME","QTIME","ARROWS"]
+  "tok_patterns": ["EMAIL1","EMAIL2","URL1","URL2","URL3","FXRIC","STOCKRIC","SPREADRIC","TWEBRIC","DATE","DATE_REV","QSPAN","QDATETIME","QTIME","ARROWS"]
 }

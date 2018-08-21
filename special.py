@@ -8,6 +8,7 @@ def get_special_rules():
         (u"rics",[{ORTH: u"rics", LEMMA: u"ric"}]),
         (u"hdbs",[{ORTH: u"hdbs", LEMMA: u"hdb"}]),
         (u"rdbs",[{ORTH: u"rdbs", LEMMA: u"rdb"}]),
+        (u"permissioned",[{ORTH: u"permissioned", LEMMA: u"permission"}]),
         (u"crons",[{ORTH: u"crons", LEMMA: u"cron"}]),
         (u"crontabs",[{ORTH: u"crontabs", LEMMA: u"crontab"}]),
         (u"csvs",[{ORTH: u"csvs", LEMMA: u"csv"}])

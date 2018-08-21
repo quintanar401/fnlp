@@ -1,4 +1,13 @@
 from __future__ import print_function
+from bisect import bisect_left
+from spacy.strings import hash_string
+
+def list_index(a, x):
+    'Locate the leftmost value exactly equal to x'
+    i = bisect_left(a, x)
+    if i != len(a) and a[i] == x:
+        return i
+    raise ValueError
 
 def find_first(lst,key):
     for l in lst:
@@ -30,14 +39,26 @@ class Node:
         self.links_from.append(lnk)
     def next(self,key):
         return find_first(self.links_to,key)
-    def lnext(self,key):
+    def lnext(self,key,nkey=None):
+        if type(key) is str:
+            key = [key]
         for l in self.links_to:
-            if l.type == key:
+            if l.type in key:
+                if nkey and not l.to.key == nkey:
+                    continue
                 return l.to
         return None
     def add_node(self,node,ltype,lSubType=None):
         Link(self,ltype,node,subType=lSubType)
         return self
+    def isA(self,key,lkeys=["is"]):
+        if key == self.key:
+            return True
+        for l in self.links_to:
+            if l.type in lkeys:
+                if l.to.isA(key):
+                    return True
+        return False
 
 class Link:
     def __init__(self, frm, type, to, subType=None):
@@ -83,14 +104,16 @@ def load_kb(path, encoding='latin1'):
                 t1, rel, t2, ex = (tok[1].text, tok[2].text, tok[3].text, False)
             else:
                 t1, rel, t2, ex = (tok[0].text, tok[1].text, tok[2].text, True)
-            if rel == "is":
-                Link(get_kb_node(t1, not_exists=ex),"kb",get_kb_node(t2))
+            if rel in ["is","isA"]:
+                Link(get_kb_node(t1, not_exists=ex),rel,get_kb_node(t2))
             else:
                 raise UnknownLinkType(rel)
 
 class Dict:
     def __init__(self, path, encoding='latin1'):
         self.dict = { "#re": []}
+        self.index = []
+        self.array = []
         self.add_dict(path, encoding)
     def add_dict(self, path, encoding='latin1'):
         with codecs.open(path, encoding=encoding) as f:
@@ -98,7 +121,9 @@ class Dict:
                 if ESTR2.match(str):
                     continue
                 self.add_dict_entry(str.strip("\r\n"))
+            self.hash_entries()
     def add_dict_entry(self,str):
+        'Add one dictionary entry.'
         toks = []; brk = None; esc = False; i = 0; doc = fnlpTok(str); nolemma = False; re_rule = False; opts = {}
         while i < len(doc):
             t = doc[i]
@@ -129,7 +154,7 @@ class Dict:
                     break
                 brk = t.text
                 continue
-            ntok = { "word": t.text, "lword": t.text.lower(), "lemma": "**nolemma**" if nolemma else fnlpTok(t.text.lower())[0].lemma_, "ws": len(t.whitespace_)>0,
+            ntok = { "word": t.text, "lword": t.text.lower(), "lemma": "**nolemma**" if nolemma else fnlpTok(t.text.lower())[0].lemma_, "ws": not brk == "'" and len(t.whitespace_)>0,
                 "re": re_rule, "opts": opts }
             re_rule = nolemma = False; opts = {}
             toks.append(ntok)
@@ -137,7 +162,7 @@ class Dict:
                 break
         toks[-1]["ws"] = None
         kbw = [toks[-1]["word"]] if i is len(doc) else [t.text for t in doc[i:]]
-        W = self.get_entry("#re" if toks[0]["re"] else self.get_lemma(toks[0]["lword"]))
+        W = self.get_entry("#re" if toks[0]["re"] else toks[0]["lword"])
         entry = self.match_exact_entry_tokens(W,toks) if len(W) and not toks[0]["re"] else None
         if entry:
             kbw = [f for f in filter(lambda x: not any(map(lambda y: y.next(x),entry["ids"])),kbw)]
@@ -146,6 +171,7 @@ class Dict:
         W.append({ "tokens": toks, "ids": [Node(t,"word_proxy").add_node(get_kb_node(t),"pointer") for t in kbw]})
         return W[-1]["ids"]
     def match_exact_entry_tokens(self, entry, tokens):
+        'Check if entry already exists.'
         for e in entry:
             ent = e["tokens"]
             if not len(ent) is len(tokens):
@@ -155,17 +181,34 @@ class Dict:
         return None
 
     def __contains__(self, val):
-        return val in self.dict
+        return 0<len(self.get_entry(name))
 
     def __getitem__(self, name):
-        return self.dict[name.lower()]
+        return self.get_entry(name)
 
     def get_entry(self, name):
+        'Get dictionary entry. Returns entries mapped to name\'s lemma. If the word doesn\'t exists returns an empty list.'
+        name = name if name[0] == "#" else self.get_lemma(name)
+        hash = hash_string(name)
         try:
-            return self.dict[name]
-        except KeyError:
-            self.dict[name] = []
-            return self.dict[name]
+            return self.array[list_index(self.index,hash)]
+        except ValueError:
+            try:
+                return self.dict[hash]
+            except KeyError:
+                self.dict[hash] = []
+                return self.dict[hash]
+    def hash_entries(self):
+        'Move dict entries from a dictionary to an array indexed by hash.'
+        if len(self.dict) is 0:
+            return
+        self.index += list(self.dict.keys())
+        self.array += list(self.dict.values())
+        self.dict = {}
+        iasc = list(range(len(self.index)))
+        iasc.sort(key=lambda x: self.index[x])
+        self.index = [self.index[i] for i in iasc]
+        self.array = [self.array[i] for i in iasc]
 
     def get_repr(self, txt, src, kb_id):
         n = Node(txt,"word_repr").add_node(Node("matches","synt",self.add_dict_entry(txt+" "+kb_id)),"assoc")
@@ -173,9 +216,10 @@ class Dict:
         return n
 
     def match(self,doc):
+        'Match the start of doc (tokenized by fnlpTok) vs dictionary. Returns either (0,None) or (shift,entries)'
         art = self.dict['#re']
         try:
-            art += self.dict[self.get_lemma(doc[0].text)]
+            art += self.get_entry(doc[0].text)
         except KeyError:
             pass
         score = 0; entry = None
@@ -186,6 +230,7 @@ class Dict:
                 score = ns
         return (len(entry["tokens"]),entry["ids"]) if entry else (0,None)
     def calc_score(self, doc, ent):
+        'Calculate the match score for 1 entry.'
         if len(doc)<len(ent):
             return 0
         return func.reduce(op.add, map(self._score,ent,doc[0:len(ent)]))
@@ -199,10 +244,12 @@ class Dict:
             else:
                 word_score = -100
         else:
-            word_score = 1 if x["word"] == y.text else 0.95 if x["lword"] == y.text.lower() else 0.9 if x["lemma"] == fnlpTok(y.text.lower())[0].lemma_ else -10
+            lemma = fnlpTok(y.text.lower())[0].lemma_
+            word_score = 1 if x["word"] == y.text else 0.95 if x["lword"] in [y.text.lower(),lemma] else 0.9 if x["lemma"] == lemma else -10
         return word_score + ws_score
 
     def get_lemma(self, word):
+        'Calculate lemma recursively until it stops to change to ensure stability.'
         l = fnlpTok(word.lower())[0].lemma_
         while not l == word:
             word = l

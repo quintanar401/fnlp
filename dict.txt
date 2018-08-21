@@ -22,12 +22,15 @@ CUSIP
 "Kospi 100" index
 "Kospi 200" index
 !FID reuters_fid
+!MIC MIC_code
 
 # DBs
 HDB
 RDB
 PDB
 RDBMS
+tickerplant
+TP tickerplant
 Oracle
 Sybase
 database
@@ -48,11 +51,12 @@ dictionary
 join
 enumeration
 vector
+freeform
 
 SQL
 QSQL
 Q q_language
-C++ cpp_language
+!C++ cpp_language
 Java Java_language
 variable
 constant
@@ -65,6 +69,7 @@ example
 PC personal_computer
 ZIP file_format
 CSV file_format
+json file_format
 !IT information_technology
 UI user_interface
 scp unix_cmd
@@ -87,6 +92,7 @@ host server
 box server
 firmware
 computer
+machine
 function
 adapter
 error
@@ -100,6 +106,7 @@ fatal
 failure
 faulty
 incident
+critical
 issue
 problem
 ticket
@@ -111,6 +118,7 @@ release
 project
 patch
 backfill
+back-fill backfill
 update
 upgrade
 check
@@ -130,8 +138,10 @@ password
 access
 unauthorized
 authorized
+authentication
 deny
 entitlement
+!rights
 forbid
 URL
 website
@@ -183,6 +193,8 @@ instance
 team
 connect
 connectivity
+connection
+disconnect
 run
 help
 communication
@@ -194,7 +206,6 @@ timeout
 screenshot
 job
 directory
-connection
 gateway
 g/w gateway
 gw gateway
@@ -243,7 +254,6 @@ basket
 CPU
 storage
 handler
-!id identification
 platform
 task
 parameter
@@ -259,12 +269,16 @@ approve
 deadline
 handle
 buffer
+restrict
 restriction
+identification
+!id identification
 identifier
 SFTP
 FTP
 SSH
 investigate
+investigation
 terminal
 echo
 deamon
@@ -295,6 +309,21 @@ HTML5
 HTML
 persist
 OS
+decommission
+alert
+hardware
+PID process_id
+whitelist
+blacklist
+kill
+library
+lib library
+documentation
+JMS
+JMX
+JDBC
+driver
+Wiki
 
 # pronouns
 it pronoun
@@ -315,18 +344,19 @@ regional
 
 # countries
 !US US_country
-USA
+USA country
 american
-Australia
+Australia country
 australian
-Brazil
+Brazil country
 brazilian
-Japan
+Japan country
 japanese
-Russia
+asian
+Russia country
 russian
-Luxembourg
-Singapore
+Luxembourg country
+Singapore country
 SG Singapore
 "United Kingdom" united_kingdom
 UK united_kingdom
@@ -335,10 +365,13 @@ english
 EU european_union
 european
 DE Germany
-Germany
+Germany country
 german
 India
 indian
+"South Africa" country
+Taiwan country
+China country
 
 # cities
 NewYork new_york
@@ -347,6 +380,7 @@ NY new_york
 SaoPaulo sao_paulo
 "Sao Paulo" sao_paulo
 London
+LN London
 Moscow
 Sydney
 Bangalore
@@ -377,6 +411,9 @@ Geneos
 WebEx application
 Eikon reuters_application
 WhatsApp
+git application
+svn application
+
 
 # table columns
 !bid bid_price bid_column
@@ -399,6 +436,7 @@ sym sym_column
 volume stats
 vwap stats
 twap stats
+NAV stats
 
 # tables
 trade
@@ -408,6 +446,7 @@ nbbo
 level1
 
 # financial terms
+!trading
 Libor
 curve
 rate
@@ -420,6 +459,7 @@ OHLC
 !EM emerging_markets
 asset
 "corporate action" corporate_action
+"corp action" corporate_action
 !CA corporate_action
 split
 dividend
@@ -430,6 +470,8 @@ onshore
 dollar
 euro
 cent
+ccypair ccy_pair
+"ccy pair" ccy_pair
 
 share
 stock
@@ -446,6 +488,9 @@ bond
 warrant
 swap
 swaption
+debt
+credit
+"foreign exchange" fx
 
 payment
 negotiation
@@ -460,6 +505,8 @@ auction
 volatility
 "order book" book
 book
+financial
+finance
 
 trader
 desk
@@ -489,8 +536,9 @@ adjustment
 cross
 information
 info information
-feed
+!feed
 feedhandler
+FH feedhandler
 gap
 value
 tick
@@ -519,6 +567,7 @@ question
 confirm
 perform
 container
+key
 
 Bloomberg Bloomberg_company
 BB Bloomberg_company
@@ -531,7 +580,10 @@ BlackBerry BlackBerry_company
 DB deutsche_bank
 LLC limited_liability_company
 bank
-Tradeweb
+Tradeweb company
+Exegy company
+Fidelity company
+vendor
 
 # time
 date
@@ -563,6 +615,8 @@ soon
 ETA
 !AM before_1200
 !PM after_1200
+a.m. before_1200
+p.m. after_1200
 timezone
 "time zone" timezone
 BST
@@ -576,6 +630,7 @@ IST
 COB close_of_business
 day
 daily
+daylight
 night
 nightly
 midnight
@@ -583,6 +638,7 @@ tonight
 morning
 evening
 T+1 tomorrow
+T0 today
 tomorrow
 yesterday
 today
@@ -613,6 +669,7 @@ timeline
 interval
 meantime
 meanwhile
+quarter
 
 Jan month
 January month
@@ -629,6 +686,7 @@ July month
 Jul month
 Aug month
 August month
+Sep month
 Sept month
 September month
 Oct month
@@ -654,6 +712,11 @@ Saturday weekday
 !Sun weekday
 Sunday weekday
 
+summer
+winter
+spring
+autumn
+
 # misc
 
 FYI for_your_information
@@ -667,6 +730,10 @@ MTA mandatory_time_away
 PS post_script
 TBH to_be_honest
 GB gigabyte
+IPO initial_public_offering
+atm at_the_moment
+vs. versus
+vs versus
 w/o without
 am be
 may may
@@ -681,6 +748,7 @@ important
 name
 location
 call
+human
 
 # math
 
@@ -692,16 +760,20 @@ result
 formula
 number
 max
+maximum
 min
+minimum
 set
 operation
 analyze
 equal
 match
+mismatch
 correct
 correctly
-deduce
+correctness
 incorrect
+deduce
 logic
 list
 queue
@@ -715,6 +787,7 @@ add
 threshold
 count
 average
+percent
 
 # greetings
 
@@ -725,6 +798,7 @@ Hey greetings
 Regards thank_you
 Thanks thank_you
 "Thank you" thank_you
+Thx thank_you
 cheers thank_you
 okay ok
 okey ok
@@ -736,55 +810,112 @@ pls please
 plz please
 
 # numbers
-zero
-one
-two
-three
-four
-five
-six
-seven
-eight
-nine
-ten
-eleven
-twelve
-thirteen
-fourteen
-fifteen
-sixteen
-seventeen
-eighteen
-nineteen
-twenty
-thirty
-forty
-fifty
-sixty
-seventy
-eighty
-ninety
-hundred
-thousand
-million
-billion
+!zero
+!one
+!two
+!three
+!four
+!five
+!six
+!seven
+!eight
+!nine
+!ten
+!eleven
+!twelve
+!thirteen
+!fourteen
+!fifteen
+!sixteen
+!seventeen
+!eighteen
+!nineteen
+!twenty
+!thirty
+!forty
+!fifty
+!sixty
+!seventy
+!eighty
+!ninety
+!hundred
+!thousand
+!million
+!billion
+!trillion
+
+couple
+multiple
+single
+half
+
+!first
+!third
+!fourth
+!fifth
+!sixth
+!seventh
+!eighth
+!ninth
+!tenth
+!eleventh
+!twelfth
+!thirteenth
+!fourteenth
+!fifteenth
+!sixteenth
+!eighteenth
+!twentieth
+!thirtieth
+!fortieth
+!fiftieth
+!sixtieth
+!seventieth
+!eightieth
+!ninetieth
+!hundredth
+!thousandth
+!millionth
+!billionth
+!trillionth
 
 # re
+"$INT24 : $INT60 : $TIMEFLOAT" time
 "$INT24 : $INT60 : $INT60" time
 "$INT24 : $INT60" time
+"$INT hours" time_hours
+"$INT minutes" time_minutes
+"$INT min" time_minutes
 "$INT12 !AM" am_time
 "$INT12 !PM" pm_time
 
 .$UNKNOWN idx_ric
 "{check_fn=check_ccy}$CCY / {check_fn=check_ccy}$CCY" ccy_pair
+"{check_fn=check_ccy}$CCY - {check_fn=check_ccy}$CCY" ccy_pair
 {check_fn=check_ccy}$CCY ccy
 {check_fn=check_ccypair}$CCYPAIR ccy_pair
 
+"$INTEGER %" num_percent
+"$FLOAT %" num_percent
+
 {check_fn=check_year}$INT integer_year
 {check_fn=check_int_date}$INT integer_date
+
+"$INT31 , $MONTH" month_date
+"$INT31 / $MONTH" month_date
+"$INT31 $MONTH" month_date
+"$MONTH $INT31" month_date
+"$MONTH $ORDINALNUM" month_date
+"$ORDINALNUM $MONTH" month_date
+
+"$MONTH {check_fn=check_year}$INT" month_year
 
 $ORDINALNUM ordinal_number
 
 .$QNS Q_namespace
 .$ZNS Z_namespace
 $ISIN isin
+.$STOCKSUFFIX stock_ric_suffix
+*.$STOCKSUFFIX stock_ric_suffix
+$INDEXRIC index_ric
+$UNKNOWN=$EQUALSUFFIX some_ric

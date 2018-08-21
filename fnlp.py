@@ -46,8 +46,8 @@ nlp = spacy.load('en_core_web_md')
 tokenizer = nlp.tokenizer
 
 INFIX_RULES1 = ["[\[\]\(\)\{\}\!\.\:\,;]"]
-INFIX_RULES2 = ["[\[\]\(\)\{\}\!`\:\,;+=<>\\\\/$#\\"]"]
-PREFIX_RULES = ["[\./\\\\~]"]
+INFIX_RULES2 = ["[\[\]\(\)\{\}\!`\:\,;+=<>\\\\/$#\"@]"]
+PREFIX_RULES = ["[\./\\\\~@]"]
 SUFFIX_RULES = ["[\/\\\\\\-|]"]
 
 def extend_tokenizer(nlp,pref,inf,suf):
@@ -144,4 +144,4 @@ def get_tokenizer():
     for r in get_special_rules():
         fnlpTok.add_special_case(r[0],r[1])
         
-get_tokenizer()
+# get_tokenizer()

@@ -1,15 +1,18 @@
-currency_pair is symbol
+symbol is object
+ccy_pair is symbol
+currency is symbol
 ccy is currency
 RIC is symbol
 bb_ticker is symbol
 ISIN is symbol
 
-PROD is environment
-UAT is environment
-DR is environment
-QA is environment
-DEV is environment
-RES is environment
+environment is container
+PROD isA environment
+UAT isA environment
+DR isA environment
+QA isA environment
+DEV isA environment
+RES isA environment
 
 HDB is q_database
 RDB is q_database
@@ -22,18 +25,23 @@ QSQL is computer_language
 PC is personal_computer
 ZIP is file_format
 
-EMEA is region
-US is region
-APAC is region
-ASIA is region
-JPN is region
+region is container
+EMEA isA region
+US isA region
+APAC isA region
+ASIA isA region
+JPN isA region
 
-US_country is country
-Brazil is country
-Japan is country
+US_country isA country
+Brazil isA country
+Japan isA country
+Russia isA country
+Australia isA country
+China isA country
+Taiwan isA country
 
-new_york is city
-sao_paulo is city
+new_york isA city
+sao_paulo isA city
 
 stock_ric is RIC
 future_ric is RIC

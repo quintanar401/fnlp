@@ -58,7 +58,9 @@ QSQL
 Q q_language
 !C++ cpp_language
 Java Java_language
+Python Python_language
 variable
+namespace
 constant
 assign
 define
@@ -79,6 +81,8 @@ Windows
 !Mac
 MacOS
 file
+filename
+"file name" filename
 jira
 API
 code
@@ -122,6 +126,8 @@ back-fill backfill
 update
 upgrade
 check
+validate
+valid
 change
 test
 fix
@@ -156,6 +162,7 @@ email
 e-mail email
 mail email
 mailchain
+"email chain" mailchain
 online
 upstream
 link
@@ -203,6 +210,7 @@ dependency
 archive
 setup
 timeout
+"time out" timeout
 screenshot
 job
 directory
@@ -212,6 +220,7 @@ gw gateway
 execution
 exec
 message
+msg message
 output
 downtime
 rollover
@@ -233,6 +242,7 @@ publisher
 publish
 downstream
 shutdown
+"shut down" shutdown
 datacenter
 network
 requirement
@@ -324,6 +334,14 @@ JMX
 JDBC
 driver
 Wiki
+telephone
+mobile
+journal
+backup
+web
+service
+certificate
+device
 
 # pronouns
 it pronoun
@@ -372,6 +390,8 @@ indian
 "South Africa" country
 Taiwan country
 China country
+"Hong Kong" Hong_Kong
+Chile
 
 # cities
 NewYork new_york
@@ -384,6 +404,8 @@ LN London
 Moscow
 Sydney
 Bangalore
+Mumbai
+Pune
 
 # exchanges
 LSE
@@ -400,6 +422,7 @@ exchange
 # applications
 Excel
 application
+framework
 app application
 QPad
 "Q Pad" QPad
@@ -410,7 +433,9 @@ KDB+ KDB
 Geneos
 WebEx application
 Eikon reuters_application
-WhatsApp
+WhatsApp application
+Outlook application
+Skype application
 git application
 svn application
 
@@ -446,6 +471,9 @@ nbbo
 level1
 
 # financial terms
+MiFID
+MiFID2 MiFID
+"MiFID II" MiFID
 !trading
 Libor
 curve
@@ -472,6 +500,8 @@ euro
 cent
 ccypair ccy_pair
 "ccy pair" ccy_pair
+major
+minor
 
 share
 stock
@@ -491,6 +521,9 @@ swaption
 debt
 credit
 "foreign exchange" fx
+derivative
+CDS credit_default_swap
+"credit default swap" credit_default_swap
 
 payment
 negotiation
@@ -516,6 +549,7 @@ support
 PM project_manager
 "project manager" project_manager
 manager
+management
 meeting
 compliance
 sale
@@ -539,6 +573,7 @@ info information
 !feed
 feedhandler
 FH feedhandler
+"feed handler" feedhandler
 gap
 value
 tick
@@ -595,6 +630,7 @@ sec second
 weekend
 w/e weekend
 week
+"next week" next_week
 weekly
 month
 monthly
@@ -633,6 +669,7 @@ daily
 daylight
 night
 nightly
+overnight
 midnight
 tonight
 morning
@@ -700,6 +737,7 @@ weekday
 Mon weekday
 Monday weekday
 Tue weekday
+Tues weekday
 Tuesday weekday
 !Wed weekday
 Wednesday weekday
@@ -732,6 +770,12 @@ TBH to_be_honest
 GB gigabyte
 IPO initial_public_offering
 atm at_the_moment
+LOL lol
+HP
+WFH work_from_home
+WBL will_be_late
+RFQ rfq
+:) smile
 vs. versus
 vs versus
 w/o without
@@ -788,6 +832,8 @@ threshold
 count
 average
 percent
+true
+false
 
 # greetings
 
@@ -848,6 +894,13 @@ couple
 multiple
 single
 half
+several
+few
+many
+both
+any
+all
+some
 
 !first
 !third
@@ -898,6 +951,10 @@ half
 "$INTEGER %" num_percent
 "$FLOAT %" num_percent
 
+$NEGINTN1or2\! q_internal_fn
+"$INT G" gigabytes
+"$INT Gb" gigabytes
+
 {check_fn=check_year}$INT integer_year
 {check_fn=check_int_date}$INT integer_date
 
@@ -913,9 +970,47 @@ half
 $ORDINALNUM ordinal_number
 
 .$QNS Q_namespace
+.Q Q_namespace
 .$ZNS Z_namespace
+.z.D Z_namespace
+.z.T Z_namespace
+.z.P Z_namespace
+.z.W Z_namespace
+.z.K Z_namespace
+.z.X Z_namespace
+
+{check_fn=check_ccy}$CCY= fx_ric
+{check_fn=check_ccypair}$CCYPAIR= fx_ric
+{check_fn=check_ccy}$CCY=$EQUALSUFFIX fx_ric
+{check_fn=check_ccypair}$CCYPAIR=$EQUALSUFFIX fx_ric
 $ISIN isin
 .$STOCKSUFFIX stock_ric_suffix
 *.$STOCKSUFFIX stock_ric_suffix
 $INDEXRIC index_ric
+$UNKNOWN= some_ric
 $UNKNOWN=$EQUALSUFFIX some_ric
+
+# telephone nums
+"+ $INTN1or2 $INTN3 $INTN3 - $INTN4" telephone_num
+"+ $INTN1or2 $INTN3 $INTN3 $INTN4" telephone_num
+"+ $INTN1or2 $INTN3 ( $INTN3 ) $INTN4" telephone_num
+"+ $INTN1or2 ( $INTN3 ) $INTN3 - $INTN4" telephone_num
+"+ $INTN1or2 ( $INTN3 ) $INTN7" telephone_num
+"+ $INTN2 ( $INTN1 ) $INTN10" telephone_num
+"+ $INTN1or2 $INTN3 $INTN7" telephone_num
+"+ $INTN1or2 $INTN2 $INTN3 - $INTN5" telephone_num
+"+ $INTN2 ( $INTN2 ) $INTN3 - $INTN5" telephone_num
+"+ $INTN1or2 $INTN3 $INTN3 $INTN5" telephone_num
+"+ $INTN2or3 $INTN2 $INTN3 $INTN4" telephone_num
+"+ $INTN2 $INTN2 $INTN4 - $INTN4" telephone_num
+"+ $INTN2 $INTN2 $INTN4 $INTN4" telephone_num
+"+ $INTN2 $INTN4 $INTN3 $INTN3" telephone_num
+"+ $INTN2 $INTN1 $INTN3 - $INTN4" telephone_num
+"+ $INTN1or2 $INTN10" telephone_num
+"+ $INTN3 $INTN8" telephone_num
+"+ $INTN2 $INTN4 $INTN4" telephone_num
+"+ $INTN2 $INTN5 $INTN4" telephone_num
+'$INTN3 - $INTN8' telephone_num
+
+
+$HOST host

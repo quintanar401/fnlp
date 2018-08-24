@@ -39,19 +39,19 @@ class Node:
         self.links_from.append(lnk)
     def next(self,key):
         return find_first(self.links_to,key)
-    def lnext(self,key,nkey=None):
+    def lnext(self,key,nkey=None,last=False):
         if type(key) is str:
             key = [key]
-        for l in self.links_to:
+        for l in reversed(self.links_to) if last else self.links_to:
             if l.type in key:
                 if nkey and not l.to.key == nkey:
                     continue
                 return l.to
         return None
-    def add_node(self,node,ltype,lSubType=None):
+    def add_node(self,node,ltype,lSubType=None, ret_arg = False):
         Link(self,ltype,node,subType=lSubType)
-        return self
-    def isA(self,key,lkeys=["is"]):
+        return node if ret_arg else self
+    def isA(self,key,lkeys=["is","isA"]):
         if key == self.key:
             return True
         for l in self.links_to:
@@ -111,7 +111,7 @@ def load_kb(path, encoding='latin1'):
 
 class Dict:
     def __init__(self, path, encoding='latin1'):
-        self.dict = { "#re": []}
+        self.dict = { hash_string(u"#re"): [], hash_string(u"#lvl2"): []}
         self.index = []
         self.array = []
         self.add_dict(path, encoding)
@@ -162,7 +162,7 @@ class Dict:
                 break
         toks[-1]["ws"] = None
         kbw = [toks[-1]["word"]] if i is len(doc) else [t.text for t in doc[i:]]
-        W = self.get_entry("#re" if toks[0]["re"] else toks[0]["lword"])
+        W = self.get_entry(u"#re" if toks[0]["re"] and toks[0]["word"] in RE else u"#lvl2" if toks[0]["re"] else toks[0]["lword"])
         entry = self.match_exact_entry_tokens(W,toks) if len(W) and not toks[0]["re"] else None
         if entry:
             kbw = [f for f in filter(lambda x: not any(map(lambda y: y.next(x),entry["ids"])),kbw)]
@@ -215,11 +215,49 @@ class Dict:
         n.add_node(Node("src","synt",src),"assoc")
         return n
 
+    def match_sentence(self,doc):
+        start = Node("sentence_head","synt",doc); curr = start; i = 0
+        while i<len(doc):
+            j,res = self.match(doc[i:])
+            if res:
+                repr = { "tokens": doc[i:i+j], "kb_ids": res, "ws": False }
+            else:
+                j,res = match_re(doc,i)
+                if not res:
+                    repr = { "tokens": doc[i:i+1], "kb_ids": [], "ws": False }
+                else:
+                    repr = { "tokens": res[1], "kb_ids": [get_kb_node(res[2])], "ws": False }
+            repr["ws"] = len(repr["tokens"][-1].whitespace_)>0
+            curr = curr.add_node(Node("sentence_token","synt",repr), "next", ret_arg=True)
+            i += len(repr["tokens"])
+        lvl2 = DICT[u"#lvl2"]
+        while True:
+            curr = start.lnext("next", last=True); prev = start; no_change = True
+            while curr:
+                for r in lvl2:
+                    curr2 = curr; succ = True
+                    for t in r["tokens"]:
+                        if not (curr2 and any(map(lambda x: x.isA(t["word"]),curr2.value["kb_ids"]))):
+                            succ = False
+                            break
+                        curr2 = curr2.lnext("next", last=True)
+                    if succ:
+                        curr = prev.add_node(Node("sentence_token","synt",{ "tokens": start.value[curr.value["tokens"][0].i:1+curr2.value["tokens"][-1].i] }), "next", ret_arg=True)
+                        nxt = curr2.lnext("next", last=True)
+                        if nxt:
+                            curr.add_node(nxt, "next")
+                        no_change = False
+                        break
+                curr = curr.lnext("next", last=True)
+            if no_change:
+                break
+        return start
+
     def match(self,doc):
         'Match the start of doc (tokenized by fnlpTok) vs dictionary. Returns either (0,None) or (shift,entries)'
-        art = self.dict['#re']
+        art = self.get_entry(u'#re')
         try:
-            art += self.get_entry(doc[0].text)
+            art = art + self.get_entry(doc[0].text)
         except KeyError:
             pass
         score = 0; entry = None
@@ -237,10 +275,10 @@ class Dict:
     def _score(self,x,y):
         ws_score = 0 if not x["ws"] is False or (len(y.whitespace_)>0) is x["ws"] else -3
         if x['re']:
-            p = RE[x['word']]['patterns'][0].match
-            word_score = 1 if p(y.text) else -100
-            if p(y.text):
-                word_score = -100 if "check_fn" in x['opts'] and not x['opts']["check_fn"](y.text) else 1
+            p = RE[x['word']]['patterns'][0].match(y.text)
+            p = len(y.text) is p.end() if p else False
+            if p:
+                word_score = -100 if "check_fn" in x['opts'] and not x['opts']["check_fn"](y.text) else 0.99
             else:
                 word_score = -100
         else:
@@ -278,34 +316,21 @@ def load_emails(path, encoding='latin1'):
 def process_email(e):
     r = {}
     for l in e['body']:
-        doc = fnlpTok(l)
-        i = 0
-        while i<len(doc):
-            j,res = DICT.match(doc[i:])
-            if res:
-                key = res[0].lnext('pointer').key
-                val = doc[i:i+j].text
-                i += j
-            else:
-                i,res = match_re(doc,i)
-                if not res:
-                    print(doc[i].text+doc[i].whitespace_, end="")
-                    i += 1
-                    continue
-                if res[2] in ['FXRIC','STOCKRIC','FUTURERIC','SPREADRIC','ISIN','QZNS']:
-                    res = DICT.get_repr(res[0],res[1],res[2])
-                    key = res.next('matches').value[0].lnext('pointer').key
-                    val = res.key
+        curr = DICT.match_sentence(fnlpTok(l)).lnext("next")
+        while curr:
+            repr = curr.value
+            if len(repr["kb_ids"]):
+                key = repr["kb_ids"][0].key; val = repr["tokens"].text
+                print(repr["tokens"].text+"<"+key+">"+repr["tokens"][-1].whitespace_, end="")
+                if key in r:
+                    rk = r[key]
+                    if not val in rk:
+                        rk.append(val)
                 else:
-                    key = res[2]
-                    val = res[0]
-            print(val+"<"+key+">"+doc[i-1].whitespace_, end="")
-            if key in r:
-                rk = r[key]
-                if not val in rk:
-                    rk.append(val)
+                    r[key] = [val]
             else:
-                r[key] = [val]
+                print(repr["tokens"].text_with_ws, end="")
+            curr = curr.lnext("next")
         print("")
     return r
 

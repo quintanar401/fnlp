@@ -77,7 +77,7 @@ def load_re_rules(file, init=False):
     with open(file) as f:
         reg = json.load(f)
         for p in reg["patterns"].keys():
-            RE[p] = { "type": "re", "name": p, "patterns": [re.compile("^(?:"+reg["patterns"][p]+")$")], "str": reg["patterns"][p]}
+            RE[p] = { "type": "re", "name": p, "patterns": [re.compile(reg["patterns"][p])], "str": reg["patterns"][p]}
         for p in reg["comp_patterns"]:
             # p["patterns"] = [pat for pat in map(lambda x: RE[x], p["patterns"])]
             if "check_fn" in p:
@@ -98,11 +98,15 @@ def match_re(doc,i,pattern = "main"):
     pat = p["patterns"]
     typ = p["type"]
     if typ == "re":
-        txt = doc[i].text
-        r = pat[0].match(txt)
+        r = pat[0].match(doc.text, pos=doc[i].idx)
         if not r:
             return (i,None)
-        return (i+1,(txt,doc[i:i+1],p["name"]))
+        j = i + 1; (_,k) = r.span()
+        while j<len(doc) and doc[j].idx < k:
+            j += 1
+        if len(doc[i:j].text) is k-doc[i].idx:
+            return (j,(doc[i:j].text,doc[i:j],p["name"]))
+        return (i,None)
     start = i; r = None
     for pp in pat:
         i,r = match_re(doc,i,pp)

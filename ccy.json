@@ -32,6 +32,7 @@
  {"country":"Botswana","code":"BWP","ncode":72,"conv":-2,"name":"Pula"},
  {"country":"Bouvet Island","code":"NOK","ncode":578,"conv":-2,"name":"Norwegian Krone"},
  {"country":"Brazil","code":"BRL","ncode":986,"conv":-2,"name":"Brazil Real"},
+ {"country":"Brazil","code":"BRO","ncode":986,"conv":-2,"name":"Brazil Real"},
  {"country":"British Indian Ocean Territory","code":"USD","ncode":840,"conv":-2,"name":"US Dollar"},
  {"country":"Brunei Darrusslam","code":"BND","ncode":96,"conv":-2,"name":"Brunei Dollar"},
  {"country":"Bulgaria","code":"BGL","ncode":100,"conv":-2,"name":"Lev"},

@@ -1,4 +1,4 @@
-symbol is object
+symbol is logical_object
 ccy_pair is symbol
 currency is symbol
 ccy is currency
@@ -84,3 +84,12 @@ size_column is column
 trade is table
 quote is table
 depth is table
+
+pm_time is time_val
+am_time is time_val
+
+int31 is int_number
+
+physical_object in container
+
+server is physical_object

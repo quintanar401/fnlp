@@ -124,6 +124,7 @@ patch
 backfill
 back-fill backfill
 update
+select
 upgrade
 check
 validate
@@ -292,6 +293,7 @@ investigation
 terminal
 echo
 deamon
+daemon
 root
 setting
 disk
@@ -329,6 +331,8 @@ kill
 library
 lib library
 documentation
+document
+doc document
 JMS
 JMX
 JDBC
@@ -342,6 +346,9 @@ web
 service
 certificate
 device
+putty
+session
+byte
 
 # pronouns
 it pronoun
@@ -406,6 +413,7 @@ Sydney
 Bangalore
 Mumbai
 Pune
+Gurgaon
 
 # exchanges
 LSE
@@ -420,12 +428,14 @@ exchange
 "stock exchange" exchange
 
 # applications
-Excel
+Excel application
+Word application
 application
 framework
 app application
 QPad
 "Q Pad" QPad
+"Q Insight Pad" QPad
 "KDB Studio" kdb_studio
 KDB
 KDB+ KDB
@@ -524,6 +534,8 @@ credit
 derivative
 CDS credit_default_swap
 "credit default swap" credit_default_swap
+fund
+ETF
 
 payment
 negotiation
@@ -540,6 +552,7 @@ volatility
 book
 financial
 finance
+order
 
 trader
 desk
@@ -621,20 +634,20 @@ Fidelity company
 vendor
 
 # time
-date
-time
-hour
-minute
-second
+date time_interval
+time time_interval
+hour time_interval
+minute time_interval
+second time_interval
 sec second
-weekend
-w/e weekend
-week
+weekend time_interval
+w/e weekend time_interval
+week time_interval
 "next week" next_week
 weekly
-month
+month time_interval
 monthly
-year
+year time_interval
 yearly
 history
 historic
@@ -651,18 +664,20 @@ soon
 ETA
 !AM before_1200
 !PM after_1200
+!am before_1200
+!pm after_1200
 a.m. before_1200
 p.m. after_1200
 timezone
 "time zone" timezone
-BST
-DST
-GMT
-EST
-EDT
-UTC
-JST
-IST
+BST timezone_val
+DST timezone_val
+GMT timezone_val
+EST timezone_val
+EDT timezone_val
+UTC timezone_val
+JST timezone_val
+IST timezone_val
 COB close_of_business
 day
 daily
@@ -708,30 +723,30 @@ meantime
 meanwhile
 quarter
 
-Jan month
-January month
-Feb month
-February month
-Mar month
-March month
-Apr month
-April month
-!May month
-Jun month
-June month
-July month
-Jul month
-Aug month
-August month
-Sep month
-Sept month
-September month
-Oct month
-October month
-Nov month
-November month
-Dec month
-December month
+Jan month_val
+January month_val
+Feb month_val
+February month_val
+Mar month_val
+March month_val
+Apr month_val
+April month_val
+!May month_val
+Jun month_val
+June month_val
+July month_val
+Jul month_val
+Aug month_val
+August month_val
+Sep month_val
+Sept month_val
+September month_val
+Oct month_val
+October month_val
+Nov month_val
+November month_val
+Dec month_val
+December month_val
 
 weekday
 Mon weekday
@@ -933,14 +948,14 @@ some
 !trillionth
 
 # re
-"$INT24 : $INT60 : $TIMEFLOAT" time
-"$INT24 : $INT60 : $INT60" time
-"$INT24 : $INT60" time
-"$INT hours" time_hours
-"$INT minutes" time_minutes
-"$INT min" time_minutes
-"$INT12 !AM" am_time
-"$INT12 !PM" pm_time
+"$INT24 : $INT60 : $TIMEFLOAT" time_val
+"$INT24 : $INT60 : $INT60" time_val
+"$INT24 : $INT60" time_val
+"$INT hours" time_interval
+"$INT minutes" time_interval
+"$INT min" time_interval
+"$INT12 !AM" am_time_val
+"$INT12 !PM" pm_time_val
 
 .$UNKNOWN idx_ric
 "{check_fn=check_ccy}$CCY / {check_fn=check_ccy}$CCY" ccy_pair
@@ -954,16 +969,13 @@ some
 $NEGINTN1or2\! q_internal_fn
 "$INT G" gigabytes
 "$INT Gb" gigabytes
+"$INT bytes" bytes_number
 
-{check_fn=check_year}$INT integer_year
+{check_fn=check_year}$INT year_val
 {check_fn=check_int_date}$INT integer_date
 
 "$INT31 , $MONTH" month_date
 "$INT31 / $MONTH" month_date
-"$INT31 $MONTH" month_date
-"$MONTH $INT31" month_date
-"$MONTH $ORDINALNUM" month_date
-"$ORDINALNUM $MONTH" month_date
 
 "$MONTH {check_fn=check_year}$INT" month_year
 
@@ -991,26 +1003,68 @@ $UNKNOWN= some_ric
 $UNKNOWN=$EQUALSUFFIX some_ric
 
 # telephone nums
-"+ $INTN1or2 $INTN3 $INTN3 - $INTN4" telephone_num
+"$INT Gb" gigabytes
 "+ $INTN1or2 $INTN3 $INTN3 $INTN4" telephone_num
+"+ $INTN1 - $INTN3 - $INTN3 - $INTN4" telephone_num
 "+ $INTN1or2 $INTN3 ( $INTN3 ) $INTN4" telephone_num
 "+ $INTN1or2 ( $INTN3 ) $INTN3 - $INTN4" telephone_num
+"+ $INTN2 $INTN1 $INTN3 - $INTN4" telephone_num
+"+ $INTN2 ( $INTN2 ) $INTN1 $INTN3 $INTN4" telephone_num
+"+ $INTN2 ( $INTN1 ) $INTN3 - $INTN4" telephone_num
 "+ $INTN1or2 ( $INTN3 ) $INTN7" telephone_num
-"+ $INTN2 ( $INTN1 ) $INTN10" telephone_num
 "+ $INTN1or2 $INTN3 $INTN7" telephone_num
+"+ $INTN2 ( $INTN1 ) $INTN10" telephone_num
 "+ $INTN1or2 $INTN2 $INTN3 - $INTN5" telephone_num
 "+ $INTN2 ( $INTN2 ) $INTN3 - $INTN5" telephone_num
+"+ $INTN1 $INTN3 $INTN2 - $INTN5" telephone_num
+"+ $INTN2 $INTN2 $INTN3 $INTN5" telephone_num
 "+ $INTN1or2 $INTN3 $INTN3 $INTN5" telephone_num
+"+ $INTN1 $INTN3 $INTN2 $INTN5" telephone_num
+"+ $INTN2 ( $INTN2 ) $INTN1 $INTN2 $INTN5" telephone_num
 "+ $INTN2or3 $INTN2 $INTN3 $INTN4" telephone_num
-"+ $INTN2 $INTN2 $INTN4 - $INTN4" telephone_num
+"+ $INTN2 $INTN1or2or3 $INTN4 - $INTN4" telephone_num
 "+ $INTN2 $INTN2 $INTN4 $INTN4" telephone_num
+"+ $INTN2 ( $INTN2 ) $INTN4 $INTN4" telephone_num
 "+ $INTN2 $INTN4 $INTN3 $INTN3" telephone_num
-"+ $INTN2 $INTN1 $INTN3 - $INTN4" telephone_num
 "+ $INTN1or2 $INTN10" telephone_num
+"+ $INTN2 $INTN10" telephone_num
+"+ $INTN2 $INTN9" telephone_num
 "+ $INTN3 $INTN8" telephone_num
-"+ $INTN2 $INTN4 $INTN4" telephone_num
+"+ $INTN2 $INTN2 $INTN8" telephone_num
+"+ $INTN2or3 $INTN4 $INTN4" telephone_num
+"+ $INTN2 $INTN4 $INTN6" telephone_num
 "+ $INTN2 $INTN5 $INTN4" telephone_num
+"+ $INTN1 $INTN3 $INTN3 $INTN2 $INTN2" telephone_num
 '$INTN3 - $INTN8' telephone_num
 
+. dot_sign
+: ddot_sign
+` squote_sign
+of of_prep
+
+$INT31 int31_number
+$INT int_number
+$QTIME time_val
+{score=0.98}$UNKNOWN unknown_sym
+
+'$host $ddot $int_number' host_port_pair
+'$ddot_sign $host $ddot $int_number' host_port_pair
+'$squote_sign $ddot_sign $host $ddot $int_number' quoted_host_port_pair
+
+"$time_val $timezone_val" time_with_timezone_val
+
+"$month_val $ordinal_number" month_day_val
+"$month_val $int31_number" month_day_val
+"$ordinal_number $month_val" month_day_val
+"$int31_number $month_val" month_day_val
+"$month_day_val $year_val" month_day_year_val
+"$time_val $before_1200" time_val
+"$time_val $after_1200" time_val
+
+"$reuters_fid $int_number" fid_number
+
+'$squote_sign $unknown_sym' quoted_unknown_sym
+
+"$Bloomberg_company $bb_ticker" bb_ticker
 
 $HOST host

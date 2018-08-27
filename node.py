@@ -92,9 +92,10 @@ def get_kb_node(name,type="kb",value=None,not_exists=False):
         KB[name] = Node(name,type,value)
         return KB[name]
 
-def load_kb(path, encoding='latin1'):
+def load_kb(path, encoding='latin1', init=True):
     global KB
-    KB = {}
+    if init:
+        KB = {}
     with codecs.open(path, encoding=encoding) as f:
         for str in f:
             if ESTR2.match(str):
@@ -104,7 +105,7 @@ def load_kb(path, encoding='latin1'):
                 t1, rel, t2, ex = (tok[1].text, tok[2].text, tok[3].text, False)
             else:
                 t1, rel, t2, ex = (tok[0].text, tok[1].text, tok[2].text, True)
-            if rel in ["is","isA"]:
+            if rel in ["is","isA","in"]:
                 Link(get_kb_node(t1, not_exists=ex),rel,get_kb_node(t2))
             else:
                 raise UnknownLinkType(rel)
@@ -142,7 +143,8 @@ class Dict:
             elif t.text == "{":
                 while doc[i].text != "}":
                     if doc[i+1].text == "=":
-                        opts[doc[i].text] = eval(doc[i+2].text) if doc[i].text[-3:] == "_fn" else doc[i+2].text
+                        txt = doc[i+2].text
+                        opts[doc[i].text] = eval(txt) if doc[i].text[-3:] == "_fn" else float(txt) if RE["FLOAT"]["re"].match(txt) else txt
                         i += 3
                     else:
                         opts[doc[i].text] = True
@@ -166,9 +168,9 @@ class Dict:
         entry = self.match_exact_entry_tokens(W,toks) if len(W) and not toks[0]["re"] else None
         if entry:
             kbw = [f for f in filter(lambda x: not any(map(lambda y: y.next(x),entry["ids"])),kbw)]
-            entry["ids"] += [Node(t,"word_proxy").add_node(get_kb_node(t),"pointer") for t in kbw]
+            entry["ids"] += [get_kb_node(t) for t in kbw]
             return entry["ids"]
-        W.append({ "tokens": toks, "ids": [Node(t,"word_proxy").add_node(get_kb_node(t),"pointer") for t in kbw]})
+        W.append({ "tokens": toks, "ids": [get_kb_node(t) for t in kbw]})
         return W[-1]["ids"]
     def match_exact_entry_tokens(self, entry, tokens):
         'Check if entry already exists.'
@@ -176,7 +178,7 @@ class Dict:
             ent = e["tokens"]
             if not len(ent) is len(tokens):
                 continue
-            if func.reduce(lambda x,y: x and (ent[y]["word"] == tokens[y]["word"] and ent[y]["ws"] is tokens[y]["ws"]), range(len(tokens)), True):
+            if func.reduce(lambda x,y: x and (ent[y]["word"] == tokens[y]["word"] and ent[y]["lemma"] == tokens[y]["lemma"] and ent[y]["ws"] is tokens[y]["ws"]), range(len(tokens)), True):
                 return e
         return None
 
@@ -235,19 +237,20 @@ class Dict:
             curr = start.lnext("next", last=True); prev = start; no_change = True
             while curr:
                 for r in lvl2:
-                    curr2 = curr; succ = True
+                    curr2 = prev; succ = True
                     for t in r["tokens"]:
-                        if not (curr2 and any(map(lambda x: x.isA(t["word"]),curr2.value["kb_ids"]))):
+                        curr2 = curr2.lnext("next", last=True)
+                        if not curr2 or not check_kb(t["word"], curr2.value["kb_ids"]) :
                             succ = False
                             break
-                        curr2 = curr2.lnext("next", last=True)
                     if succ:
-                        curr = prev.add_node(Node("sentence_token","synt",{ "tokens": start.value[curr.value["tokens"][0].i:1+curr2.value["tokens"][-1].i] }), "next", ret_arg=True)
+                        curr = prev.add_node(Node("sentence_token","synt",{ "tokens": start.value[curr.value["tokens"][0].i:1+curr2.value["tokens"][-1].i], "kb_ids": r["ids"] }), "next", ret_arg=True)
                         nxt = curr2.lnext("next", last=True)
                         if nxt:
                             curr.add_node(nxt, "next")
                         no_change = False
                         break
+                prev = curr
                 curr = curr.lnext("next", last=True)
             if no_change:
                 break
@@ -284,7 +287,7 @@ class Dict:
         else:
             lemma = fnlpTok(y.text.lower())[0].lemma_
             word_score = 1 if x["word"] == y.text else 0.95 if x["lword"] in [y.text.lower(),lemma] else 0.9 if x["lemma"] == lemma else -10
-        return word_score + ws_score
+        return word_score + ws_score * (x["opts"]["score"] if "score" in x["opts"] else 1)
 
     def get_lemma(self, word):
         'Calculate lemma recursively until it stops to change to ensure stability.'
@@ -316,7 +319,7 @@ def load_emails(path, encoding='latin1'):
 def process_email(e):
     r = {}
     for l in e['body']:
-        curr = DICT.match_sentence(fnlpTok(l)).lnext("next")
+        curr = DICT.match_sentence(fnlpTok(l)).lnext("next", last=True)
         while curr:
             repr = curr.value
             if len(repr["kb_ids"]):
@@ -330,7 +333,7 @@ def process_email(e):
                     r[key] = [val]
             else:
                 print(repr["tokens"].text_with_ws, end="")
-            curr = curr.lnext("next")
+            curr = curr.lnext("next", last=True)
         print("")
     return r
 

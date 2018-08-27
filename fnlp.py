@@ -46,7 +46,7 @@ nlp = spacy.load('en_core_web_md')
 tokenizer = nlp.tokenizer
 
 INFIX_RULES1 = ["[\[\]\(\)\{\}\!\.\:\,;]"]
-INFIX_RULES2 = ["[\[\]\(\)\{\}\!`\:\,;+=<>\\\\/$#\"@]"]
+INFIX_RULES2 = ["[\[\]\(\)\{\}\!`\:\,;+=<>\\\\/$#\"@^]"]
 PREFIX_RULES = ["[\./\\\\~@]"]
 SUFFIX_RULES = ["[\/\\\\\\-|]"]
 
@@ -77,7 +77,8 @@ def load_re_rules(file, init=False):
     with open(file) as f:
         reg = json.load(f)
         for p in reg["patterns"].keys():
-            RE[p] = { "type": "re", "name": p, "patterns": [re.compile(reg["patterns"][p])], "str": reg["patterns"][p]}
+            rp = reg["patterns"][p]
+            RE[p] = { "type": "re", "name": p, "patterns": [re.compile(rp)], "str": rp, "re":re.compile("("+rp+")$")}
         for p in reg["comp_patterns"]:
             # p["patterns"] = [pat for pat in map(lambda x: RE[x], p["patterns"])]
             if "check_fn" in p:
@@ -141,6 +142,11 @@ def check_int_date(x):
     return len(x) is 8 and 1800<int(x[:4])<2100 and 0<int(x[4:6])<13 and 0<int(x[6:])<32
 def check_am_pm(x):
     return 0<int(x[0].text)<13
+def check_kb(x,y):
+    for t in y:
+        if t.isA(x):
+            return True
+    return False
 
 def get_tokenizer():
     global fnlpTok

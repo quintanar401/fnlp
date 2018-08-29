@@ -142,9 +142,9 @@ def check_int_date(x):
     return len(x) is 8 and 1800<int(x[:4])<2100 and 0<int(x[4:6])<13 and 0<int(x[6:])<32
 def check_am_pm(x):
     return 0<int(x[0].text)<13
-def check_kb(x,y):
+def check_kb(x,lnk,y):
     for t in y:
-        if t.isA(x):
+        if t.isA(x,lkeys=lnk):
             return True
     return False
 

@@ -52,12 +52,35 @@ class Node:
         Link(self,ltype,node,subType=lSubType)
         return node if ret_arg else self
     def isA(self,key,lkeys=["is","isA"]):
+        if len(lkeys) is 1:
+            if lkeys[0] == "isA":
+                return self._isAExact(key,True)
+            elif lkeys[0]== "has":
+                return self._has(key)
+        return self._isA(key,lkeys)
+    def _isAExact(key, follow_isA = True):
+        if not follow_isA and key == self.key:
+            return true
+        for l in self.links.to:
+            if l.type == "isA" and follow_isA and l.to._isAExact(key, False):
+                return True
+            elif l.type == "is" and l.to._isAExact(key, follow_isA):
+                return True
+        return False
+    def _isA(self,key,lkeys):
         if key == self.key:
             return True
         for l in self.links_to:
             if l.type in lkeys:
                 if l.to.isA(key):
                     return True
+        return False
+    def _has(self, key, exact = False):
+        for l in self.links_to:
+            if l.type in ["is","isA"] and l.to._has(key, exact):
+                return True
+            elif l.type == "has" and l.to.isA(key):
+                return True
         return False
 
 class Link:
@@ -158,6 +181,12 @@ class Dict:
                 continue
             ntok = { "word": t.text, "lword": t.text.lower(), "lemma": "**nolemma**" if nolemma else fnlpTok(t.text.lower())[0].lemma_, "ws": not brk == "'" and len(t.whitespace_)>0,
                 "re": re_rule, "opts": opts }
+            if re_rule:
+                spl = t.text.split(".")
+                if 1<len(spl):
+                    ntok["word"] = spl[-1]; ntok["links"] = spl[0:-1]
+                else:
+                    ntok["links"] = ["is"]
             re_rule = nolemma = False; opts = {}
             toks.append(ntok)
             if (not brk) and ntok["ws"]:
@@ -240,7 +269,7 @@ class Dict:
                     curr2 = prev; succ = True
                     for t in r["tokens"]:
                         curr2 = curr2.lnext("next", last=True)
-                        if not curr2 or not check_kb(t["word"], curr2.value["kb_ids"]) :
+                        if not curr2 or not check_kb(t["word"], t["links"], curr2.value["kb_ids"]) :
                             succ = False
                             break
                     if succ:

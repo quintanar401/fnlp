@@ -6,16 +6,19 @@ RIC is symbol
 bb_ticker is symbol
 ISIN is symbol
 
-environment is container
-PROD isA environment
-UAT isA environment
-DR isA environment
-QA isA environment
-DEV isA environment
-RES isA environment
+env_cluster is container
+PROD_cluster isA env_cluster
+UAT_cluster isA env_cluster
+DR_cluster isA env_cluster
+QA_cluster isA env_cluster
+DEV_cluster isA env_cluster
+RES_cluster isA env_cluster
 
-HDB is q_database
-RDB is q_database
+q_process is process
+HDB_process isA q_process
+RDB_process isA q_process
+PDB_process isA q_process
+GW_process isA q_process
 RDBMS is classic_database
 Oracle is classic_database
 
@@ -26,11 +29,13 @@ PC is personal_computer
 ZIP is file_format
 
 region is container
-EMEA isA region
-US isA region
-APAC isA region
-ASIA isA region
-JPN isA region
+EMEA_region_name isA region_name
+US_region_name isA region_name
+APAC_region_name isA region_name
+AMER_region_name isA region_name
+ASIA_region_name isA region_name
+JPN_region_name isA region_name
+HK_region_name isA region_name
 
 US_country isA country
 Brazil isA country
@@ -50,11 +55,19 @@ spread_ric is RIC
 index_ric is RIC
 tweb_ric is RIC
 
-ICE is exchange
-NYSE is exchange
-LSE is exchange
-BMF is exchange
-BOVESPA is exchange
+financial_market is market
+exchange is financial_data_source
+#exchange is financial_market
+ICE_exchange isA exchange
+NYSE_exchange isA exchange
+LSE_exchange isA exchange
+BMF_exchange isA exchange
+BOVESPA_exchange isA exchange
+ASX_exchange isA exchange
+ChiX_exchange isA exchange
+
+Bloomberg_financial_data_source isA financial_data_source
+Reuters_financial_data_source isA financial_data_source
 
 Excel is application
 QPad is application
@@ -74,22 +87,121 @@ max_price is price
 high_column is column
 min_price is price
 low_column is column
-open_price is price
 open_column is column
-close_price is price
 close_column is column
 price_column is column
 size_column is column
+
+price_type is price
+open_price isA price_type
+close_price isA price_type
 
 trade is table
 quote is table
 depth is table
 
-pm_time is time_val
-am_time is time_val
+pm_time_val is time_val
+am_time_val is time_val
+start_time isA logical_time
+end_time isA logical_time
 
 int31 is int_number
 
 physical_object in container
 
 server is physical_object
+
+stock_financial_instrument isA financial_instrument
+index_financial_instrument isA financial_instrument
+future_financial_instrument isA financial_instrument
+fx_financial_instrument isA financial_instrument
+spread_financial_instrument isA financial_instrument
+option_financial_instrument isA financial_instrument
+bond_financial_instrument isA financial_instrument
+warrant_financial_instrument isA financial_instrument
+swap_financial_instrument isA financial_instrument
+swaption_financial_instrument isA financial_instrument
+CDS_financial_instrument isA financial_instrument
+ETF_financial_instrument isA financial_instrument
+
+financial_data is generic_data
+
+stock_financial_data isA financial_data
+index_financial_data isA financial_data
+future_financial_data isA financial_data
+fx_financial_data isA financial_data
+spread_financial_data isA financial_data
+option_financial_data isA financial_data
+bond_financial_data isA financial_data
+warrant_financial_data isA financial_data
+swap_financial_data isA financial_data
+swaption_financial_data isA financial_data
+CDS_financial_data isA financial_data
+ETF_financial_data isA financial_data
+
+Jan_month_val isA month_val
+Feb_month_val isA month_val
+Mar_month_val isA month_val
+Apr_month_val isA month_val
+May_month_val isA month_val
+Jun_month_val isA month_val
+July_month_val isA month_val
+Aug_month_val isA month_val
+Sep_month_val isA month_val
+Oct_month_val isA month_val
+Nov_month_val isA month_val
+Dec_month_val isA month_val
+
+Mon_weekday_val isA weekday_val
+Tue_weekday_val isA weekday_val
+Wed_weekday_val isA weekday_val
+Thu_weekday_val isA weekday_val
+Fri_weekday_val isA weekday_val
+Sat_weekday_val isA weekday_val
+Sun_weekday_val isA weekday_val
+
+time_time_period isA time_period
+year_time_period isA time_period
+month_time_period isA time_period
+week_time_period isA time_period
+weekend_time_period isA time_period
+date_time_period isA time_period
+hour_time_period isA time_period
+minute_time_period isA time_period
+second_time_period isA time_period
+
+zip_file_format isA file_format
+csv_file_format isA file_format
+json_file_format isA file_format
+txt_file_format isA file_format
+bin_file_format isA file_format
+
+qnull_long isA qnull
+qnull_float isA qnull
+qnull_guid isA qnull
+qnull_short isA qnull
+qnull_integer isA qnull
+qnull_date isA qnull
+qnull_timestamp isA qnull
+qnull_real isA qnull
+qnull_month isA qnull
+qnull_timestamp isA qnull
+qnull_timespan isA qnull
+qnull_minute isA qnull
+qnull_second isA qnull
+qnull_time isA qnull
+
+qinf_long isA qinf
+qinf_float isA qinf
+qinf_guid isA qinf
+qinf_short isA qinf
+qinf_integer isA qinf
+qinf_date isA qinf
+qinf_timestamp isA qinf
+qinf_real isA qinf
+qinf_month isA qinf
+qinf_timestamp isA qinf
+qinf_timespan isA qinf
+qinf_minute isA qinf
+qinf_second isA qinf
+qinf_time isA qinf

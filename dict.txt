@@ -1,14 +1,14 @@
-!UAT
-UAT2 UAT
-!PROD
-!DR
-!DEV
-!QA
-!RES
-production
+!UAT UAT_cluster
+UAT2 UAT_cluster
+!PROD PROD_cluster
+!DR DR_cluster
+!DEV DEV_cluster
+!QA QA_cluster
+!RES RES_cluster
+production PROD_cluster
 environment
 env environment
-research
+research RES_cluster
 
 # symbology
 RIC
@@ -25,12 +25,13 @@ CUSIP
 !MIC MIC_code
 
 # DBs
-HDB
-RDB
-PDB
+HDB HDB_process
+RDB RDB_process
+PDB PDB_process
 RDBMS
-tickerplant
-TP tickerplant
+tickerplant TP_process
+"tiker plant" TP_process
+TP TP_process
 Oracle
 Sybase
 database
@@ -69,9 +70,11 @@ example
 
 # IT related
 PC personal_computer
-ZIP file_format
-CSV file_format
-json file_format
+ZIP zip_file_format
+CSV csv_file_format
+json json_file_format
+txt txt_file_format
+bin bin_file_format
 !IT information_technology
 UI user_interface
 scp unix_cmd
@@ -181,7 +184,8 @@ response
 respond
 recipient
 attach
-start
+start start_time
+end end_time
 restart
 stop
 finish
@@ -215,9 +219,9 @@ timeout
 screenshot
 job
 directory
-gateway
-g/w gateway
-gw gateway
+gateway GW_process
+g/w gateway GW_process
+gw gateway GW_process
 execution
 exec
 message
@@ -357,13 +361,13 @@ us pronoun
 Us pronoun
 
 # regions
-EMEA
-!US
-APAC
-AMER
-ASIA
-JPN
-HK
+EMEA EMEA_region_name
+!US US_region_name
+APAC APAC_region_name
+AMER AMER_region_name
+ASIA ASIA_region_name
+JPN JPN_region_name
+HK HK_region_name
 region
 regional
 
@@ -416,12 +420,12 @@ Pune
 Gurgaon
 
 # exchanges
-LSE
-NYSE
-BMF
-BOVESPA
-!ICE
-ASX
+LSE LSE_exchange
+NYSE NYSE_exchange
+BMF BMF_exchange
+BOVESPA BOVESPA_exchange
+!ICE ICE_exchange
+ASX ASX_exchange
 Chi-X ChiX_exchange
 market
 exchange
@@ -461,9 +465,7 @@ cond
 high max_price high_column
 low min_price low_column
 open open_price open_column
-"open price" open_price
 close close_price close_column
-"close price" close_price
 price price price_column
 size size size_column
 level level_column
@@ -514,28 +516,28 @@ major
 minor
 
 share
-stock
-equity
-index
+stock stock_financial_instrument stock_financial_data
+equity stock__financial_data
+index index_financial_instrument index_financial_data
 spot
-future
-fx
-spread
-option
-bond
-"convertible bond" bond
-"fixed income" bond
-warrant
-swap
-swaption
+future future_financial_instrument future_financial_data
+fx fx_financial_instrument fx_financial_data
+spread spread_financial_instrument spread_financial_data
+option option_financial_instrument option_financial_data
+bond bond_financial_instrument bond_financial_data
+"convertible bond" bond_financial_instrument
+"fixed income" bond_financial_instrument
+warrant warrant_financial_instrument warrant_financial_data
+swap swap_financial_instrument swap_financial_data
+swaption swaption_financial_instrument swaption_financial_data
 debt
 credit
-"foreign exchange" fx
+"foreign exchange" fx_financial_data
 derivative
-CDS credit_default_swap
-"credit default swap" credit_default_swap
-fund
-ETF
+CDS CDS_financial_instrument CDS_financial_data
+"credit default swap" CDS_financial_instrument
+fund ETF_financial_instrument
+ETF ETF_financial_instrument ETF_financial_data
 
 payment
 negotiation
@@ -572,7 +574,8 @@ stakeholder
 shareholder
 
 # data
-data
+data financial_data
+mktdata financial_data
 dataset
 "reference data" data
 delete
@@ -616,11 +619,14 @@ confirm
 perform
 container
 key
+confluence
+"confluence page" confluence
+solution
 
-Bloomberg Bloomberg_company
-BB Bloomberg_company
-BBG Bloomberg_company
-Reuters Reuters_company
+Bloomberg Bloomberg_company Bloomberg_financial_data_source
+BB Bloomberg_company Bloomberg_financial_data_source
+BBG Bloomberg_company Bloomberg_financial_data_source
+Reuters Reuters_company Reuters_financial_data_source
 ION
 BlackBerry BlackBerry_company
 "Deutsche Bank AG" deutsche_bank
@@ -634,20 +640,20 @@ Fidelity company
 vendor
 
 # time
-date time_interval
-time time_interval
-hour time_interval
-minute time_interval
-second time_interval
-sec second
-weekend time_interval
-w/e weekend time_interval
-week time_interval
+date date_time_period
+time time_time_period
+hour hour_time_period
+minute minute_time_period
+second second_time_period
+sec second_time_period
+weekend weekend_time_period
+w/e weekend weekend_time_period
+week week_time_period
 "next week" next_week
 weekly
-month time_interval
+month month_time_period
 monthly
-year time_interval
+year year_time_period
 yearly
 history
 historic
@@ -722,48 +728,49 @@ interval
 meantime
 meanwhile
 quarter
+official
 
-Jan month_val
-January month_val
-Feb month_val
-February month_val
-Mar month_val
-March month_val
-Apr month_val
-April month_val
-!May month_val
-Jun month_val
-June month_val
-July month_val
-Jul month_val
-Aug month_val
-August month_val
-Sep month_val
-Sept month_val
-September month_val
-Oct month_val
-October month_val
-Nov month_val
-November month_val
-Dec month_val
-December month_val
+Jan Jan_month_val
+January Jan_month_val
+Feb Feb_month_val
+February Feb_month_val
+Mar Mar_month_val
+March Mar_month_val
+Apr Apr_month_val
+April Apr_month_val
+!May May_month_val
+Jun Jun_month_val
+June Jun_month_val
+July July_month_val
+Jul July_month_val
+Aug Aug_month_val
+August Aug_month_val
+Sep Sep_month_val
+Sept Sep_month_val
+September Sep_month_val
+Oct Oct_month_val
+October Oct_month_val
+Nov Nov_month_val
+November Nov_month_val
+Dec Dec_month_val
+December Dec_month_val
 
 weekday
-Mon weekday
-Monday weekday
-Tue weekday
-Tues weekday
-Tuesday weekday
-!Wed weekday
-Wednesday weekday
-Thu weekday
-Thursday weekday
-Fri weekday
-Friday weekday
-!Sat weekday
-Saturday weekday
-!Sun weekday
-Sunday weekday
+Mon Mon_weekday_val
+Monday Mon_weekday_val
+Tue Tue_weekday_val
+Tues Tue_weekday_val
+Tuesday Tue_weekday_val
+!Wed Wed_weekday_val
+Wednesday Wed_weekday_val
+Thu Thu_weekday_val
+Thursday Thu_weekday_val
+Fri Fri_weekday_val
+Friday Fri_weekday_val
+!Sat Sat_weekday_val
+Saturday Sat_weekday_val
+!Sun Sun_weekday_val
+Sunday Sun_weekday_val
 
 summer
 winter
@@ -797,6 +804,7 @@ w/o without
 am be
 may may
 ca can
+an an
 global
 local
 suffix
@@ -947,6 +955,42 @@ some
 !billionth
 !trillionth
 
+# q defs
+
+!0N qnull_long
+!0n qnull_float
+!0Nj qnull_long
+!0nf qnull_float
+!0Ng qnull_guid
+!0Nh qnull_short
+!0Ni qnull_integer
+!0nd qnull_date
+!0np qnull_timestamp
+!0Ne qnull_real
+!0Nm qnull_month
+!0Nz qnull_timestamp
+!0Nn qnull_timespan
+!0Nu qnull_minute
+!0Nv qnull_second
+!0Nt qnull_time
+
+!0W qinf_long
+!0w qinf_float
+!0Wj qinf_long
+!0Wf qinf_float
+!0Wg qinf_guid
+!0Wh qinf_short
+!0Wi qinf_integer
+!0Wd qinf_date
+!0Wp qinf_timestamp
+!0We qinf_real
+!0Wm qinf_month
+!0Wz qinf_timestamp
+!0Wn qinf_timespan
+!0Wu qinf_minute
+!0Wv qinf_second
+!0Wt qinf_time
+
 # re
 "$INT24 : $INT60 : $TIMEFLOAT" time_val
 "$INT24 : $INT60 : $INT60" time_val
@@ -1041,30 +1085,13 @@ $UNKNOWN=$EQUALSUFFIX some_ric
 : ddot_sign
 ` squote_sign
 of of_prep
+and and_conj
+& and_conj ampresand_sign
+@ at_sign
 
 $INT31 int31_number
 $INT int_number
 $QTIME time_val
-{score=0.98}$UNKNOWN unknown_sym
-
-'$host $ddot $int_number' host_port_pair
-'$ddot_sign $host $ddot $int_number' host_port_pair
-'$squote_sign $ddot_sign $host $ddot $int_number' quoted_host_port_pair
-
-"$time_val $timezone_val" time_with_timezone_val
-
-"$month_val $ordinal_number" month_day_val
-"$month_val $int31_number" month_day_val
-"$ordinal_number $month_val" month_day_val
-"$int31_number $month_val" month_day_val
-"$month_day_val $year_val" month_day_year_val
-"$time_val $before_1200" time_val
-"$time_val $after_1200" time_val
-
-"$reuters_fid $int_number" fid_number
-
-'$squote_sign $unknown_sym' quoted_unknown_sym
-
-"$Bloomberg_company $bb_ticker" bb_ticker
+{score=0.9}$UNKNOWN unknown_sym
 
 $HOST host

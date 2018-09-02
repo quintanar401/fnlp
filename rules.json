@@ -15,7 +15,7 @@
     "DATE": "[12]\\d\\d\\d[\\./-]([01]\\d|\\d)[\\./-]([0-3]\\d|\\d)",
     "DATE_REV": "([0-3]\\d|\\d)[\\./-]([0-3]\\d|\\d)[\\./-][12]\\d\\d\\d",
     "QSPAN": "\\d+D\\d([\\d:\\.])+",
-    "QDATETIME": "\\d{4}\\.[01]\\d\\.[0-3]\\d(DT)\\d([\\d:\\.])+",
+    "QDATETIME": "\\d{4}\\.[01]\\d\\.[0-3]\\d(D|T)\\d([\\d:\\.])+",
     "QTIME": "\\d\\d:\\d\\d(?::\\d\\d(?:\\.\\d+)?)?",
     "DATE_dWd": "(?i)(\\d\\d|\\d)-(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|july|june|august)-\\d\\d(\\d\\d)?",
     "DATE_dW": "(?i)(\\d\\d|\\d)-(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|july|june|august)",
@@ -29,10 +29,8 @@
     "EQUALSUFFIX": "[A-Z]{1,4}",
     "CCY": "[A-Z]{3}",
     "CCYPAIR": "[A-Z]{6}",
-    "IP": "((\\d|\\d\\d|[1-2]\\d\\d)\\.){3}(\\d|\\d\\d|[1-2]\\d\\d)",
+    "IP": "(([1-2]\\d\\d|\\d\\d|\\d)\\.){3}([1-2]\\d\\d|\\d\\d|\\d)",
     "ORDINALNUM": "11th|12th|13th|\\d*[04-9]th|\\d*2nd|\\d*3r?d|\\d1st",
-    "QNULLS": "0N[ghijepmdznuvtf]|0N|0n",
-    "QINF": "-?(0W[ghijepmdznuvtf]|0W|0w)",
     "INT60": "[0-5]\\d",
     "INT24": "[0-1]\\d|2[0-4]|\\d",
     "INT12": "10|11|12|[1-9]",
@@ -60,7 +58,7 @@
     {
       "name": "main",
       "patterns": ["EMAIL1", "EMAIL2", "EMAIL3", "URL1", "URL2", "URL3", "STOCKRIC", "FUTURERIC", "SPREADRIC", "TWEBRIC", "DATE", "DATE_REV",
-        "QSPAN", "QDATETIME", "QTIME", "DATE_dWd", "DATE_dW", "IP", "ARROWS", "QNULLS", "QINF",
+        "QSPAN", "QDATETIME", "QTIME", "DATE_dWd", "DATE_dW", "IP", "ARROWS",
         "INTEGER", "FLOAT", "UNKNOWN"],
       "type": "or"
     }

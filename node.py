@@ -52,16 +52,19 @@ class Node:
         Link(self,ltype,node,subType=lSubType)
         return node if ret_arg else self
     def isA(self,key,lkeys=["is","isA"]):
+        if self.type == "kb_ref":
+            if self.value and get_kb_node(self.value).isA(key, lkeys):
+                return True
         if len(lkeys) is 1:
             if lkeys[0] == "isA":
                 return self._isAExact(key,True)
             elif lkeys[0]== "has":
                 return self._has(key)
         return self._isA(key,lkeys)
-    def _isAExact(key, follow_isA = True):
+    def _isAExact(self, key, follow_isA = True):
         if not follow_isA and key == self.key:
-            return true
-        for l in self.links.to:
+            return True
+        for l in self.links_to:
             if l.type == "isA" and follow_isA and l.to._isAExact(key, False):
                 return True
             elif l.type == "is" and l.to._isAExact(key, follow_isA):
@@ -72,7 +75,7 @@ class Node:
             return True
         for l in self.links_to:
             if l.type in lkeys:
-                if l.to.isA(key):
+                if l.to.isA(key, lkeys):
                     return True
         return False
     def _has(self, key, exact = False):
@@ -95,15 +98,17 @@ class Link:
         return self.to if self.to.key == key else None
 
 class BaseFNLPException(BaseException):
-    def __init__(self,err):
-        self.msg = err
+    pass
 class UnknownLinkType(BaseFNLPException):
     pass
 class DuplicateKBRef(BaseFNLPException):
     pass
+class WrongL2DictFormat(BaseFNLPException):
+    pass
 
 ESTR = re.compile("^\s*$")
 ESTR2 = re.compile("^(\s*|\s*#.*)\r?\n?$")
+ECMT = re.compile("(.*) # .*$")
 
 def get_kb_node(name,type="kb",value=None,not_exists=False):
     try:
@@ -140,12 +145,51 @@ class Dict:
         self.array = []
         self.add_dict(path, encoding)
     def add_dict(self, path, encoding='latin1'):
+        self._add_dict(path, encoding, self.add_dict_entry)
+    def add_l2dict(self, path, encoding='latin1'):
+        self._add_dict(path, encoding, self.add_l2dict_entry)
+    def _add_dict(self, path, encoding, func):
         with codecs.open(path, encoding=encoding) as f:
+            str = ECMT.match(str).groups(1)
             for str in f:
                 if ESTR2.match(str):
                     continue
-                self.add_dict_entry(str.strip("\r\n"))
+                func(str.strip("\r\n"))
             self.hash_entries()
+    def add_l2dict_entry(self,str):
+        i = 0; doc = fnlpTok(str);
+        i, defs = self.parse_defs(i,doc)
+        _, rls = self.parse_defs(i,doc,rules=True)
+        self.get_entry(u"#lvl2").append({ "defs": defs, "rules": rls})
+    def parse_defs(self, i, doc, rules=False):
+        i, df = self.parse_def(i, doc)
+        defs = [df] if rules else [[df]]
+        while len(doc) > i and doc[i-1].text == ",":
+            i, df = self.parse_def(i, doc)
+            if rules:
+                defs.append(df)
+                continue
+            for d in defs:
+                if (df["var"] == d[0]["var"]):
+                    d.append(df)
+            else:
+                defs.append([df])
+        return i, defs
+    def parse_def(self, i, doc):
+        'assume x is something / something is x /  x / somethin for now'
+        if len(doc) is i+1 or doc[i+1].text in [":",","]:
+            df = { "v1": self.is_var(doc[i].text), "links": [], "node1": doc[i].text, "node2": None, "v2": False}
+            df["var"] = df["node1"] if df["v1"] else None
+            df["node"] = None if df["v1"] else df["node1"]
+            return i+2, df
+        df = { "node1": doc[i].text, "links": doc[i+1].text.split("."), "v1": self.is_var(doc[i].text), "v2": self.is_var(doc[i+2].text), "node2": doc[i+2].text}
+        df["var"] = df["node1"] if df["v1"] else df["node2"] if df["v2"] else None
+        df["node"] = df["node1"] if not df["v1"] else df["node2"] if not df["v2"] else None
+        if not (len(doc) is i+3 or doc[i+3].text in [":",","]):
+            raise WrongL2DictFormat(doc.text)
+        return i+4, df
+    def is_var(self, x):
+        return len(x) is 1 or x[1:].isdigit()
     def add_dict_entry(self,str):
         'Add one dictionary entry.'
         toks = []; brk = None; esc = False; i = 0; doc = fnlpTok(str); nolemma = False; re_rule = False; opts = {}
@@ -181,25 +225,19 @@ class Dict:
                 continue
             ntok = { "word": t.text, "lword": t.text.lower(), "lemma": "**nolemma**" if nolemma else fnlpTok(t.text.lower())[0].lemma_, "ws": not brk == "'" and len(t.whitespace_)>0,
                 "re": re_rule, "opts": opts }
-            if re_rule:
-                spl = t.text.split(".")
-                if 1<len(spl):
-                    ntok["word"] = spl[-1]; ntok["links"] = spl[0:-1]
-                else:
-                    ntok["links"] = ["is"]
             re_rule = nolemma = False; opts = {}
             toks.append(ntok)
             if (not brk) and ntok["ws"]:
                 break
         toks[-1]["ws"] = None
         kbw = [toks[-1]["word"]] if i is len(doc) else [t.text for t in doc[i:]]
-        W = self.get_entry(u"#re" if toks[0]["re"] and toks[0]["word"] in RE else u"#lvl2" if toks[0]["re"] else toks[0]["lword"])
+        W = self.get_entry(u"#re" if toks[0]["re"]  else toks[0]["lword"])
         entry = self.match_exact_entry_tokens(W,toks) if len(W) and not toks[0]["re"] else None
         if entry:
-            kbw = [f for f in filter(lambda x: not any(map(lambda y: y.next(x),entry["ids"])),kbw)]
-            entry["ids"] += [get_kb_node(t) for t in kbw]
+            kbw = [f for f in filter(lambda x: x in entry["ids"],kbw)]
+            entry["ids"] += kbw
             return entry["ids"]
-        W.append({ "tokens": toks, "ids": [get_kb_node(t) for t in kbw]})
+        W.append({ "tokens": toks, "ids": kbw})
         return W[-1]["ids"]
     def match_exact_entry_tokens(self, entry, tokens):
         'Check if entry already exists.'
@@ -241,9 +279,8 @@ class Dict:
         self.index = [self.index[i] for i in iasc]
         self.array = [self.array[i] for i in iasc]
 
-    def get_repr(self, txt, src, kb_id):
-        n = Node(txt,"word_repr").add_node(Node("matches","synt",self.add_dict_entry(txt+" "+kb_id)),"assoc")
-        n.add_node(Node("src","synt",src),"assoc")
+    def get_repr(self, txt, kb_id):
+        n = Node(txt, "kb_ref", kb_id)
         return n
 
     def match_sentence(self,doc):
@@ -251,13 +288,13 @@ class Dict:
         while i<len(doc):
             j,res = self.match(doc[i:])
             if res:
-                repr = { "tokens": doc[i:i+j], "kb_ids": res, "ws": False }
+                repr = { "tokens": doc[i:i+j], "kb_ids": [get_repr(t.key, t.key) for t in res], "ws": False }
             else:
                 j,res = match_re(doc,i)
-                if not res:
-                    repr = { "tokens": doc[i:i+1], "kb_ids": [], "ws": False }
+                if res:
+                    repr = { "tokens": res[1], "kb_ids": [get_repr(res[2], res[2])], "ws": False }
                 else:
-                    repr = { "tokens": res[1], "kb_ids": [get_kb_node(res[2])], "ws": False }
+                    repr = { "tokens": doc[i:i+1], "kb_ids": [], "ws": False }
             repr["ws"] = len(repr["tokens"][-1].whitespace_)>0
             curr = curr.add_node(Node("sentence_token","synt",repr), "next", ret_arg=True)
             i += len(repr["tokens"])
@@ -266,14 +303,15 @@ class Dict:
             curr = start.lnext("next", last=True); prev = start; no_change = True
             while curr:
                 for r in lvl2:
-                    curr2 = prev; succ = True
-                    for t in r["tokens"]:
+                    curr2 = prev; succ = True; env = {}
+                    for t in r["defs"]:
                         curr2 = curr2.lnext("next", last=True)
-                        if not curr2 or not check_kb(t["word"], t["links"], curr2.value["kb_ids"]) :
+                        if not curr2 or not check_kb(t, curr2.value["kb_ids"], env) :
                             succ = False
                             break
                     if succ:
-                        curr = prev.add_node(Node("sentence_token","synt",{ "tokens": start.value[curr.value["tokens"][0].i:1+curr2.value["tokens"][-1].i], "kb_ids": r["ids"] }), "next", ret_arg=True)
+                        curr = prev.add_node(Node("sentence_token","synt",{ "tokens": start.value[curr.value["tokens"][0].i:1+curr2.value["tokens"][-1].i],
+                            "kb_ids": apply_rules(r["rules"], env) }), "next", ret_arg=True)
                         nxt = curr2.lnext("next", last=True)
                         if nxt:
                             curr.add_node(nxt, "next")
@@ -316,7 +354,7 @@ class Dict:
         else:
             lemma = fnlpTok(y.text.lower())[0].lemma_
             word_score = 1 if x["word"] == y.text else 0.95 if x["lword"] in [y.text.lower(),lemma] else 0.9 if x["lemma"] == lemma else -10
-        return word_score + ws_score * (x["opts"]["score"] if "score" in x["opts"] else 1)
+        return ws_score + word_score * (x["opts"]["score"] if "score" in x["opts"] else 1)
 
     def get_lemma(self, word):
         'Calculate lemma recursively until it stops to change to ensure stability.'
@@ -353,7 +391,7 @@ def process_email(e):
             repr = curr.value
             if len(repr["kb_ids"]):
                 key = repr["kb_ids"][0].key; val = repr["tokens"].text
-                print(repr["tokens"].text+"<"+key+">"+repr["tokens"][-1].whitespace_, end="")
+                print(val+"<"+key+">"+repr["tokens"][-1].whitespace_, end="")
                 if key in r:
                     rk = r[key]
                     if not val in rk:

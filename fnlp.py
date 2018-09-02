@@ -142,11 +142,55 @@ def check_int_date(x):
     return len(x) is 8 and 1800<int(x[:4])<2100 and 0<int(x[4:6])<13 and 0<int(x[6:])<32
 def check_am_pm(x):
     return 0<int(x[0].text)<13
-def check_kb(x,lnk,y):
-    for t in y:
-        if t.isA(x,lkeys=lnk):
+def check_kb(x,y,env):
+    for kb_node in y:
+        succ = True
+        for df in x:
+            if not df["node2"]:
+                if not (df["v1"] or kb_node.isA(df["node1"], lkeys=["is"])):
+                    succ = False
+                    break
+            elif df["v1"]:
+                if not kb_node.isA(df["node2"], lkeys=df["links"]):
+                    succ = False
+                    break
+            elif df["v2"]:
+                if not get_kb_node(df["node1"]).isA(kb_node, lkeys=df["links"]):
+                    succ = False
+                    break
+            else:
+                if not get_kb_node(df["node1"]).isA(get_kb_node(df["node2"]), lkeys=df["links"]):
+                    succ = False
+                    break
+        if succ:
+            if x[0]["var"]:
+                env[x[0]["var"]] = kb_node
             return True
+        succ = True
     return False
+# work with repr only
+# x link y ->  (x -> y), x
+# x/node -> , x/node
+# unknown x -> empty node
+# kb_node -> repr of node
+def apply_rules(rules, env):
+    node = None
+    for r in rules:
+        if r["v1"] and not r["node1"] in env:
+            if r["links"][0] == "=":
+                env[r["node1"]] = node = DICT.get_repr(r["node2"],r["node2"])
+                continue
+            env[r["node1"]] = Node(r["node1"],"kb_ref",None)
+        if r["v2"] and not r["node2"] in env:
+            env[r["node2"]] = Node(r["node2"],"kb_ref",None)
+        if not r["node2"]:
+            node = env[r["var"]] if r["var"] else DICT.get_repr(r["node"],r["node"])
+        else:
+            n1 = env[r["node1"]] if r["v1"] else DICT.get_repr(r["node1"],r["node1"])
+            n2 = env[r["node2"]] if r["v2"] else DICT.get_repr(r["node2"],r["node2"])
+            n1.add_node(n2,r["links"][0])
+            node = n1
+    return node
 
 def get_tokenizer():
     global fnlpTok

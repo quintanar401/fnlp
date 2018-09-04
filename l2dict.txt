@@ -34,7 +34,7 @@ squote_sign, ddot_sign, x isA host, ddot_sign, y is int_number : a is host_port_
 squote_sign, x is unknown_sym : a is symbol, a isAssoc unknown_sym   # `somesym
 
 # time
-x is time_val, y is timezone_val :  x has y    # 10:00 GMT
+x is time_val, y isA timezone_val :  x has y    # 10:00 GMT
 x is month_val, y is ordinal_number :  a is time_val, a has x, a has y  # Jul 10th
 x is month_val, y is int31_number : a is time_val, a has x, a has y   # Jul 10
 x is ordinal_number, y is month_val : a is time_val, a has x, a has y  # 10th Jul

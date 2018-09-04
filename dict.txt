@@ -355,10 +355,10 @@ session
 byte
 
 # pronouns
-it pronoun
-It pronoun
-us pronoun
-Us pronoun
+it it_pronoun
+It it_pronoun
+us us_pronoun
+Us us_pronoun
 
 # regions
 EMEA EMEA_region_name
@@ -372,52 +372,52 @@ region
 regional
 
 # countries
-!US US_country
-USA country
+!US USA_country
+USA USA_country
 american
-Australia country
+Australia Australia_country
 australian
-Brazil country
+Brazil Brazil_country
 brazilian
-Japan country
+Japan Japan_country
 japanese
 asian
-Russia country
+Russia Russia_country
 russian
-Luxembourg country
-Singapore country
-SG Singapore
+Luxembourg Luxembourg_country
+Singapore Singapore_country Singapore_city
+SG Singapore_country Singapore_city
 "United Kingdom" united_kingdom
 UK united_kingdom
 british
 english
 EU european_union
 european
-DE Germany
-Germany country
+DE Germany_country
+Germany Germany_country
 german
-India
+India India_country
 indian
-"South Africa" country
-Taiwan country
-China country
-"Hong Kong" Hong_Kong
-Chile
+"South Africa" SA_country
+Taiwan Taiwan_country
+China China_country
+"Hong Kong" Hong_Kong_city
+Chile Chile_country
 
 # cities
-NewYork new_york
-"New York" new_york new_york_state
-NY new_york
-SaoPaulo sao_paulo
-"Sao Paulo" sao_paulo
-London
-LN London
-Moscow
-Sydney
-Bangalore
-Mumbai
-Pune
-Gurgaon
+NewYork NY_city
+"New York" NY_city NY_state
+NY NY_city
+SaoPaulo sao_paulo_city
+"Sao Paulo" sao_paulo_city
+London London_city
+LN London_city
+Moscow Moscow_city
+Sydney Sydney_city
+Bangalore Bangalore_city
+Mumbai Mumbai_city
+Pune Pune_city
+Gurgaon Gurgaon_city
 
 # exchanges
 LSE LSE_exchange
@@ -432,26 +432,26 @@ exchange
 "stock exchange" exchange
 
 # applications
-Excel application
-Word application
+Excel Excel_application
+Word Word_application
 application
 framework
 app application
-QPad
-"Q Pad" QPad
-"Q Insight Pad" QPad
-"KDB Studio" kdb_studio
+QPad QPad_application
+"Q Pad" QPad_application
+"Q Insight Pad" QPad_application
+"KDB Studio" kdb_studio_application
 KDB
 KDB+ KDB
-"BlackBerry Works" application
-Geneos
-WebEx application
-Eikon reuters_application
-WhatsApp application
-Outlook application
-Skype application
-git application
-svn application
+"BlackBerry Works" BW_application
+Geneos Geneos_application
+WebEx WebEx_application
+Eikon Eikon_application
+WhatsApp WhatsApp_application
+Outlook Outlook_application
+Skype Skype_application
+git git_application
+svn svn_application
 
 
 # table columns
@@ -476,11 +476,11 @@ twap stats
 NAV stats
 
 # tables
-trade
-quote
-depth
-nbbo
-level1
+trade trade_table
+quote quote_table
+depth depth_table
+nbbo nbbo_table
+level1 level1_table
 
 # financial terms
 MiFID
@@ -627,16 +627,16 @@ Bloomberg Bloomberg_company Bloomberg_financial_data_source
 BB Bloomberg_company Bloomberg_financial_data_source
 BBG Bloomberg_company Bloomberg_financial_data_source
 Reuters Reuters_company Reuters_financial_data_source
-ION
+ION ION_financial_data_source
 BlackBerry BlackBerry_company
-"Deutsche Bank AG" deutsche_bank
-"Deutsche Bank" deutsche_bank
-DB deutsche_bank
+"Deutsche Bank AG" DB_company
+"Deutsche Bank" DB_company
+DB DB_company
 LLC limited_liability_company
 bank
-Tradeweb company
-Exegy company
-Fidelity company
+Tradeweb Tradeweb_company
+Exegy Exegy_company
+Fidelity Fidelity_company
 vendor
 
 # time
@@ -676,14 +676,14 @@ a.m. before_1200
 p.m. after_1200
 timezone
 "time zone" timezone
-BST timezone_val
-DST timezone_val
-GMT timezone_val
-EST timezone_val
-EDT timezone_val
-UTC timezone_val
-JST timezone_val
-IST timezone_val
+BST BST_timezone_val
+DST DST_timezone_val
+GMT GMT_timezone_val
+EST EST_timezone_val
+EDT EDT_timezone_val
+UTC UTC_timezone_val
+JST JST_timezone_val
+IST IST_timezone_val
 COB close_of_business
 day
 daily
@@ -1083,11 +1083,39 @@ $UNKNOWN=$EQUALSUFFIX some_ric
 
 . dot_sign
 : ddot_sign
+; dcomma_sign
+, comma_sign
 ` squote_sign
+\' equote_sign
+\" quote_sign
++ plus_sign
+- minus_sign
+* star_sign
+/ slash_sign
+\\ rslash_sign
+% percent_sign
+~ tilda_sign
+\! excl_sign
+? question_sign
+\$ dollar_sign
+^ hat_sign
+_ und_sign
+= equal_sign
+< less_sign
+> greater_sign
+\# hash_sign
 of of_prep
 and and_conj
-& and_conj ampresand_sign
+& and_conj amp_sign
+| or_sign
 @ at_sign
+
+( lp_sign
+) rp_sign
+[ lb_sign
+] rb_sign
+\{ lcb_sign
+\} rcb_sign
 
 $INT31 int31_number
 $INT int_number

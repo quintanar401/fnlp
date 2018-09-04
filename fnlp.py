@@ -190,12 +190,14 @@ def apply_rules(rules, env):
             n2 = env[r["node2"]] if r["v2"] else DICT.get_repr(r["node2"],r["node2"])
             n1.add_node(n2,r["links"][0])
             node = n1
-    return node
+    return [node] if node else []
 
 def get_tokenizer():
-    global fnlpTok
-    fnlpTok = extend_tokenizer(nlp,PREFIX_RULES,INFIX_RULES2,SUFFIX_RULES)
+    global fnlpTok_
+    fnlpTok_ = extend_tokenizer(nlp,PREFIX_RULES,INFIX_RULES2,SUFFIX_RULES)
     for r in get_special_rules():
-        fnlpTok.add_special_case(r[0],r[1])
+        fnlpTok_.add_special_case(r[0],r[1])
+def fnlpTok(txt):
+    return fnlpTok_("".join([t.text_with_ws for t in fnlpTok_(txt) if not t.is_space]))
         
 # get_tokenizer()

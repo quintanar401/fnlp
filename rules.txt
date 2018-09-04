@@ -68,42 +68,73 @@ ChiX_exchange isA exchange
 
 Bloomberg_financial_data_source isA financial_data_source
 Reuters_financial_data_source isA financial_data_source
+ION_financial_data_source isA financial_data_source
 
-Excel is application
-QPad is application
-KDB is application
+Bloomberg_company isA company
+Reuters_company isA company
+BlackBerry_company isA company
+DB_company isA company
+Exegy_company isA company
+Tradeweb_company isA company
+Fidelity_company isA company
 
-bid_price is price
-bid_column is column
-ask_price is price
-ask_column is column
-bidPrice_column is column
-askPrice_column is column
+Excel_application isA application
+QPad_application isA application
+KDB isA application isA application
+kdb_studio_application isA application
+Word_application isA application
+BW_application isA application
+Geneos_application isA application
+WebEx_application isA application
+Eikon_application isA application
+WhatsApp_application isA application
+Outlook_application isA application
+Skype_application isA application
+git_application isA application
+svn_application isA application
+
+bid_column isA column
+ask_column isA column
+bidPrice_column isA column
+askPrice_column isA column
 bid_size is size
-bidSize_column is column
+bidSize_column isA column
 ask_size is size
-askSize_column is column
-max_price is price
-high_column is column
-min_price is price
-low_column is column
-open_column is column
-close_column is column
-price_column is column
-size_column is column
+askSize_column isA column
+high_column isA column
+low_column isA column
+open_column isA column
+close_column isA column
+price_column isA column
+size_column isA column
 
 price_type is price
+bid_price isA price_type
+ask_price isA price_type
 open_price isA price_type
 close_price isA price_type
+max_price isA price_type
+min_price isA price_type
 
-trade is table
-quote is table
-depth is table
+trade_table isA table
+quote_table isA table
+depth_table isA table
+nbbo_table isA table
+level1_table isA table
 
 pm_time_val is time_val
 am_time_val is time_val
 start_time isA logical_time
 end_time isA logical_time
+
+BST_timezone_val isA timezone_val
+DST_timezone_val isA timezone_val
+GMT_timezone_val isA timezone_val
+EST_timezone_val isA timezone_val
+EDT_timezone_val isA timezone_val
+UTC_timezone_val isA timezone_val
+JST_timezone_val isA timezone_val
+IST_timezone_val isA timezone_val
 
 int31 is int_number
 
@@ -176,6 +207,32 @@ json_file_format isA file_format
 txt_file_format isA file_format
 bin_file_format isA file_format
 
+Australia_country isA country
+Brazil_country isA country
+Chile_country isA country
+China_country isA country
+Germany_country isA country
+India_country isA country
+Japan_country isA country
+Luxembourg_country isA country
+Russia_country isA country
+Singapore_country isA country
+SA_country isA country
+Taiwan_country isA country
+united_kingdom isA country
+USA_country isA country
+
+Bangalore_city isA city
+Gurgaon_city isA city
+London_city isA city
+Moscow_city isA city
+Mumbai_city isA city
+NY_city isA city
+Pune_city isA city
+sao_paulo_city isA city
+Singapore_city isA city
+Sydney_city isA city
+
 qnull_long isA qnull
 qnull_float isA qnull
 qnull_guid isA qnull
@@ -185,7 +242,6 @@ qnull_date isA qnull
 qnull_timestamp isA qnull
 qnull_real isA qnull
 qnull_month isA qnull
-qnull_timestamp isA qnull
 qnull_timespan isA qnull
 qnull_minute isA qnull
 qnull_second isA qnull
@@ -200,7 +256,6 @@ qinf_date isA qinf
 qinf_timestamp isA qinf
 qinf_real isA qinf
 qinf_month isA qinf
-qinf_timestamp isA qinf
 qinf_timespan isA qinf
 qinf_minute isA qinf
 qinf_second isA qinf

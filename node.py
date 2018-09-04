@@ -150,11 +150,12 @@ class Dict:
         self._add_dict(path, encoding, self.add_l2dict_entry)
     def _add_dict(self, path, encoding, func):
         with codecs.open(path, encoding=encoding) as f:
-            str = ECMT.match(str).groups(1)
             for str in f:
+                r = ECMT.match(str)
+                str = r.group(1) if r else str
                 if ESTR2.match(str):
                     continue
-                func(str.strip("\r\n"))
+                func(str.strip("\r\n "))
             self.hash_entries()
     def add_l2dict_entry(self,str):
         i = 0; doc = fnlpTok(str);
@@ -288,11 +289,11 @@ class Dict:
         while i<len(doc):
             j,res = self.match(doc[i:])
             if res:
-                repr = { "tokens": doc[i:i+j], "kb_ids": [get_repr(t.key, t.key) for t in res], "ws": False }
+                repr = { "tokens": doc[i:i+j], "kb_ids": [self.get_repr(t, t) for t in res], "ws": False }
             else:
                 j,res = match_re(doc,i)
                 if res:
-                    repr = { "tokens": res[1], "kb_ids": [get_repr(res[2], res[2])], "ws": False }
+                    repr = { "tokens": res[1], "kb_ids": [self.get_repr(res[2], res[2])], "ws": False }
                 else:
                     repr = { "tokens": doc[i:i+1], "kb_ids": [], "ws": False }
             repr["ws"] = len(repr["tokens"][-1].whitespace_)>0
@@ -386,23 +387,48 @@ def load_emails(path, encoding='latin1'):
 def process_email(e):
     r = {}
     for l in e['body']:
-        curr = DICT.match_sentence(fnlpTok(l)).lnext("next", last=True)
-        while curr:
-            repr = curr.value
-            if len(repr["kb_ids"]):
-                key = repr["kb_ids"][0].key; val = repr["tokens"].text
-                print(val+"<"+key+">"+repr["tokens"][-1].whitespace_, end="")
-                if key in r:
-                    rk = r[key]
-                    if not val in rk:
-                        rk.append(val)
-                else:
-                    r[key] = [val]
-            else:
-                print(repr["tokens"].text_with_ws, end="")
-            curr = curr.lnext("next", last=True)
-        print("")
+        process_sent(l,r)
     return r
+
+def process_sent(l,r={}):
+    curr = DICT.match_sentence(fnlpTok(l)).lnext("next", last=True)
+    while curr:
+        repr = curr.value
+        if len(repr["kb_ids"]):
+            key = repr["kb_ids"][0].key; val = repr["tokens"].text
+            print(val+"<"+key+str(len(repr["tokens"]))+">"+repr["tokens"][-1].whitespace_, end="")
+            if key in r:
+                rk = r[key]
+                if not val in rk:
+                    rk.append(val)
+            else:
+                r[key] = [val]
+        else:
+            print(repr["tokens"].text_with_ws, end="")
+        curr = curr.lnext("next", last=True)
+    print("")
+    return r
+
+def process_sent(l,r={}):
+    curr = DICT.match_sentence(fnlpTok(l)).lnext("next", last=True)
+    while curr:
+        repr = curr.value
+        if len(repr["kb_ids"]):
+            key = repr["kb_ids"][0].key; val = repr["tokens"].text
+            desc = ",".join([ln.type+":"+ln.to.key for ln in repr["kb_ids"][0].links_to])
+            print(val+"<"+key+str(len(repr["tokens"]))+desc+">"+repr["tokens"][-1].whitespace_, end="")
+            if key in r:
+                rk = r[key]
+                if not val in rk:
+                    rk.append(val)
+            else:
+                r[key] = [val]
+        else:
+            print(repr["tokens"].text_with_ws, end="")
+        curr = curr.lnext("next", last=True)
+    print("")
+    return r
+
 
 # load_kb("c:/github/fnlp/rules.txt")
 # DICT = Dict("c:/github/fnlp/dict.txt")

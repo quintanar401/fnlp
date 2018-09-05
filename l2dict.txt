@@ -6,6 +6,10 @@ x is internet_address, y is address : x   # IP address
 x isA table_name, y is table : x    # trade table
 x isA financial_data, y is market : x # fx market
 x isA region, y is region : x  # EMEA region
+x isA financial_instrument, y is instrument : x # bond instrument
+x isA commodity, y is instrument : x  # oil instrument
+x isA process, y is process : x # gateway process
+x isA env_cluster, y is environment : x      # UAT environment
 
 # A B, A and B unrelated
 x is generic_data, y is flow : y isAssoc x  # some flow
@@ -14,18 +18,26 @@ x isA financial_data_source, y is price : y isAssoc x  # Reuters price
 x is.isA client, y is connection : y isAssoc x  #  userid connection
 x isA application, y is support : y isAssoc x   # Word support
 x isA application, y is team : y isAssoc x   # Excel team
+x is trade_action, y isA time_period : y isAssoc x # trade date
+x isA financial_instrument, y is financial_market : y isAssoc x # swap market
+x isA application, y is account : y isAssoc x # reuters account
+x isA company, y is support : y isAssoc x # reuters support
+x is log, y is file : y isAssoc x # log file
+x is human, y is account : user_account # user account
 
 # <A isA B> C where B is a restriction on C
 x isA financial_instrument, y is price : y nounAssoc x     # fx price
-x isA region_name, y isA financial_instrument : y nounAssoc x      # EMEA bond
-x isA region_name, y is.isA process : y nounAssoc x      # EMEA hdb
-x isA env_cluster, y is.isA process : y nounAssoc x      # US hdb
-x isA env_cluster, y is environment : y nounAssoc x      # UAT environment
+x isA region_name, y is anything : y nounAssoc x      # EMEA bond
+x isA env_cluster, y is anything : y nounAssoc x      # US hdb
 x isA application, y is financial_data : y nounAssoc x   # Eikon data
-x isA logical_time, y is time_period : y nounAssoc x     # start date
+x isA logical_time, y isA time_period : y nounAssoc x     # start date
 x is Bloomberg_company, y is bb_ticker : y   # Bloomberg ticker
 x is reuters_fid, y is int_number : a is fid_number, a has x # fid 1002
 x isA file_format, y is file : y nounAssoc x  # txt file
+x isA financial_instrument, y is name : y nounAssoc x # future name
+x isA application, y is screenshot : y nounAssoc x # Excel screenshot
+x is financial_market, y is financial_data : x # market data
+x isA financial_market, y is instrument : x nounAssoc y # exchange instrument
 
 # hard coded
 x isA host, ddot_sign, y is int_number : a is host_port_pair, a has x, a has y   # host:port
@@ -35,11 +47,12 @@ squote_sign, x is unknown_sym : a is symbol, a isAssoc unknown_sym   # `somesym
 
 # time
 x is time_val, y isA timezone_val :  x has y    # 10:00 GMT
-x is month_val, y is ordinal_number :  a is time_val, a has x, a has y  # Jul 10th
-x is month_val, y is int31_number : a is time_val, a has x, a has y   # Jul 10
-x is ordinal_number, y is month_val : a is time_val, a has x, a has y  # 10th Jul
-x is int31_number, y is month_val : a is time_val, a has x, a has y  # 10 Jul
-x is int31_number, and_conj, y is month_val : a is time_val, a has x, a has y  # 10 Jul
+x isA timezone_val, y is time_val :  y has x
+x isA month_val, y is ordinal_number :  a is time_val, a has x, a has y  # Jul 10th
+x isA month_val, y is int31_number : a is time_val, a has x, a has y   # Jul 10
+x is ordinal_number, y isA month_val : a is time_val, a has x, a has y  # 10th Jul
+x is int31_number, y isA month_val : a is time_val, a has x, a has y  # 10 Jul
+x is int31_number, and_conj, y isA month_val : a is time_val, a has x, a has y  # 10 Jul
 x is time_val, y is year_val : x has y  # .. 2018
 x is time_val, y is before_1200 : x has y  # 10 am
 x is time_val, y is after_1200 : x has y   # 10 pm

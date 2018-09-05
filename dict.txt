@@ -139,7 +139,7 @@ config
 configuration
 misconfiguration
 configure
-user
+user human
 username
 "user name" username
 client
@@ -172,6 +172,7 @@ upstream
 link
 permission
 account
+"application account" app_account
 dev developer
 developer
 development
@@ -206,6 +207,7 @@ team
 connect
 connectivity
 connection
+"connection details" connection_details
 disconnect
 run
 help
@@ -353,6 +355,7 @@ device
 putty
 session
 byte
+license
 
 # pronouns
 it it_pronoun
@@ -368,6 +371,7 @@ AMER AMER_region_name
 ASIA ASIA_region_name
 JPN JPN_region_name
 HK HK_region_name
+TOK TOK_region_name
 region
 regional
 
@@ -418,6 +422,7 @@ Bangalore Bangalore_city
 Mumbai Mumbai_city
 Pune Pune_city
 Gurgaon Gurgaon_city
+Tokyo Tokyo_city
 
 # exchanges
 LSE LSE_exchange
@@ -427,7 +432,7 @@ BOVESPA BOVESPA_exchange
 !ICE ICE_exchange
 ASX ASX_exchange
 Chi-X ChiX_exchange
-market
+market financial_market
 exchange
 "stock exchange" exchange
 
@@ -476,7 +481,7 @@ twap stats
 NAV stats
 
 # tables
-trade trade_table
+trade trade_table trade_action
 quote quote_table
 depth depth_table
 nbbo nbbo_table
@@ -521,11 +526,15 @@ equity stock__financial_data
 index index_financial_instrument index_financial_data
 spot
 future future_financial_instrument future_financial_data
-fx fx_financial_instrument fx_financial_data
+fx fx_financial_market fx_financial_data
 spread spread_financial_instrument spread_financial_data
 option option_financial_instrument option_financial_data
 bond bond_financial_instrument bond_financial_data
 "convertible bond" bond_financial_instrument
+"government bond" bond_financial_instrument
+"corporate bond" bond_financial_instrument
+"covered bond" bond_financial_instrument
+"real estate bond" bond_financial_instrument
 "fixed income" bond_financial_instrument
 warrant warrant_financial_instrument warrant_financial_data
 swap swap_financial_instrument swap_financial_data
@@ -534,10 +543,34 @@ debt
 credit
 "foreign exchange" fx_financial_data
 derivative
+"credit derivative" derivative
+"equity derivative" derivative
+"fx derivative" derivative
+"commodity derivative" derivative
+"money market" money_market_financial_market
+"money market derivative" derivative
 CDS CDS_financial_instrument CDS_financial_data
 "credit default swap" CDS_financial_instrument
 fund ETF_financial_instrument
 ETF ETF_financial_instrument ETF_financial_data
+"interest rate" rate
+"interest rate derivative" derivative
+OTF OTF_financial_market
+oil wti_oil_commodity
+"crude oil" wti_oil_commodity
+"oil future" future_financial_instrument
+"brent crude" brent_oil_commodity
+brent brent_oil_commodity
+"natural gas" gas_commodity
+gas gas_commodity
+gold gold_commodity
+silver silver_commodity
+copper copper_commodity
+corn corn_commodity
+MTF mutual_fund
+commodity
+"cash equity" equity
+"interest rate swap" swap_financial_instrument
 
 payment
 negotiation
@@ -561,6 +594,7 @@ desk
 business
 "Vice President" person
 support
+"customer support" support
 PM project_manager
 "project manager" project_manager
 manager
@@ -627,7 +661,10 @@ Bloomberg Bloomberg_company Bloomberg_financial_data_source
 BB Bloomberg_company Bloomberg_financial_data_source
 BBG Bloomberg_company Bloomberg_financial_data_source
 Reuters Reuters_company Reuters_financial_data_source
+"Thompson Reuters" Reuters_company
 ION ION_financial_data_source
+"Tullet Prebon" Tullet_financial_data_source
+Tullet Tullet_financial_data_source
 BlackBerry BlackBerry_company
 "Deutsche Bank AG" DB_company
 "Deutsche Bank" DB_company
@@ -815,6 +852,7 @@ important
 name
 location
 call
+person human
 human
 
 # math
@@ -869,6 +907,7 @@ Thanks thank_you
 "Thank you" thank_you
 Thx thank_you
 cheers thank_you
+"many thanks" thank_you
 okay ok
 okey ok
 ok
@@ -1053,6 +1092,7 @@ $UNKNOWN=$EQUALSUFFIX some_ric
 "+ $INTN1or2 $INTN3 ( $INTN3 ) $INTN4" telephone_num
 "+ $INTN1or2 ( $INTN3 ) $INTN3 - $INTN4" telephone_num
 "+ $INTN2 $INTN1 $INTN3 - $INTN4" telephone_num
+"+ $INTN2 $INTN1 $INTN3 $INTN4" telephone_num
 "+ $INTN2 ( $INTN2 ) $INTN1 $INTN3 $INTN4" telephone_num
 "+ $INTN2 ( $INTN1 ) $INTN3 - $INTN4" telephone_num
 "+ $INTN1or2 ( $INTN3 ) $INTN7" telephone_num
@@ -1071,6 +1111,7 @@ $UNKNOWN=$EQUALSUFFIX some_ric
 "+ $INTN2 ( $INTN2 ) $INTN4 $INTN4" telephone_num
 "+ $INTN2 $INTN4 $INTN3 $INTN3" telephone_num
 "+ $INTN1or2 $INTN10" telephone_num
+"+ $INTN1or2 - $INTN10" telephone_num
 "+ $INTN2 $INTN10" telephone_num
 "+ $INTN2 $INTN9" telephone_num
 "+ $INTN3 $INTN8" telephone_num

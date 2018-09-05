@@ -52,6 +52,8 @@ class Node:
         Link(self,ltype,node,subType=lSubType)
         return node if ret_arg else self
     def isA(self,key,lkeys=["is","isA"]):
+        if key == "anything":
+            return True
         if self.type == "kb_ref":
             if self.value and get_kb_node(self.value).isA(key, lkeys):
                 return True

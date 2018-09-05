@@ -198,6 +198,6 @@ def get_tokenizer():
     for r in get_special_rules():
         fnlpTok_.add_special_case(r[0],r[1])
 def fnlpTok(txt):
-    return fnlpTok_("".join([t.text_with_ws for t in fnlpTok_(txt) if not t.is_space]))
+    return fnlpTok_(u"".join([t.text_with_ws for t in fnlpTok_(txt) if not t.is_space]))
         
 # get_tokenizer()

@@ -36,6 +36,7 @@ AMER_region_name isA region_name
 ASIA_region_name isA region_name
 JPN_region_name isA region_name
 HK_region_name isA region_name
+TOK_region_name isA region_name
 
 US_country isA country
 Brazil isA country
@@ -57,6 +58,8 @@ tweb_ric is RIC
 
 financial_market is market
 exchange is financial_data_source
+money_market_financial_market isA financial_market
+OTF_financial_market isA financial_market
 #exchange is financial_market
 ICE_exchange isA exchange
 NYSE_exchange isA exchange
@@ -66,9 +69,18 @@ BOVESPA_exchange isA exchange
 ASX_exchange isA exchange
 ChiX_exchange isA exchange
 
+wti_oil_commodity isA commodity
+brent_oil_commodity isA commodity
+gas_commodity isA commodity
+gold_commodity isA commodity
+silver_commodity isA commodity
+corn_commodity isA commodity
+copper_commodity isA commodity
+
 Bloomberg_financial_data_source isA financial_data_source
 Reuters_financial_data_source isA financial_data_source
 ION_financial_data_source isA financial_data_source
+Tullet_financial_data_source isA financial_data_source
 
 Bloomberg_company isA company
 Reuters_company isA company
@@ -92,6 +104,9 @@ Outlook_application isA application
 Skype_application isA application
 git_application isA application
 svn_application isA application
+
+app_account is account
+user_account is account
 
 bid_column isA column
 ask_column isA column
@@ -232,6 +247,7 @@ Pune_city isA city
 sao_paulo_city isA city
 Singapore_city isA city
 Sydney_city isA city
+Tokyo_city isA city
 
 qnull_long isA qnull
 qnull_float isA qnull

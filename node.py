@@ -162,8 +162,12 @@ class Dict:
     def add_l2dict_entry(self,str):
         i = 0; doc = fnlpTok(str);
         i, defs = self.parse_defs(i,doc)
+        if i<len(doc) and doc[i-1] == "|":
+            i,chks = self.parse_defs(i,doc,rules=True)
+        else:
+            chks = []
         _, rls = self.parse_defs(i,doc,rules=True)
-        self.get_entry(u"#lvl2").append({ "defs": defs, "rules": rls})
+        self.get_entry(u"#lvl2").append({ "defs": defs, "checks":chks, "rules": rls})
     def parse_defs(self, i, doc, rules=False):
         i, df = self.parse_def(i, doc)
         defs = [df] if rules else [[df]]
@@ -180,7 +184,7 @@ class Dict:
         return i, defs
     def parse_def(self, i, doc):
         'assume x is something / something is x /  x / somethin for now'
-        if len(doc) is i+1 or doc[i+1].text in [":",","]:
+        if len(doc) is i+1 or doc[i+1].text in [":",",","|"]:
             df = { "v1": self.is_var(doc[i].text), "links": [], "node1": doc[i].text, "node2": None, "v2": False}
             df["var"] = df["node1"] if df["v1"] else None
             df["node"] = None if df["v1"] else df["node1"]
@@ -188,7 +192,7 @@ class Dict:
         df = { "node1": doc[i].text, "links": doc[i+1].text.split("."), "v1": self.is_var(doc[i].text), "v2": self.is_var(doc[i+2].text), "node2": doc[i+2].text}
         df["var"] = df["node1"] if df["v1"] else df["node2"] if df["v2"] else None
         df["node"] = df["node1"] if not df["v1"] else df["node2"] if not df["v2"] else None
-        if not (len(doc) is i+3 or doc[i+3].text in [":",","]):
+        if not (len(doc) is i+3 or doc[i+3].text in [":",",","|"]):
             raise WrongL2DictFormat(doc.text)
         return i+4, df
     def is_var(self, x):
@@ -312,7 +316,7 @@ class Dict:
                         if not curr2 or not check_kb(t, curr2.value["kb_ids"], env) :
                             succ = False
                             break
-                    if succ:
+                    if succ and apply_checks(r["checks"], env):
                         curr = prev.add_node(Node("sentence_token","synt",{ "tokens": start.value[curr.value["tokens"][0].i:1+curr2.value["tokens"][-1].i],
                             "kb_ids": apply_rules(r["rules"], env) }), "next", ret_arg=True)
                         nxt = curr2.lnext("next", last=True)

@@ -191,6 +191,13 @@ def apply_rules(rules, env):
             n1.add_node(n2,r["links"][0])
             node = n1
     return [node] if node else []
+def apply_checks(checks, env):
+    for c in checks:
+        o1 = env[c["node1"]] if c["v1"] else get_kb_node(c["node1"])
+        o2 = env[c["node2"]] if c["v2"] else get_kb_node(c["node2"])
+        if not c["node2"]:
+            return True
+        return o1.isA(o2, lkeys=c["links"])
 
 def get_tokenizer():
     global fnlpTok_

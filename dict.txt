@@ -172,7 +172,6 @@ upstream
 link
 permission
 account
-"application account" app_account
 dev developer
 developer
 development
@@ -407,6 +406,7 @@ Taiwan Taiwan_country
 China China_country
 "Hong Kong" Hong_Kong_city
 Chile Chile_country
+Ireland Ireland_country
 
 # cities
 NewYork NY_city
@@ -423,6 +423,7 @@ Mumbai Mumbai_city
 Pune Pune_city
 Gurgaon Gurgaon_city
 Tokyo Tokyo_city
+Doublin Doublin_city
 
 # exchanges
 LSE LSE_exchange
@@ -722,13 +723,13 @@ UTC UTC_timezone_val
 JST JST_timezone_val
 IST IST_timezone_val
 COB close_of_business
-day
+day day_time_period
 daily
 daylight
-night
+night night_time_period
 nightly
 overnight
-midnight
+midnight midnight_time_period
 tonight
 morning
 evening
@@ -842,6 +843,7 @@ am be
 may may
 ca can
 an an
+non
 global
 local
 suffix
@@ -1091,7 +1093,7 @@ $UNKNOWN=$EQUALSUFFIX some_ric
 "+ $INTN1 - $INTN3 - $INTN3 - $INTN4" telephone_num
 "+ $INTN1or2 $INTN3 ( $INTN3 ) $INTN4" telephone_num
 "+ $INTN1or2 ( $INTN3 ) $INTN3 - $INTN4" telephone_num
-"+ $INTN2 $INTN1 $INTN3 - $INTN4" telephone_num
+"+ $INTN2or3 $INTN1 $INTN3 - $INTN4" telephone_num
 "+ $INTN2 $INTN1 $INTN3 $INTN4" telephone_num
 "+ $INTN2 ( $INTN2 ) $INTN1 $INTN3 $INTN4" telephone_num
 "+ $INTN2 ( $INTN1 ) $INTN3 - $INTN4" telephone_num

@@ -47,7 +47,7 @@ tokenizer = nlp.tokenizer
 
 INFIX_RULES1 = ["[\[\]\(\)\{\}\!\.\:\,;]"]
 INFIX_RULES2 = ["[\[\]\(\)\{\}\!`\:\,;+=<>\\\\/$#\"@^]"]
-PREFIX_RULES = ["[\./\\\\~@]"]
+PREFIX_RULES = ["[\./\\\\~@\\-]"]
 SUFFIX_RULES = ["[\/\\\\\\-|]"]
 
 def extend_tokenizer(nlp,pref,inf,suf):
@@ -188,7 +188,10 @@ def apply_rules(rules, env):
         else:
             n1 = env[r["node1"]] if r["v1"] else DICT.get_repr(r["node1"],r["node1"])
             n2 = env[r["node2"]] if r["v2"] else DICT.get_repr(r["node2"],r["node2"])
-            n1.add_node(n2,r["links"][0])
+            if r["links"][0] == "+":
+                n1.merge(n2)
+            else:
+                n1.add_node(n2,r["links"][0])
             node = n1
     return [node] if node else []
 def apply_checks(checks, env):
@@ -196,8 +199,10 @@ def apply_checks(checks, env):
         o1 = env[c["node1"]] if c["v1"] else get_kb_node(c["node1"])
         o2 = env[c["node2"]] if c["v2"] else get_kb_node(c["node2"])
         if not c["node2"]:
-            return True
-        return o1.isA(o2, lkeys=c["links"])
+            continue
+        if not o1.isA(o2, lkeys=c["links"]):
+            return False
+    return True
 
 def get_tokenizer():
     global fnlpTok_

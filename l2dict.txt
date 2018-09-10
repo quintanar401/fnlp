@@ -1,7 +1,6 @@
 # <A isA B> B rules
 x isA financial_data, y is financial_data : x      # fx data
 x isA financial_data_source, y is financial_data : x      # LSE data
-x isA price, y is price : x     # close price
 x is internet_address, y is address : x   # IP address
 x isA table_name, y is table : x    # trade table
 x isA financial_data, y is market : x # fx market
@@ -10,6 +9,8 @@ x isA financial_instrument, y is instrument : x # bond instrument
 x isA commodity, y is instrument : x  # oil instrument
 x isA process, y is process : x # gateway process
 x isA env_cluster, y is environment : x      # UAT environment
+x is email, y is address : x
+x, y | x isA y : x + y # EMEA region like
 
 # A B, A and B unrelated
 x is generic_data, y is flow : y isAssoc x  # some flow
@@ -23,14 +24,23 @@ x isA financial_instrument, y is financial_market : y isAssoc x # swap market
 x isA application, y is account : y isAssoc x # reuters account
 x isA company, y is support : y isAssoc x # reuters support
 x is log, y is file : y isAssoc x # log file
-x is human, y is account : user_account # user account
+x is human, y is account : a is user_account, a + y # user account
+x is application, y is account : a is app_account, a + y # application account
+x is account, y is password : y isAssoc x # account password
+x is user, y is password : y isAssoc x # user password
+x isA user, y is password : y isAssoc x # user_id password
+non, minus_sign, x : x isAssoc negation
+x is financial_data_source, y is symbol : y isAssoc x # LSE symbol
+x is financial_market, y is symbol : y isAssoc x # FX symbol
 
 # <A isA B> C where B is a restriction on C
 x isA financial_instrument, y is price : y nounAssoc x     # fx price
-x isA region_name, y is anything : y nounAssoc x      # EMEA bond
-x isA env_cluster, y is anything : y nounAssoc x      # US hdb
+x isA region_name, y is object : y nounAssoc x      # EMEA bond
+x isA env_cluster, y is object : y nounAssoc x      # US hdb
 x isA application, y is financial_data : y nounAssoc x   # Eikon data
-x isA logical_time, y isA time_period : y nounAssoc x     # start date
+x is start_time, y isA time_period : y nounAssoc x     # start date
+x is end_time, y isA time_period : y nounAssoc x     # end date
+x is snap, y isA time_period : y nounAssoc x     # snap date
 x is Bloomberg_company, y is bb_ticker : y   # Bloomberg ticker
 x is reuters_fid, y is int_number : a is fid_number, a has x # fid 1002
 x isA file_format, y is file : y nounAssoc x  # txt file
@@ -38,6 +48,8 @@ x isA financial_instrument, y is name : y nounAssoc x # future name
 x isA application, y is screenshot : y nounAssoc x # Excel screenshot
 x is financial_market, y is financial_data : x # market data
 x isA financial_market, y is instrument : x nounAssoc y # exchange instrument
+x isA financial_market, y is financial_data : y nounAssoc x # FX data
+x isA application, y isA process : y nounAssoc x # Excel hdb
 
 # hard coded
 x isA host, ddot_sign, y is int_number : a is host_port_pair, a has x, a has y   # host:port
@@ -56,3 +68,11 @@ x is int31_number, and_conj, y isA month_val : a is time_val, a has x, a has y  
 x is time_val, y is year_val : x has y  # .. 2018
 x is time_val, y is before_1200 : x has y  # 10 am
 x is time_val, y is after_1200 : x has y   # 10 pm
+
+
+lvl3
+
+x is last, y is.isA object_countable : y isAssoc x  # last something
+x is next, y is.isA object_countable : y isAssoc x  # next something
+x is few, y is.isA object_countable : y isAssoc x  #  few something
+x is first, y is.isA object_countable : y isAssoc x  # first something

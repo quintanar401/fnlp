@@ -18,10 +18,11 @@ def find_first(lst,key):
 
 class Node:
     id = 0
-    def __init__(self, key, type, value=None):
+    def __init__(self, key, type, value=None, weight = 0.0):
         self.key = key
         self.value = value
         self.type = type
+        self.weight = weight
         self.links_to = []
         self.links_from = []
         self.id = Node.id
@@ -51,9 +52,18 @@ class Node:
     def add_node(self,node,ltype,lSubType=None, ret_arg = False):
         Link(self,ltype,node,subType=lSubType)
         return node if ret_arg else self
+    def merge(self, node):
+        self.links_to += [l.set_to(self) for l in node.links_to]
+        self.links_from += [l.set_from(self) for l in node.links_from]
+        node.links_to = []; node.links_from = [];
+        return self
+    def cp_merge(self, node):
+        self.links_to += [l.copy_to(self) for l in node.links_to]
+        self.links_from += [l.copy_from(self) for l in node.links_from]
+        return self
     def isA(self,key,lkeys=["is","isA"]):
-        if key == "anything":
-            return True
+        if not type(key) is str:
+            key = key.key
         if self.type == "kb_ref":
             if self.value and get_kb_node(self.value).isA(key, lkeys):
                 return True
@@ -98,6 +108,16 @@ class Link:
         to.add_from_link(self)
     def next(self, key):
         return self.to if self.to.key == key else None
+    def set_from(self, frm):
+        self.to = frm
+        return self
+    def set_to(self, to):
+        self.frm = to
+        return self
+    def copy_from(self, to):
+        return Link(self.frm, self.type, to, subType = self.subType)
+    def copy_to(self, frm):
+        return Link(frm, self.type, self.to, subType = self.subType)
 
 class BaseFNLPException(BaseException):
     pass
@@ -142,7 +162,7 @@ def load_kb(path, encoding='latin1', init=True):
 
 class Dict:
     def __init__(self, path, encoding='latin1'):
-        self.dict = { hash_string(u"#re"): [], hash_string(u"#lvl2"): []}
+        self.dict = { hash_string(u"#re"): [], hash_string(u"#lvl2"): [], hash_string(u"#lvl3"): []}
         self.index = []
         self.array = []
         self.add_dict(path, encoding)
@@ -151,23 +171,30 @@ class Dict:
     def add_l2dict(self, path, encoding='latin1'):
         self._add_dict(path, encoding, self.add_l2dict_entry)
     def _add_dict(self, path, encoding, func):
+        self.currDict = u"#lvl2"
         with codecs.open(path, encoding=encoding) as f:
-            for str in f:
-                r = ECMT.match(str)
-                str = r.group(1) if r else str
-                if ESTR2.match(str):
+            for strn in f:
+                r = ECMT.match(strn)
+                strn = (r.group(1) if r else strn).strip("\r\n ")
+                if ESTR2.match(strn):
                     continue
-                func(str.strip("\r\n "))
+                if strn == "lvl3":
+                    self.currDict = u"#lvl3"
+                    continue
+                try:
+                    func(strn)
+                except Exception as e:
+                    print("Error in: "+strn+" - "+str(e))
             self.hash_entries()
     def add_l2dict_entry(self,str):
         i = 0; doc = fnlpTok(str);
         i, defs = self.parse_defs(i,doc)
-        if i<len(doc) and doc[i-1] == "|":
+        if i<len(doc) and doc[i-1].text == "|":
             i,chks = self.parse_defs(i,doc,rules=True)
         else:
             chks = []
         _, rls = self.parse_defs(i,doc,rules=True)
-        self.get_entry(u"#lvl2").append({ "defs": defs, "checks":chks, "rules": rls})
+        self.get_entry(self.currDict).append({ "defs": defs, "checks":chks, "rules": rls})
     def parse_defs(self, i, doc, rules=False):
         i, df = self.parse_def(i, doc)
         defs = [df] if rules else [[df]]
@@ -231,17 +258,17 @@ class Dict:
                 brk = t.text
                 continue
             ntok = { "word": t.text, "lword": t.text.lower(), "lemma": "**nolemma**" if nolemma else fnlpTok(t.text.lower())[0].lemma_, "ws": not brk == "'" and len(t.whitespace_)>0,
-                "re": re_rule, "opts": opts }
+                "re": re_rule, "opts": opts, "last": False }
             re_rule = nolemma = False; opts = {}
             toks.append(ntok)
             if (not brk) and ntok["ws"]:
                 break
-        toks[-1]["ws"] = None
+        toks[-1]["ws"] = None; toks[-1]["last"] = True
         kbw = [toks[-1]["word"]] if i is len(doc) else [t.text for t in doc[i:]]
         W = self.get_entry(u"#re" if toks[0]["re"]  else toks[0]["lword"])
         entry = self.match_exact_entry_tokens(W,toks) if len(W) and not toks[0]["re"] else None
         if entry:
-            kbw = [f for f in filter(lambda x: x in entry["ids"],kbw)]
+            kbw = [f for f in filter(lambda x: not x in entry["ids"],kbw)]
             entry["ids"] += kbw
             return entry["ids"]
         W.append({ "tokens": toks, "ids": kbw})
@@ -286,8 +313,10 @@ class Dict:
         self.index = [self.index[i] for i in iasc]
         self.array = [self.array[i] for i in iasc]
 
-    def get_repr(self, txt, kb_id):
-        n = Node(txt, "kb_ref", kb_id)
+    def get_repr(self, doc, txt, kb_id, weight):
+        n = Node(txt, "kb_ref", kb_id, weight = weight)
+        if nlp(doc)[-1].tag_ == "NNS":
+            n.add_node(Node("noun_plural","synt",0), "is")
         return n
 
     def match_sentence(self,doc):
@@ -295,21 +324,21 @@ class Dict:
         while i<len(doc):
             j,res = self.match(doc[i:])
             if res:
-                repr = { "tokens": doc[i:i+j], "kb_ids": [self.get_repr(t, t) for t in res], "ws": False }
+                repr = { "tokens": doc[i:i+j], "kb_ids": res[j], "ws": False }
             else:
                 j,res = match_re(doc,i)
                 if res:
-                    repr = { "tokens": res[1], "kb_ids": [self.get_repr(res[2], res[2])], "ws": False }
+                    repr = { "tokens": res[1], "kb_ids": [self.get_repr(res[2], res[2], 1)], "ws": False }
                 else:
                     repr = { "tokens": doc[i:i+1], "kb_ids": [], "ws": False }
             repr["ws"] = len(repr["tokens"][-1].whitespace_)>0
             curr = curr.add_node(Node("sentence_token","synt",repr), "next", ret_arg=True)
             i += len(repr["tokens"])
-        lvl2 = DICT[u"#lvl2"]
+        lvl = [DICT[u"#lvl2"],DICT[u"#lvl3"]]; lidx = 0
         while True:
             curr = start.lnext("next", last=True); prev = start; no_change = True
             while curr:
-                for r in lvl2:
+                for r in lvl[lidx]:
                     curr2 = prev; succ = True; env = {}
                     for t in r["defs"]:
                         curr2 = curr2.lnext("next", last=True)
@@ -327,7 +356,11 @@ class Dict:
                 prev = curr
                 curr = curr.lnext("next", last=True)
             if no_change:
-                break
+                lidx += 1
+                if lidx is len(lvl):
+                    break
+            else:
+                lidx = 0
         return start
 
     def match(self,doc):
@@ -337,13 +370,23 @@ class Dict:
             art = art + self.get_entry(doc[0].text)
         except KeyError:
             pass
-        score = 0; entry = None
+        score = 0; elen = 0; entries = {}
         for a in art:
             ns = self.calc_score(doc, a["tokens"])
+            if ns < 0.1:
+                continue
+            l = len(a["tokens"])
             if ns>score:
-                entry = a
+                elen = l
                 score = ns
-        return (len(entry["tokens"]),entry["ids"]) if entry else (0,None)
+            a = [self.get_repr(doc[0:l].text,t,t,ns) for t in a["ids"]]
+            if l in entries:
+                entries[l] += a
+            else:
+                entries[l] = a
+        for k in entries:
+            entries[k].sort(key = lambda x: -x.weight)
+        return (elen,entries) if elen>0 else (0,None)
     def calc_score(self, doc, ent):
         'Calculate the match score for 1 entry.'
         if len(doc)<len(ent):
@@ -359,8 +402,14 @@ class Dict:
             else:
                 word_score = -100
         else:
-            lemma = fnlpTok(y.text.lower())[0].lemma_
-            word_score = 1 if x["word"] == y.text else 0.95 if x["lword"] in [y.text.lower(),lemma] else 0.9 if x["lemma"] == lemma else -10
+            if x["word"] == y.text:
+                word_score = 1
+            else:
+                lemma = fnlpTok(y.text.lower())[0].lemma_
+                if x["last"]:
+                    word_score = 0.95 if x["lword"] in [y.text.lower(),lemma] else 0.9 if x["lemma"] == lemma else -10
+                else:
+                    word_score = 0.95 if x["lword"] == y.text.lower() else 0.8 if x["lword"] == lemma or x["lemma"] == lemma else -10
         return ws_score + word_score * (x["opts"]["score"] if "score" in x["opts"] else 1)
 
     def get_lemma(self, word):

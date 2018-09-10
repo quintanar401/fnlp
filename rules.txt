@@ -1,4 +1,5 @@
-symbol is logical_object
+object_countable is object
+symbol is object_countable
 ccy_pair is symbol
 currency is symbol
 ccy is currency
@@ -46,9 +47,6 @@ Australia isA country
 China isA country
 Taiwan isA country
 
-new_york isA city
-sao_paulo isA city
-
 stock_ric is RIC
 future_ric is RIC
 fx_ric is RIC
@@ -60,6 +58,7 @@ financial_market is market
 exchange is financial_data_source
 money_market_financial_market isA financial_market
 OTF_financial_market isA financial_market
+fx_financial_market isA financial_market
 #exchange is financial_market
 ICE_exchange isA exchange
 NYSE_exchange isA exchange
@@ -139,8 +138,6 @@ level1_table isA table
 
 pm_time_val is time_val
 am_time_val is time_val
-start_time isA logical_time
-end_time isA logical_time
 
 BST_timezone_val isA timezone_val
 DST_timezone_val isA timezone_val
@@ -215,6 +212,10 @@ date_time_period isA time_period
 hour_time_period isA time_period
 minute_time_period isA time_period
 second_time_period isA time_period
+day_time_period isA time_period
+night_time_period isA time_period
+midnight_time_period isA time_period
+
 
 zip_file_format isA file_format
 csv_file_format isA file_format
@@ -228,6 +229,7 @@ Chile_country isA country
 China_country isA country
 Germany_country isA country
 India_country isA country
+Ireland_country isA country
 Japan_country isA country
 Luxembourg_country isA country
 Russia_country isA country
@@ -238,6 +240,7 @@ united_kingdom isA country
 USA_country isA country
 
 Bangalore_city isA city
+Doublin_city isA city
 Gurgaon_city isA city
 London_city isA city
 Moscow_city isA city

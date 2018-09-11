@@ -178,16 +178,16 @@ def apply_rules(rules, env):
     for r in rules:
         if r["v1"] and not r["node1"] in env:
             if r["links"][0] == "=":
-                env[r["node1"]] = node = DICT.get_repr(r["node2"],r["node2"])
+                env[r["node1"]] = node = DICT.get_repr0(r["node2"])
                 continue
             env[r["node1"]] = Node(r["node1"],"kb_ref",None)
         if r["v2"] and not r["node2"] in env:
             env[r["node2"]] = Node(r["node2"],"kb_ref",None)
         if not r["node2"]:
-            node = env[r["var"]] if r["var"] else DICT.get_repr(r["node"],r["node"])
+            node = env[r["var"]] if r["var"] else DICT.get_repr0(r["node"])
         else:
-            n1 = env[r["node1"]] if r["v1"] else DICT.get_repr(r["node1"],r["node1"])
-            n2 = env[r["node2"]] if r["v2"] else DICT.get_repr(r["node2"],r["node2"])
+            n1 = env[r["node1"]] if r["v1"] else DICT.get_repr0(r["node1"])
+            n2 = env[r["node2"]] if r["v2"] else DICT.get_repr0(r["node2"])
             if r["links"][0] == "+":
                 n1.merge(n2)
             else:

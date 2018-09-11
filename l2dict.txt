@@ -1,43 +1,54 @@
 # <A isA B> B rules
-x isA financial_data, y is financial_data : x      # fx data
-x isA financial_data_source, y is financial_data : x      # LSE data
-x is internet_address, y is address : x   # IP address
-x isA table_name, y is table : x    # trade table
-x isA financial_data, y is market : x # fx market
-x isA region, y is region : x  # EMEA region
-x isA financial_instrument, y is instrument : x # bond instrument
-x isA commodity, y is instrument : x  # oil instrument
-x isA process, y is process : x # gateway process
-x isA env_cluster, y is environment : x      # UAT environment
-x is email, y is address : x
+x isA financial_data_source, y is financial_data : x + y    # LSE data
+x is internet_address, y is address : x + y  # IP address
+x isA table_name, y is table : x + y   # trade table
+x isA financial_data, y is market : x + y # fx market
+x isA financial_instrument, y is instrument : x + y # bond instrument
+x isA commodity, y is instrument : x + y # oil instrument
+x isA env_cluster, y is environment : x + y   # UAT environment
+x is email, y is address : x + y
 x, y | x isA y : x + y # EMEA region like
 
 # A B, A and B unrelated
 x is generic_data, y is flow : y isAssoc x  # some flow
-x is previous, y is price : y isAssoc x  # previous price
 x isA financial_data_source, y is price : y isAssoc x  # Reuters price
+x is price, y is source : y isAssoc x # price source
 x is.isA client, y is connection : y isAssoc x  #  userid connection
 x isA application, y is support : y isAssoc x   # Word support
 x isA application, y is team : y isAssoc x   # Excel team
+x isA application, y isA team : y isAssoc x # BB data team
+x isA application, y is account : y isAssoc x # reuters account
+x is application, y is account : a is app_account, a + y # application account
+x isA application, y is financial_data : y nounAssoc x   # Eikon data
+x isA application, y is screenshot : y nounAssoc x # Excel screenshot
+x isA application, y isA process : y nounAssoc x # Excel hdb
+x isA application, y is codebase : y nounAssoc x # Excel codebase
+x isA application, y is release : y nounAssoc x # Excel release
+x isA application, y is server : y nounAssoc x # Excel server
+x isA application, y is port : y nounAssoc x # Excel port
+x isA application, y is query : y nounAssoc x # Excel query
 x is trade_action, y isA time_period : y isAssoc x # trade date
 x isA financial_instrument, y is financial_market : y isAssoc x # swap market
-x isA application, y is account : y isAssoc x # reuters account
+x isA financial_instrument, y is index_financial_instrument : y isAssoc x # future index
+x isA financial_instrument, y is symbol : y isAssoc x # future symbol
 x isA company, y is support : y isAssoc x # reuters support
+x isA company, y is terminal : y isAssoc x # bb terminal
 x is log, y is file : y isAssoc x # log file
 x is human, y is account : a is user_account, a + y # user account
-x is application, y is account : a is app_account, a + y # application account
 x is account, y is password : y isAssoc x # account password
 x is user, y is password : y isAssoc x # user password
 x isA user, y is password : y isAssoc x # user_id password
 non, minus_sign, x : x isAssoc negation
 x is financial_data_source, y is symbol : y isAssoc x # LSE symbol
 x is financial_market, y is symbol : y isAssoc x # FX symbol
+x is API, y is call : y isAssoc x # API call
+x is primary, y is GW_process : y isAssoc x # primary GW
+x is secondary, y is GW_process : y isAssoc x # secondary GW
+x is symbol, y is name : y isAssoc x # symbol name
+y is symbol, y is history : y isAssoc x # symbol history
 
 # <A isA B> C where B is a restriction on C
 x isA financial_instrument, y is price : y nounAssoc x     # fx price
-x isA region_name, y is object : y nounAssoc x      # EMEA bond
-x isA env_cluster, y is object : y nounAssoc x      # US hdb
-x isA application, y is financial_data : y nounAssoc x   # Eikon data
 x is start_time, y isA time_period : y nounAssoc x     # start date
 x is end_time, y isA time_period : y nounAssoc x     # end date
 x is snap, y isA time_period : y nounAssoc x     # snap date
@@ -45,34 +56,46 @@ x is Bloomberg_company, y is bb_ticker : y   # Bloomberg ticker
 x is reuters_fid, y is int_number : a is fid_number, a has x # fid 1002
 x isA file_format, y is file : y nounAssoc x  # txt file
 x isA financial_instrument, y is name : y nounAssoc x # future name
-x isA application, y is screenshot : y nounAssoc x # Excel screenshot
 x is financial_market, y is financial_data : x # market data
 x isA financial_market, y is instrument : x nounAssoc y # exchange instrument
 x isA financial_market, y is financial_data : y nounAssoc x # FX data
-x isA application, y isA process : y nounAssoc x # Excel hdb
+x is greetings, y isA person_name : x nounAssoc y # hi alex
 
 # hard coded
 x isA host, ddot_sign, y is int_number : a is host_port_pair, a has x, a has y   # host:port
 ddot_sign, x isA host, ddot_sign, y is int_number : a is host_port_pair, a has x, a has y # :host:port
 squote_sign, ddot_sign, x isA host, ddot_sign, y is int_number : a is host_port_pair, a has x, a has y   # `:host:port
 squote_sign, x is unknown_sym : a is symbol, a isAssoc unknown_sym   # `somesym
+minus_sign, x is int1or2_number, excl_sign : a is q_internal_fn, a isAssoc x
 
 # time
 x is time_val, y isA timezone_val :  x has y    # 10:00 GMT
 x isA timezone_val, y is time_val :  y has x
 x isA month_val, y is ordinal_number :  a is time_val, a has x, a has y  # Jul 10th
 x isA month_val, y is int31_number : a is time_val, a has x, a has y   # Jul 10
+x isA month_val, y is year_val : a is time_val, a has x, a has y   # Jul 2010
 x is ordinal_number, y isA month_val : a is time_val, a has x, a has y  # 10th Jul
 x is int31_number, y isA month_val : a is time_val, a has x, a has y  # 10 Jul
+x is int31_number, comma_sign, y isA month_val : a is time_val, a has x, a has y  # 10 Jul
+x is int31_number, slash_sign, y isA month_val : a is time_val, a has x, a has y  # 10 Jul
 x is int31_number, and_conj, y isA month_val : a is time_val, a has x, a has y  # 10 Jul
 x is time_val, y is year_val : x has y  # .. 2018
 x is time_val, y is before_1200 : x has y  # 10 am
 x is time_val, y is after_1200 : x has y   # 10 pm
+x is int_number, y is time_period : y has x  # 7 weeks
+x is year_val, y is time_val : y has x # 2018 ...
+x is time_val, comma_sign, y is time_val : x + y # time , time
+x isA weekday_val, comma_sign, y is time_val : y has x # Thu, 8
+x isA month_val, comma_sign, y is int31_number : a is time_val, a has x, a has y  # Apr, 10
+x is year_val, minus_sign, y is int12_number, minus_sign, z is int31_number : a is time_val, a has x, a has y, a has z
 
 
 lvl3
 
 x is last, y is.isA object_countable : y isAssoc x  # last something
 x is next, y is.isA object_countable : y isAssoc x  # next something
+x is previous, y is.isA object_countable : y isAssoc x  # previous price
 x is few, y is.isA object_countable : y isAssoc x  #  few something
 x is first, y is.isA object_countable : y isAssoc x  # first something
+x isA region_name, y is.isA object_countable : y nounAssoc x      # EMEA bond
+x isA env_cluster, y is.isA object_countable : y nounAssoc x      # US hdb

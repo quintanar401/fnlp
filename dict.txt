@@ -15,6 +15,7 @@ RIC
 ticker bb_ticker
 !ISIN
 symbol
+sym symbol
 symbology
 instrument
 security
@@ -355,6 +356,9 @@ putty
 session
 byte
 license
+codebase
+primary
+secondary
 
 # pronouns
 it it_pronoun
@@ -473,6 +477,7 @@ low min_price low_column
 open open_price open_column
 close close_price close_column
 price price price_column
+!pricing
 size size size_column
 level level_column
 sym sym_column
@@ -482,11 +487,11 @@ twap stats
 NAV stats
 
 # tables
-trade trade_table trade_action
-quote quote_table
-depth depth_table
-nbbo nbbo_table
-level1 level1_table
+!trade trade_table trade_action
+!quote quote_table
+!depth depth_table
+!nbbo nbbo_table
+!level1 level1_table
 
 # financial terms
 MiFID
@@ -532,6 +537,7 @@ spread spread_financial_instrument spread_financial_data
 option option_financial_instrument option_financial_data
 bond bond_financial_instrument bond_financial_data
 "convertible bond" bond_financial_instrument
+"conv bond" bond_financial_instrument
 "government bond" bond_financial_instrument
 "corporate bond" bond_financial_instrument
 "covered bond" bond_financial_instrument
@@ -693,6 +699,8 @@ month month_time_period
 monthly
 year year_time_period
 yearly
+"out of hours" ooh
+"as far as" afa
 history
 historic
 historical
@@ -702,6 +710,7 @@ moment
 delay
 realtime
 RT realtime
+"real time" realtime
 present
 past
 soon
@@ -902,6 +911,7 @@ false
 
 Hi greetings
 Hey greetings
+Hello greetings
 "Kind Regards" thank_you
 "Warm Regards" thank_you
 Regards thank_you
@@ -1036,9 +1046,6 @@ some
 "$INT24 : $INT60 : $TIMEFLOAT" time_val
 "$INT24 : $INT60 : $INT60" time_val
 "$INT24 : $INT60" time_val
-"$INT hours" time_interval
-"$INT minutes" time_interval
-"$INT min" time_interval
 "$INT12 !AM" am_time_val
 "$INT12 !PM" pm_time_val
 
@@ -1051,18 +1058,12 @@ some
 "$INTEGER %" num_percent
 "$FLOAT %" num_percent
 
-$NEGINTN1or2\! q_internal_fn
 "$INT G" gigabytes
 "$INT Gb" gigabytes
 "$INT bytes" bytes_number
 
 {check_fn=check_year}$INT year_val
 {check_fn=check_int_date}$INT integer_date
-
-"$INT31 , $MONTH" month_date
-"$INT31 / $MONTH" month_date
-
-"$MONTH {check_fn=check_year}$INT" month_year
 
 $ORDINALNUM ordinal_number
 
@@ -1160,7 +1161,11 @@ and and_conj
 \{ lcb_sign
 \} rcb_sign
 
+$INTN1or2 int1or2_number
+$INT60 int60_number
 $INT31 int31_number
+$INT24 int24_number
+$INT12 int12_number
 $INT int_number
 $QTIME time_val
 {score=0.9}$UNKNOWN unknown_sym

@@ -104,6 +104,7 @@ Skype_application isA application
 git_application isA application
 svn_application isA application
 
+account isA object_countable
 app_account is account
 user_account is account
 
@@ -148,11 +149,17 @@ UTC_timezone_val isA timezone_val
 JST_timezone_val isA timezone_val
 IST_timezone_val isA timezone_val
 
-int31 is int_number
+int31_number is int_number
+int12_number is int_number
 
 physical_object in container
 
 server is physical_object
+
+person_name isA object_countable
+first_name is person_name
+last_name is person_name
+full_name is person_name
 
 stock_financial_instrument isA financial_instrument
 index_financial_instrument isA financial_instrument
@@ -203,6 +210,7 @@ Fri_weekday_val isA weekday_val
 Sat_weekday_val isA weekday_val
 Sun_weekday_val isA weekday_val
 
+time_period isA object_countable
 time_time_period isA time_period
 year_time_period isA time_period
 month_time_period isA time_period

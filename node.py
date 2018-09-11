@@ -41,7 +41,7 @@ class Node:
     def next(self,key):
         return find_first(self.links_to,key)
     def lnext(self,key,nkey=None,last=False):
-        if type(key) is str:
+        if type(key) is type(u""):
             key = [key]
         for l in reversed(self.links_to) if last else self.links_to:
             if l.type in key:
@@ -204,7 +204,7 @@ class Dict:
                 defs.append(df)
                 continue
             for d in defs:
-                if (df["var"] == d[0]["var"]):
+                if df["var"] and (df["var"] == d[0]["var"]):
                     d.append(df)
             else:
                 defs.append([df])
@@ -315,8 +315,16 @@ class Dict:
 
     def get_repr(self, doc, txt, kb_id, weight):
         n = Node(txt, "kb_ref", kb_id, weight = weight)
-        if nlp(doc)[-1].tag_ == "NNS":
+        tag = nlp(doc)[-1].tag_
+        if tag == "NNS":
             n.add_node(Node("noun_plural","synt",0), "is")
+        elif tag == "VBN":
+            n.add_node(Node("verb_past","synt",0), "is")
+        elif tag == "VBG":
+            n.add_node(Node("verb_gerund","synt",0), "is")
+        return n
+    def get_repr0(self, kb_id):
+        n = Node(kb_id, "kb_ref", kb_id)
         return n
 
     def match_sentence(self,doc):
@@ -328,7 +336,7 @@ class Dict:
             else:
                 j,res = match_re(doc,i)
                 if res:
-                    repr = { "tokens": res[1], "kb_ids": [self.get_repr(res[2], res[2], 1)], "ws": False }
+                    repr = { "tokens": res[1], "kb_ids": [self.get_repr(doc[i:i+j].text, res[2], res[2], 1)], "ws": False }
                 else:
                     repr = { "tokens": doc[i:i+1], "kb_ids": [], "ws": False }
             repr["ws"] = len(repr["tokens"][-1].whitespace_)>0

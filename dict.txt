@@ -9,6 +9,7 @@ production PROD_cluster
 environment
 env environment
 research RES_cluster
+cluster env_cluster
 
 # symbology
 RIC
@@ -375,7 +376,7 @@ ASIA ASIA_region_name
 JPN JPN_region_name
 HK HK_region_name
 TOK TOK_region_name
-region
+region region_name
 regional
 
 # countries
@@ -578,6 +579,7 @@ MTF mutual_fund
 commodity
 "cash equity" equity
 "interest rate swap" swap_financial_instrument
+repo repo_financial_data
 
 payment
 negotiation

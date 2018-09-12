@@ -45,7 +45,10 @@ x is API, y is call : y isAssoc x # API call
 x is primary, y is GW_process : y isAssoc x # primary GW
 x is secondary, y is GW_process : y isAssoc x # secondary GW
 x is symbol, y is name : y isAssoc x # symbol name
-y is symbol, y is history : y isAssoc x # symbol history
+x is symbol, y is history : y isAssoc x # symbol history
+x is developer, y is team : y isAssoc x
+x is fx_financial_data, y is rate : y isAssoc x # fx rate
+x isA city, y is time_time_period : y isAssoc x # NY time
 
 # <A isA B> C where B is a restriction on C
 x isA financial_instrument, y is price : y nounAssoc x     # fx price
@@ -97,5 +100,6 @@ x is next, y is.isA object_countable : y isAssoc x  # next something
 x is previous, y is.isA object_countable : y isAssoc x  # previous price
 x is few, y is.isA object_countable : y isAssoc x  #  few something
 x is first, y is.isA object_countable : y isAssoc x  # first something
+x is new, y is.isA object_all : y isAssoc x # new something
 x isA region_name, y is.isA object_countable : y nounAssoc x      # EMEA bond
 x isA env_cluster, y is.isA object_countable : y nounAssoc x      # US hdb

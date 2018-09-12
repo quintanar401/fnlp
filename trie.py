@@ -7,29 +7,42 @@ class Trie:
     def __len__(self):
         return self.total_len
     def __setitem__(self, item, data):
-        dict = self.dict; s = self.shifts; i = 0
+        dict = self.dict; s = self.shifts; i = 1
         while s[i] < len(item):
-            c = item[s[i]:s[i+1]]; i += 1
+            c = item[s[i-1]:s[i]]; i += 1
             try:
-                dict = dict[c]
+                d = dict[c]
+                if type(d) is list:
+                    dict[c] = { "data": d}
+                    d = dict[c]
+                dict = d
             except KeyError:
                 dict[c] = {}
                 dict = dict[c]
-        if "data" in dict:
-            dict["data"].append(data)
-            self.total_len += 1
-        else:
-            dict["data"] = [data]
-            self.total_len += 1
-            self.len += 1
+        c = item[s[i-1]:s[i]]
+        try:
+            dict = dict[c]
+            if type(dict) is list:
+                dict.append(data)
+                self.len += 1
+            elif "data" in dict:
+                dict["data"].append(data)
+                self.len += 1
+            else:
+                dict["data"] = [data]
+        except KeyError:
+            dict[c] = [data]
+        self.total_len += 1
     def __getitem__(self, item):
         dict = self.dict; s = self.shifts; i = 0
         while s[i] < len(item):
+            if type(dict) is list:
+                return []
             c = item[s[i]:s[i+1]]; i += 1
             try:
                 dict = dict[c]
             except KeyError:
                 return []
-        return dict["data"] if "data" in dict else []
+        return dict if type(dict) is list else dict["data"] if "data" in dict else []
     def __contains__(self, item):
         return len(self[item]) > 0

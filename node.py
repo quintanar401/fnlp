@@ -41,7 +41,7 @@ class Node:
     def next(self,key):
         return find_first(self.links_to,key)
     def lnext(self,key,nkey=None,last=False):
-        if type(key) is type(u""):
+        if isinstance(key,(str,unicode)):
             key = [key]
         for l in reversed(self.links_to) if last else self.links_to:
             if l.type in key:

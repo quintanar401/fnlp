@@ -1,4 +1,4 @@
-object_countable is object
+object_countable is object_all
 symbol is object_countable
 ccy_pair is symbol
 currency is symbol
@@ -15,6 +15,7 @@ QA_cluster isA env_cluster
 DEV_cluster isA env_cluster
 RES_cluster isA env_cluster
 
+process isA object_countable
 q_process is process
 HDB_process isA q_process
 RDB_process isA q_process
@@ -152,9 +153,7 @@ IST_timezone_val isA timezone_val
 int31_number is int_number
 int12_number is int_number
 
-physical_object in container
-
-server is physical_object
+server is object_countable
 
 person_name isA object_countable
 first_name is person_name
@@ -188,6 +187,7 @@ swap_financial_data isA financial_data
 swaption_financial_data isA financial_data
 CDS_financial_data isA financial_data
 ETF_financial_data isA financial_data
+repo_financial_data isA financial_data
 
 Jan_month_val isA month_val
 Feb_month_val isA month_val

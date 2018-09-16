@@ -2,6 +2,11 @@ from __future__ import print_function
 from bisect import bisect_left
 from spacy.strings import hash_string
 
+try:
+    unicode
+except:
+    unicode = str
+
 def list_index(a, x):
     'Locate the leftmost value exactly equal to x'
     i = bisect_left(a, x)
@@ -62,7 +67,7 @@ class Node:
         self.links_from += [l.copy_from(self) for l in node.links_from]
         return self
     def isA(self,key,lkeys=["is","isA"]):
-        if not type(key) is str:
+        if not isinstance(key,(str,unicode)):
             key = key.key
         if self.type == "kb_ref":
             if self.value and get_kb_node(self.value).isA(key, lkeys):

@@ -3,7 +3,7 @@ class Trie:
         self.dict = {}
         self.total_len = 0
         self.len = 0
-        self.shifts = [0,2,5,8,12,17,10000]
+        self.shifts = [0,2,5,8,12,17,22,27,10000]
     def __len__(self):
         return self.total_len
     def __setitem__(self, item, data):

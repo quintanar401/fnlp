@@ -14,6 +14,9 @@ x is generic_data, y is flow : y isAssoc x  # some flow
 x isA financial_data_source, y is price : y isAssoc x  # Reuters price
 x is price, y is source : y isAssoc x # price source
 x is.isA client, y is connection : y isAssoc x  #  userid connection
+x is support, y is team : y isAssoc
+x isA support, y is team : y isAssoc
+x is test, y is team : y isAssoc
 x isA application, y is support : y isAssoc x   # Word support
 x isA application, y is team : y isAssoc x   # Excel team
 x isA application, y isA team : y isAssoc x # BB data team
@@ -27,6 +30,8 @@ x isA application, y is release : y nounAssoc x # Excel release
 x isA application, y is server : y nounAssoc x # Excel server
 x isA application, y is port : y nounAssoc x # Excel port
 x isA application, y is query : y nounAssoc x # Excel query
+x isA application, y is access : y nounAssoc x # Excel access
+x isA application, y isA env_cluster : y nounAssoc x # Word UAT
 x is trade_action, y isA time_period : y isAssoc x # trade date
 x isA financial_instrument, y is financial_market : y isAssoc x # swap market
 x isA financial_instrument, y is index_financial_instrument : y isAssoc x # future index
@@ -49,6 +54,8 @@ x is symbol, y is history : y isAssoc x # symbol history
 x is developer, y is team : y isAssoc x
 x is fx_financial_data, y is rate : y isAssoc x # fx rate
 x isA city, y is time_time_period : y isAssoc x # NY time
+x is EOD, y is rate_financial_data : y isAssoc x
+x is subscription, y is status : y isAssoc x
 
 # <A isA B> C where B is a restriction on C
 x isA financial_instrument, y is price : y nounAssoc x     # fx price
@@ -63,6 +70,20 @@ x is financial_market, y is financial_data : x # market data
 x isA financial_market, y is instrument : x nounAssoc y # exchange instrument
 x isA financial_market, y is financial_data : y nounAssoc x # FX data
 x is greetings, y isA person_name : x nounAssoc y # hi alex
+x is greetings, y is team : x nounAssoc y
+x is release, y is notification : y isAssoc x # release notification
+x is error, y is message : y isAssoc x
+x is current, y isA time_period : y isAssoc x # current week
+x is historical, y is process : y isAssoc x
+x is historical, y is financial_data : y isAssoc x # hist data
+x is realtime, y is financial_data : y isAssoc x # realtime data
+x is intraday, y is financial_data : y isAssoc x # intraday data
+x isA financial_instrument, y is price : y isAssoc x # stock price
+x isA financial_instrument, y is trade_action : y isAssoc x # stock trade
+x is index_financial_instrument, y is index_level : y isAssoc x # index level
+x isA price, y is index_level : y isAssoc x # close level
+x is EOD, y is index_level : y isAssoc x # EOD level
+x isA exchange, y is name : y isAssoc x # LSE name
 
 # hard coded
 x isA host, ddot_sign, y is int_number : a is host_port_pair, a has x, a has y   # host:port
@@ -73,6 +94,7 @@ minus_sign, x is int1or2_number, excl_sign : a is q_internal_fn, a isAssoc x
 
 # time
 x is time_val, y isA timezone_val :  x has y    # 10:00 GMT
+x is time_val, comma_sign, y isA timezone_val :  x has y
 x isA timezone_val, y is time_val :  y has x
 x isA month_val, y is ordinal_number :  a is time_val, a has x, a has y  # Jul 10th
 x isA month_val, y is int31_number : a is time_val, a has x, a has y   # Jul 10
@@ -101,5 +123,10 @@ x is previous, y is.isA object_countable : y isAssoc x  # previous price
 x is few, y is.isA object_countable : y isAssoc x  #  few something
 x is first, y is.isA object_countable : y isAssoc x  # first something
 x is new, y is.isA object_all : y isAssoc x # new something
+x is old, y is.isA object_all : y isAssoc x
+x is some, y is.isA object_all : y isAssoc x
+x is all, y is.isA object_all : y isAssoc x
+x is any, y is.isA object_all : y isAssoc x
+x is lost, y is.isA object_all : y isAssoc x
 x isA region_name, y is.isA object_countable : y nounAssoc x      # EMEA bond
 x isA env_cluster, y is.isA object_countable : y nounAssoc x      # US hdb

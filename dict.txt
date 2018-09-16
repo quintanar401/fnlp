@@ -18,7 +18,7 @@ ticker bb_ticker
 symbol
 sym symbol
 symbology
-instrument
+instrument symbol
 security
 CUSIP
 "Kospi 100" index
@@ -45,7 +45,7 @@ table
 "partitioned table" table
 row
 field
-column
+column table_column
 cell
 record
 map
@@ -69,6 +69,7 @@ assign
 define
 comment
 example
+lost
 
 # IT related
 PC personal_computer
@@ -414,6 +415,7 @@ Chile Chile_country
 Ireland Ireland_country
 
 # cities
+city
 NewYork NY_city
 "New York" NY_city NY_state
 NY NY_city
@@ -438,8 +440,10 @@ BOVESPA BOVESPA_exchange
 !ICE ICE_exchange
 ASX ASX_exchange
 Chi-X ChiX_exchange
+CME CME_exchange
 market financial_market
 exchange
+exch exchange
 "stock exchange" exchange
 
 # applications
@@ -480,7 +484,7 @@ close close_price close_column
 price price price_column
 !pricing
 size size size_column
-level level_column
+level level_column index_level
 sym sym_column
 volume stats
 vwap stats
@@ -501,7 +505,7 @@ MiFID2 MiFID
 !trading
 Libor
 curve
-rate
+rate rate_financial_data
 rateset
 risk
 yield
@@ -846,6 +850,7 @@ HP
 WFH work_from_home
 WBL will_be_late
 RFQ rfq
+BTW by_the_way
 :) smile
 vs. versus
 vs versus
@@ -877,6 +882,7 @@ recalculation
 result
 formula
 number
+digit
 max
 maximum
 min
@@ -922,6 +928,7 @@ Thanks thank_you
 Thx thank_you
 cheers thank_you
 "many thanks" thank_you
+"thank you very much" thank_you
 okay ok
 okey ok
 ok

@@ -68,6 +68,7 @@ BMF_exchange isA exchange
 BOVESPA_exchange isA exchange
 ASX_exchange isA exchange
 ChiX_exchange isA exchange
+CME_exchange isA exchange
 
 wti_oil_commodity isA commodity
 brent_oil_commodity isA commodity
@@ -287,3 +288,15 @@ qinf_timespan isA qinf
 qinf_minute isA qinf
 qinf_second isA qinf
 qinf_time isA qinf
+
+release isA object_countable
+issue isA object_countable
+environment isA object_countable
+database isA object_countable
+port isA object_countable
+version isA object_countable
+example isA object_countable
+update isA object_countable
+generic_data isA object_countable
+message isA object_countable
+subscription isA object_countable

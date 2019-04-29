@@ -54,7 +54,7 @@ def ts2datetime(value):
         return None
     value = (value/8.64e13+10957)*8.64e4
     if value < 0:
-        return datetime.datetime.utcfromtimestamp(0)
+        value = 0
     return datetime.datetime.utcfromtimestamp(value)
 def datetime2ts(value):
     value = (value - datetime.datetime(1970,1,1)).total_seconds()

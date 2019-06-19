@@ -1,0 +1,400 @@
+"I'm"  pro_I v_be[am]
+Im     pro_I v_be[am]
+"I'ma" pro_I v_be[am] v_go[going] pre_to
+Ima    pro_I v_be[am] v_go[going] pre_to
+
+"I'll"     pro_I modal_will
+Ill        pro_I modal_will
+"I'll've"  pro_I modal_will v_have
+Illve      pro_I modal_will v_have
+"I'd"      pro_I modal_would
+Id         pro_I modal_would
+"I'd've"   pro_I modal_would v_have
+"Idve"     pro_I modal_would v_have
+
+"you'll'    pro_you modal_will
+youll       pro_you modal_will
+"you'll've' pro_you modal_will v_have
+youllve     pro_you modal_will v_have
+"you'd"     pro_you modal_would
+youd        pro_you modal_would
+"you'd've"  pro_you modal_would v_have
+youdve      pro_you modal_would v_have
+
+"he'll"    pro_he modal_will
+hell       pro_he modal_will
+"he'll've" pro_he modal_will v_have
+hellve     pro_he modal_will v_have
+"he'd"     pro_he modal_would
+hed        pro_he modal_would
+"he'd've"  pro_he modal_would v_have
+"hedve"    pro_he modal_would v_have
+
+"she'll"    pro_she modal_will
+shell       pro_she modal_will
+"she'll've" pro_she modal_will v_have
+shellve     pro_she modal_will v_have
+"she'd"     pro_she modal_would
+shed        pro_she modal_would
+"she'd've"  pro_she modal_would v_have
+shedve      pro_she modal_would v_have
+
+"it'll"    pro_it modal_will
+itll       pro_it modal_will
+"it'll've" pro_it modal_will v_have
+itllve     pro_it modal_will v_have
+"it'd"     pro_it modal_would
+itd        pro_it modal_would
+"it'd've"  pro_it modal_would v_have
+itdve      pro_it modal_would v_have
+
+"we'll"    pro_we modal_will
+well       pro_we modal_will
+"we'll've" pro_we modal_will v_have
+wellve     pro_we modal_will v_have
+"we'd"     pro_we modal_would
+wed        pro_we modal_would
+"we'd've"  pro_we modal_would v_have
+wedve      pro_we modal_would v_have
+
+"they'll"    pro_they modal_will
+theyll       pro_they modal_will
+"they'll've" pro_they modal_will v_have
+theyllve     pro_they modal_will v_have
+"they'd"     pro_they modal_would
+theyd        pro_they modal_would
+"they'd've"  pro_they modal_would v_have
+theydve      pro_they modal_would v_have
+
+"I've"    pro_I v_have
+Ive       pro_I v_have
+"you've"  pro_you v_have
+youve     pro_you v_have
+"we've"   pro_we v_have
+weve      pro_we v_have
+"they've" pro_they v_have
+theyve    pro_they v_have
+
+"you're"  pro_you v_be[are]
+youre     pro_you v_be[are]
+"we're"   pro_we v_be[are]
+were      pro_we v_be[are]
+"they're" pro_they v_be[are]
+theyre    pro_they v_be[are]
+
+"he's"  pro_he v_be[is]
+hes     pro_he v_be[is]
+"she's" pro_she v_be[is]
+shes    pro_she v_be[is]
+"it's"  pro_it v_be[is]
+its     pro_it v_be[is]
+
+"he's"  pro_he v_have[has]
+hes     pro_he v_have[has]
+"she's" pro_she v_have[has]
+shes    pro_she v_have[has]
+"it's"  pro_it v_have[has]
+its     pro_it v_have[has]
+
+"who's"     pro_who v_be[is]
+"who's"     pro_who v_have[has]
+whos        pro_who v_be[is]
+whos        pro_who v_have[has]
+"who'll"    pro_who modal_will
+wholl       pro_who modal_will
+"who'll've" pro_who modal_will v_have
+whollve     pro_who modal_will v_have
+"who're"    pro_who v_be[are]
+whore       pro_who v_be[are]
+"who've"    pro_who v_have
+whove       pro_who v_have
+"who'd"     pro_who modal_would
+"who'd"     pro_who v_have[had]
+whod        pro_who modal_would
+whod        pro_who v_have[had]
+"who'd've"  pro_who modal_would v_have
+whodve      pro_who modal_would v_have
+
+"what's"     pro_what v_be[is]
+"what's"     pro_what v_have[has]
+whats        pro_what v_be[is]
+whats        pro_what v_have[has]
+"what'll"    pro_what modal_will
+whatll       pro_what modal_will
+"what'll've" pro_what modal_will v_have
+whatllve     pro_what modal_will v_have
+"what're"    pro_what v_be[are]
+whatre       pro_what v_be[are]
+"what've"    pro_what v_have
+whatve       pro_what v_have
+"what'd"     pro_what modal_would
+"what'd"     pro_what v_have[had]
+whatd        pro_what modal_would
+whatd        pro_what v_have[had]
+"what'd've"  pro_what modal_would v_have
+whatdve      pro_what modal_would v_have
+
+"when's"     adv_when v_be[is]
+"when's"     adv_when v_have[has]
+whens        adv_when v_be[is]
+whens        adv_when v_have[has]
+"when'll"    adv_when modal_will
+whenll       adv_when modal_will
+"when'll've" adv_when modal_will v_have
+whenllve     adv_when modal_will v_have
+"when're"    adv_when v_be[are]
+whenre       adv_when v_be[are]
+"when've"    adv_when v_have
+whenve       adv_when v_have
+"when'd"     adv_when modal_would
+"when'd"     adv_when v_have[had]
+whend        adv_when modal_would
+whend        adv_when v_have[had]
+"when'd've"  adv_when modal_would v_have
+whendve      adv_when modal_would v_have
+
+"where's"     adv_where v_be[is]
+"where's"     adv_where v_have[has]
+wheres        adv_where v_be[is]
+wheres        adv_where v_have[has]
+"where'll"    adv_where modal_will
+wherell       adv_where modal_will
+"where'll've" adv_where modal_will v_have
+wherellve     adv_where modal_will v_have
+"where're"    adv_where v_be[are]
+wherere       adv_where v_be[are]
+"where've"    adv_where v_have
+whereve       adv_where v_have
+"where'd"     adv_where modal_would
+"where'd"     adv_where v_have[had]
+whered        adv_where modal_would
+whered        adv_where v_have[had]
+"where'd've"  adv_where modal_would v_have
+wheredve      adv_where modal_would v_have
+
+"why's"     adv_why v_be[is]
+"why's"     adv_why v_have[has]
+whys        adv_why v_be[is]
+whys        adv_why v_have[has]
+"why'll"    adv_why modal_will
+whyll       adv_why modal_will
+"why'll've" adv_why modal_will v_have
+whyllve     adv_why modal_will v_have
+"why're"    adv_why v_be[are]
+whyre       adv_why v_be[are]
+"why've"    adv_why v_have
+whyve       adv_why v_have
+"why'd"     adv_why modal_would
+"why'd"     adv_why v_have[had]
+whyd        adv_why modal_would
+whyd        adv_why v_have[had]
+"why'd've"  adv_why modal_would v_have
+whydve      adv_why modal_would v_have
+
+"how's"     adv_how v_be[is]
+"how's"     adv_how v_have[has]
+hows        adv_how v_be[is]
+hows        adv_how v_have[has]
+"how'll"    adv_how modal_will
+howll       adv_how modal_will
+"how'll've" adv_how modal_will v_have
+howllve     adv_how modal_will v_have
+"how're"    adv_how v_be[are]
+howre       adv_how v_be[are]
+"how've"    adv_how v_have
+howve       adv_how v_have
+"how'd"     adv_how modal_would
+"how'd"     adv_how v_have[had]
+howd        adv_how modal_would
+howd        adv_how v_have[had]
+"how'd've"  adv_how modal_would v_have
+howdve      adv_how modal_would v_have
+
+"there's"     pro_there v_be[is]
+"there's"     pro_there v_have[has]
+theres        pro_there v_be[is]
+theres        pro_there v_have[has]
+"there'll"    pro_there modal_will
+therell       pro_there modal_will
+"there'll've" pro_there modal_will v_have
+therellve     pro_there modal_will v_have
+"there're"    pro_there v_be[are]
+therere       pro_there v_be[are]
+"there've"    pro_there v_have
+thereve       pro_there v_have
+"there'd"     pro_there modal_would
+"there'd"     pro_there v_have[had]
+thered        pro_there modal_would
+thered        pro_there v_have[had]
+"there'd've"  pro_there modal_would v_have
+theredve      pro_there modal_would v_have
+
+"that's"     pro_that v_be[is]
+"that's"     pro_that v_have[has]
+thats        pro_that v_be[is]
+thats        pro_that v_have[has]
+"that'll"    pro_that modal_will
+thatll       pro_that modal_will
+"that'll've" pro_that modal_will v_have
+thatllve     pro_that modal_will v_have
+"that're"    pro_that v_be[are]
+thatre       pro_that v_be[are]
+"that've"    pro_that v_have
+thatve       pro_that v_have
+"that'd"     pro_that modal_would
+"that'd"     pro_that v_have[had]
+thatd        pro_that modal_would
+thatd        pro_that v_have[had]
+"that'd've"  pro_that modal_would v_have
+thatdve      pro_that modal_would v_have
+
+"couldn't"    modal_could adv_not
+couldnt       modal_could adv_not
+"couldn't've" modal_could adv_not v_have
+couldntve     modal_could adv_not v_have
+"could've" modal_could v_have
+couldve    modal_could v_have
+
+"can't"    modal_can adv_not
+cant       modal_can adv_not
+"can't've" modal_can adv_not v_have
+cantve     modal_can adv_not v_have
+
+"don't"    v_do adv_not
+dont       v_do adv_not
+"don't've" v_do adv_not v_have
+dontve     v_do adv_not v_have
+
+"doesn't"    v_do[does] adv_not
+doesnt       v_do[does] adv_not
+"doesn't've" v_do[does] adv_not v_have
+doesntve     v_do[does] adv_not v_have
+
+"didn't"    v_do[did] adv_not
+didnt       v_do[did] adv_not
+"didn't've" v_do[did] adv_not v_have
+didntve     v_do[did] adv_not v_have
+
+"hadn't"    v_have[had] adv_not
+hadnt       v_have[had] adv_not
+"hadn't've" v_have[had] adv_not v_have
+hadntve     v_have[had] adv_not v_have
+
+"mayn't"    modal_may adv_not
+maynt       modal_may adv_not
+"mayn't've" modal_may adv_not v_have
+mayntve     modal_may adv_not v_have
+
+"mightn't"    modal_might adv_not
+mightnt       modal_might adv_not
+"mightn't've" modal_might adv_not v_have
+mightntve     modal_might adv_not v_have
+"might've"    modal_might v_have
+mightve       modal_might v_have
+
+"mustn't"    modal_must adv_not
+mustnt       modal_must adv_not
+"mustn't've" modal_must adv_not v_have
+mustntve     modal_must adv_not v_have
+"must've"    modal_must v_have
+mustve       modal_must v_have
+
+"needn't"    modal_need adv_not
+neednt       modal_need adv_not
+"needn't've" modal_need adv_not v_have
+needntve     modal_need adv_not v_have
+
+"oughtn't"    modal_ought adv_not
+oughtnt       modal_ought adv_not
+"oughtn't've" modal_ought adv_not v_have
+oughtntve     modal_ought adv_not v_have
+
+"shan't"    modal_shall adv_not
+shant       modal_shall adv_not
+"shan't've" modal_shall adv_not v_have
+shantve     modal_shall adv_not v_have
+
+"shouldn't"    modal_should adv_not
+shouldnt       modal_should adv_not
+"shouldn't've" modal_should adv_not v_have
+shouldntve     modal_should adv_not v_have
+"should've"    modal_should v_have
+shouldve       modal_should v_have
+
+"won't"    modal_will adv_not
+wont       modal_will adv_not
+"won't've" modal_will adv_not v_have
+wontve     modal_will adv_not v_have
+
+"wouldn't"    modal_would adv_not
+wouldnt       modal_would adv_not
+"wouldn't've" modal_would adv_not v_have
+wouldntve     modal_would adv_not v_have
+"would've"    modal_would v_have
+wouldve       modal_would v_have
+
+"ain't"    v_be[are] adv_not
+aint       v_be[are] adv_not
+"are't"    v_be[are] adv_not
+arent      v_be[are] adv_not
+"isn't"    v_be[is] adv_not
+isnt       v_be[is] adv_not
+"wasn't"   v_be[was] adv_not
+wasnt      v_be[was] adv_not
+"weren't"  v_be[were] adv_not
+werent     v_be[were] adv_not
+
+"haven't"  v_have adv_not
+havent     v_have adv_not
+
+"hasn't"  v_have[has] adv_not
+hasnt     v_have[has] adv_not
+
+"daren't"    v_dare adv_not
+darent       v_dare adv_not
+
+"doin'" v_do[doing]
+"doin" v_do[doing]
+"goin'" v_go[going]
+"goin" v_go[going]
+"nothin'" adv_nothing
+"nuthin'" adv_nothing
+"ol'" n_old
+"something'" adv_something
+
+"'cause" adv_because
+"'cos" adv_because
+"'coz" adv_because
+"'cuz" adv_because
+"'em" pro_them
+"'ll" modal_will
+"'nuff" det_enough
+
+"y'all" pro_you det_all
+yall pro_you det_all
+
+"how'd'y" adv_how v_do pro_you
+
+"not've" adv_not v_have
+notve adv_not v_have
+cannot modal_can adv_not
+gonna v_go[going] pre_to
+gotta v_get pre_to
+
+"let's" v_let pro_us
+
+"'s" det_s
+"'d" modal_would
+"'d" v_have[had]
+
+"w/o" pre_without
+"'re" v_be[are]
+"'bout" pre_about
+"ma'am" n_madam
+"o'clock" x_oclock
+"lovin'" v_love[loving]
+"lovin" v_love[loving]
+"havin'" v_have
+"havin" v_have
+"a.m." x_am
+"p.m." x_pm

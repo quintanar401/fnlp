@@ -1,3 +1,9 @@
+# v_xxx - verb
+# pro_xxx - pronoun
+# a_xxx - adjective
+# adv_xxx - adverb
+# {context=I am}am v_be[verb,past,one,norm=am] 
+
 !UAT UAT_cluster
 UAT2 UAT_cluster
 !PROD PROD_cluster
@@ -32,7 +38,7 @@ RDB RDB_process
 PDB PDB_process
 RDBMS
 tickerplant TP_process
-"tiker plant" TP_process
+"ticker plant" TP_process
 TP TP_process
 Oracle
 Sybase

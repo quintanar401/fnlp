@@ -14,9 +14,9 @@ x is generic_data, y is flow : y isAssoc x  # some flow
 x isA financial_data_source, y is price : y isAssoc x  # Reuters price
 x is price, y is source : y isAssoc x # price source
 x is.isA client, y is connection : y isAssoc x  #  userid connection
-x is support, y is team : y isAssoc
-x isA support, y is team : y isAssoc
-x is test, y is team : y isAssoc
+x is support, y is team : y isAssoc x
+x isA support, y is team : y isAssoc x
+x is test, y is team : y isAssocx x
 x isA application, y is support : y isAssoc x   # Word support
 x isA application, y is team : y isAssoc x   # Excel team
 x isA application, y isA team : y isAssoc x # BB data team

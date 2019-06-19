@@ -8,12 +8,7 @@ bb_ticker is symbol
 ISIN is symbol
 
 env_cluster is container
-PROD_cluster isA env_cluster
-UAT_cluster isA env_cluster
-DR_cluster isA env_cluster
-QA_cluster isA env_cluster
-DEV_cluster isA env_cluster
-RES_cluster isA env_cluster
+PROD_cluster, UAT_cluster, DR_cluster, QA_cluster, DEV_cluster, RES_cluster isA env_cluster
 
 process isA object_countable
 q_process is process

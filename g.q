@@ -11,18 +11,39 @@
 .g.p:{.g.t:y; .g.i:0; if[(.g.i<>count .g.t 0)|`.g.err~v:.g[x][];'"parse error in ",string[x],", last token ",.Q.s1 .g.t[0;.g.i]]; v};
 .g.l:{(x;{$["\""=first x;`STR;x[0]in .Q.n;`NUM;x[0]in".",.Q.a,.Q.A;`NAME;`]}each x:x where not (()," ")~/:x:-4!x)};
 
-g) linkExprs: "-" (linkExpr ("," linkExpr 2)* {:.l.grp enlist[v1],v2})? "-" ">" ("*"|"+"|"?")? {:($[count v5;v5;(),"1"];v2)}
+g) linkExprs: "-" (linkExpr ("," linkExpr 2)* {:.l.grp enlist[v1],v2})? "-" ">" ("*"|"+"|"?")? {:($[count v5;("*+?"!`s`p`q)first v5;`];v2)}
 g) linkExpr: name ":" value {:(v1;v3)} | name {:(`typ;v1)}
 g) nodeExps: nodeExp ("," nodeExp 2)* {: .l.grp enlist[v1],v2}
-g) nodeExp: name ":" value {:(v1;v3)} | name {:$[1=count string v1;(`name;v1);(`key;v1)]}
+g) nodeExp: name ":" value {:(v1;v3)} | name {:$[.l.isVar v1;(`name;v1);(`key;v1)]}
 g) links: name ":" nodeExps (linkExprs nodeExps?)* {:.l.map[v1]:.l.getx enlist[v3],raze v4}
 g) value: name | STR {:value value v1} | NUM {:value v1}
 g) name: NAME {:`$v1}
+
+g) dentry: dlist ("|" dlist 2)? ":" drules {:(v1;v2;v4)}
+g) dlist: ddef ("," ddef 2)* {:enlist[v1],v2}
+g) drules: drule ("," drule 2)* {:enlist[v1],v2}
+g) ddef: name name name | name {:(v1;`;`)}
+g) drule: name (name | "+") name | name {:(v1;`;`)}
+
+g) kbentry: "#"? name ("," name 2)* name name {:(0=count v1;enlist[v2],v3;v4;v5)}
+
+.l.isVar:{$[null x;0b;1=count x:string x;1b;all(1_x)in .Q.n]};
 .l.e:{.g.p[`links] .g.l x};
 .l.map:0#.l;
 .l.grp:{
   w:w where{("."=x 0)&1=sum "."=x:string x} each v1 w:where -11=type each v1:x[;1];
   enlist[$[count w;{`$1_string x} each (!). flip x w;()]],{$[`name in key x;(`name _ x;first x`name);(x;`)]}{x[;1]group x[;0]} x til[count x] except w};
 .l.getx:{v:first raze {$[0=count v:x y;();10=type v 0;();`x=v 2;y;()]}[x] each til count x; (v;x)};
+.l.dparse:{`defs`checks`rules!.l.dparse1'[@[{.g.p[`dentry] .g.l x};x;{'"l2 entry: ",x,": ",y}x];001b]};
+.l.dparse1:{
+  if[0=count x;:()];
+  x:flip`node1`link`node2!flip x;
+  x[`var]: ?[.l.isVar each x`node1;x`node1;?[.l.isVar each x`node2;x`node2;`]];
+  : $[y;x;x value group x`var];
+ };
+.l.kbparse:{@[{.g.p[`kbentry].g.l x};x;{'"kb entry: ",x,": ",y}x]};
 
+/ fmt: (node;link;node;...)
+/ node: (dict that needs args;dict with constants;var name)
+/ link: (`s`p`q or `;(dict1;dict2))
 l) isA: y, .key -is->* -isA-> -is->* x

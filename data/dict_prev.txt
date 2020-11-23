@@ -1,0 +1,1188 @@
+# v_xxx - verb
+# pro_xxx - pronoun
+# a_xxx - adjective
+# adv_xxx - adverb
+# {context=I am}am v_be[verb,past,one,norm=am] 
+
+!UAT UAT_cluster
+UAT2 UAT_cluster
+!PROD PROD_cluster
+!DR DR_cluster
+!DEV DEV_cluster
+!QA QA_cluster
+!RES RES_cluster
+production PROD_cluster
+environment
+env environment
+research RES_cluster
+cluster env_cluster
+
+# symbology
+RIC
+ticker bb_ticker
+!ISIN
+symbol
+sym symbol
+symbology
+instrument symbol
+security
+CUSIP
+"Kospi 100" index
+"Kospi 200" index
+!FID reuters_fid
+!MIC MIC_code
+
+# DBs
+HDB HDB_process
+RDB RDB_process
+PDB PDB_process
+RDBMS
+tickerplant TP_process
+"ticker plant" TP_process
+TP TP_process
+Oracle
+Sybase
+database
+ranker
+
+query
+table
+"splayed table" table
+"partitioned table" table
+row
+field
+column table_column
+cell
+record
+map
+dict dictionary
+dictionary
+join
+enumeration
+vector
+freeform
+
+SQL
+QSQL
+Q q_language
+!C++ cpp_language
+Java Java_language
+Python Python_language
+variable
+namespace
+constant
+assign
+define
+comment
+example
+lost
+
+# IT related
+PC personal_computer
+ZIP zip_file_format
+CSV csv_file_format
+json json_file_format
+txt txt_file_format
+bin bin_file_format
+!IT information_technology
+UI user_interface
+scp unix_cmd
+Linux
+Unix
+Windows
+!Mac
+MacOS
+file
+filename
+"file name" filename
+jira
+API
+code
+source
+script
+technology
+IP internet_address
+I.P. internet_address
+server
+host server
+box server
+firmware
+computer
+machine
+function
+adapter
+error
+err error
+warning
+warn
+exception
+outage
+fail
+fatal
+failure
+faulty
+incident
+critical
+issue
+problem
+ticket
+DNS
+"Excel spreadsheet" spreadsheet
+spreadsheet
+release
+"post release" release
+project
+patch
+backfill
+back-fill backfill
+update
+select
+upgrade
+check
+validate
+valid
+change
+test
+fix
+config
+configuration
+misconfiguration
+configure
+user human
+username
+"user name" username
+client
+customer
+password
+access
+unauthorized
+authorized
+authentication
+deny
+entitlement
+!rights
+forbid
+URL
+website
+webpage
+site
+page
+address
+port
+hostname
+remote
+email
+e-mail email
+mail email
+mailchain
+"email chain" mailchain
+online
+upstream
+link
+permission
+account
+dev developer
+developer
+development
+firewall
+monitor
+send
+sender
+reply
+response
+respond
+recipient
+attach
+start start_time
+end end_time
+restart
+stop
+finish
+complete
+completion
+exit
+move
+alias
+cron
+crontab
+log
+download
+invoke
+process
+system
+instance
+team
+connect
+connectivity
+connection
+"connection details" connection_details
+disconnect
+run
+help
+communication
+command
+dependency
+archive
+setup
+timeout
+"time out" timeout
+screenshot
+job
+directory
+gateway GW_process
+g/w gateway GW_process
+gw gateway GW_process
+execution
+exec
+message
+msg message
+output
+downtime
+rollover
+"roll over" rollover
+examine
+execute
+implement
+implementation
+migrate
+migration
+input
+event
+protocol
+extension
+version
+deploy
+deployment
+publisher
+publish
+downstream
+shutdown
+"shut down" shutdown
+datacenter
+network
+requirement
+consume
+consumer
+audit
+debug
+runbook
+rule
+path
+subscribe
+subscription
+status
+review
+attachment
+default
+bucket
+basket
+CPU
+storage
+handler
+platform
+task
+parameter
+notification
+snapshot
+definition
+declaration
+automate
+step
+schema
+parallel
+approve
+deadline
+handle
+buffer
+restrict
+restriction
+identification
+!id identification
+identifier
+SFTP
+FTP
+SSH
+investigate
+investigation
+terminal
+echo
+deamon
+daemon
+root
+setting
+disk
+signal
+stream
+memory
+dbmaintain
+dbmaint dbmaintain
+package
+build
+UDP protocol
+interface
+ODBC
+performance
+programming
+language
+"programming language" language
+install
+product
+Internet
+in-memory in_memory
+desktop
+helpdesk
+HTML5
+HTML
+persist
+OS
+decommission
+alert
+hardware
+PID process_id
+whitelist
+blacklist
+kill
+library
+lib library
+documentation
+document
+doc document
+JMS
+JMX
+JDBC
+driver
+Wiki
+telephone
+mobile
+journal
+backup
+web
+service
+certificate
+device
+putty
+session
+byte
+license
+codebase
+primary
+secondary
+
+# pronouns
+it it_pronoun
+It it_pronoun
+us us_pronoun
+Us us_pronoun
+
+# regions
+EMEA EMEA_region_name
+!US US_region_name
+APAC APAC_region_name
+AMER AMER_region_name
+ASIA ASIA_region_name
+JPN JPN_region_name
+HK HK_region_name
+TOK TOK_region_name
+region region_name
+regional
+
+# countries
+!US USA_country
+USA USA_country
+american
+Australia Australia_country
+australian
+Brazil Brazil_country
+brazilian
+Japan Japan_country
+japanese
+asian
+Russia Russia_country
+russian
+Luxembourg Luxembourg_country
+Singapore Singapore_country Singapore_city
+SG Singapore_country Singapore_city
+"United Kingdom" united_kingdom
+UK united_kingdom
+british
+english
+EU european_union
+european
+DE Germany_country
+Germany Germany_country
+german
+India India_country
+indian
+"South Africa" SA_country
+Taiwan Taiwan_country
+China China_country
+"Hong Kong" Hong_Kong_city
+Chile Chile_country
+Ireland Ireland_country
+
+# cities
+city
+NewYork NY_city
+"New York" NY_city NY_state
+NY NY_city
+SaoPaulo sao_paulo_city
+"Sao Paulo" sao_paulo_city
+London London_city
+LN London_city
+Moscow Moscow_city
+Sydney Sydney_city
+Bangalore Bangalore_city
+Mumbai Mumbai_city
+Pune Pune_city
+Gurgaon Gurgaon_city
+Tokyo Tokyo_city
+Doublin Doublin_city
+
+# exchanges
+LSE LSE_exchange
+NYSE NYSE_exchange
+BMF BMF_exchange
+BOVESPA BOVESPA_exchange
+!ICE ICE_exchange
+ASX ASX_exchange
+Chi-X ChiX_exchange
+CME CME_exchange
+market financial_market
+exchange
+exch exchange
+"stock exchange" exchange
+
+# applications
+Excel Excel_application
+Word Word_application
+application
+framework
+app application
+QPad QPad_application
+"Q Pad" QPad_application
+"Q Insight Pad" QPad_application
+"KDB Studio" kdb_studio_application
+KDB
+KDB+ KDB
+"BlackBerry Works" BW_application
+Geneos Geneos_application
+WebEx WebEx_application
+Eikon Eikon_application
+WhatsApp WhatsApp_application
+Outlook Outlook_application
+Skype Skype_application
+git git_application
+svn svn_application
+
+
+# table columns
+!bid bid_price bid_column
+!ask ask_price ask_column
+bidPrice bid_price bidPrice_column
+askPrice ask_price askPrice_column
+bidSize bid_size bidSize_column
+askSize ask_size askSize_column
+cond
+high max_price high_column
+low min_price low_column
+open open_price open_column
+close close_price close_column
+price price price_column
+!pricing
+size size size_column
+level level_column index_level
+sym sym_column
+volume stats
+vwap stats
+twap stats
+NAV stats
+
+# tables
+!trade trade_table trade_action
+!quote quote_table
+!depth depth_table
+!nbbo nbbo_table
+!level1 level1_table
+
+# financial terms
+MiFID
+MiFID2 MiFID
+"MiFID II" MiFID
+!trading
+Libor
+curve
+rate rate_financial_data
+rateset
+risk
+yield
+currency
+ccy
+OHLC
+!EM emerging_markets
+asset
+"corporate action" corporate_action
+"corp action" corporate_action
+!CA corporate_action
+split
+dividend
+discount
+undiscounted
+onshore
+"Cupom Cambial" rate
+dollar
+euro
+cent
+ccypair ccy_pair
+"ccy pair" ccy_pair
+major
+minor
+
+share
+stock stock_financial_instrument stock_financial_data
+equity stock__financial_data
+index index_financial_instrument index_financial_data
+spot
+future future_financial_instrument future_financial_data
+fx fx_financial_market fx_financial_data
+spread spread_financial_instrument spread_financial_data
+option option_financial_instrument option_financial_data
+bond bond_financial_instrument bond_financial_data
+"convertible bond" bond_financial_instrument
+"conv bond" bond_financial_instrument
+"government bond" bond_financial_instrument
+"corporate bond" bond_financial_instrument
+"covered bond" bond_financial_instrument
+"real estate bond" bond_financial_instrument
+"fixed income" bond_financial_instrument
+warrant warrant_financial_instrument warrant_financial_data
+swap swap_financial_instrument swap_financial_data
+swaption swaption_financial_instrument swaption_financial_data
+debt
+credit
+"foreign exchange" fx_financial_data
+derivative
+"credit derivative" derivative
+"equity derivative" derivative
+"fx derivative" derivative
+"commodity derivative" derivative
+"money market" money_market_financial_market
+"money market derivative" derivative
+CDS CDS_financial_instrument CDS_financial_data
+"credit default swap" CDS_financial_instrument
+fund ETF_financial_instrument
+ETF ETF_financial_instrument ETF_financial_data
+"interest rate" rate
+"interest rate derivative" derivative
+OTF OTF_financial_market
+oil wti_oil_commodity
+"crude oil" wti_oil_commodity
+"oil future" future_financial_instrument
+"brent crude" brent_oil_commodity
+brent brent_oil_commodity
+"natural gas" gas_commodity
+gas gas_commodity
+gold gold_commodity
+silver silver_commodity
+copper copper_commodity
+corn corn_commodity
+MTF mutual_fund
+commodity
+"cash equity" equity
+"interest rate swap" swap_financial_instrument
+repo repo_financial_data
+
+payment
+negotiation
+settlement
+settle
+valuation
+mark
+deal
+offer
+benefit
+auction
+volatility
+"order book" book
+book
+financial
+finance
+order
+
+trader
+desk
+business
+"Vice President" person
+support
+"customer support" support
+PM project_manager
+"project manager" project_manager
+manager
+management
+meeting
+compliance
+sale
+lead
+company
+stakeholder
+shareholder
+
+# data
+data financial_data
+mktdata financial_data
+dataset
+"reference data" data
+delete
+ladder
+flow
+detail
+adjustment
+cross
+information
+info information
+!feed
+feedhandler
+FH feedhandler
+"feed handler" feedhandler
+gap
+value
+tick
+constituent
+aggregation
+aggregator
+range
+amount
+quantity
+usage
+capture
+search
+filter
+report
+request
+extract
+contain
+provide
+load
+snap
+reload
+save
+copy
+progress
+question
+confirm
+perform
+container
+key
+confluence
+"confluence page" confluence
+solution
+
+Bloomberg Bloomberg_company Bloomberg_financial_data_source
+BB Bloomberg_company Bloomberg_financial_data_source
+BBG Bloomberg_company Bloomberg_financial_data_source
+Reuters Reuters_company Reuters_financial_data_source
+"Thompson Reuters" Reuters_company
+ION ION_financial_data_source
+"Tullet Prebon" Tullet_financial_data_source
+Tullet Tullet_financial_data_source
+BlackBerry BlackBerry_company
+"Deutsche Bank AG" DB_company
+"Deutsche Bank" DB_company
+DB DB_company
+LLC limited_liability_company
+bank
+Tradeweb Tradeweb_company
+Exegy Exegy_company
+Fidelity Fidelity_company
+vendor
+
+# time
+date date_time_period
+time time_time_period
+hour hour_time_period
+minute minute_time_period
+second second_time_period
+sec second_time_period
+weekend weekend_time_period
+w/e weekend weekend_time_period
+week week_time_period
+"next week" next_week
+weekly
+month month_time_period
+monthly
+year year_time_period
+yearly
+"out of hours" ooh
+"as far as" afa
+history
+historic
+historical
+historically
+hist historical
+moment
+delay
+realtime
+RT realtime
+"real time" realtime
+present
+past
+soon
+ETA
+!AM before_1200
+!PM after_1200
+!am before_1200
+!pm after_1200
+a.m. before_1200
+p.m. after_1200
+timezone
+"time zone" timezone
+BST BST_timezone_val
+DST DST_timezone_val
+GMT GMT_timezone_val
+EST EST_timezone_val
+EDT EDT_timezone_val
+UTC UTC_timezone_val
+JST JST_timezone_val
+IST IST_timezone_val
+COB close_of_business
+day day_time_period
+daily
+daylight
+night night_time_period
+nightly
+overnight
+midnight midnight_time_period
+tonight
+morning
+evening
+T+1 tomorrow
+T0 today
+tomorrow
+yesterday
+today
+period
+current
+currently
+already
+early
+immediately
+now
+quick
+quickly
+recent
+recently
+always
+latest
+last
+around
+till
+after
+before
+old
+new
+prior
+intraday
+timestamp
+timeline
+interval
+meantime
+meanwhile
+quarter
+official
+
+Jan Jan_month_val
+January Jan_month_val
+Feb Feb_month_val
+February Feb_month_val
+Mar Mar_month_val
+March Mar_month_val
+Apr Apr_month_val
+April Apr_month_val
+!May May_month_val
+Jun Jun_month_val
+June Jun_month_val
+July July_month_val
+Jul July_month_val
+Aug Aug_month_val
+August Aug_month_val
+Sep Sep_month_val
+Sept Sep_month_val
+September Sep_month_val
+Oct Oct_month_val
+October Oct_month_val
+Nov Nov_month_val
+November Nov_month_val
+Dec Dec_month_val
+December Dec_month_val
+
+weekday
+Mon Mon_weekday_val
+Monday Mon_weekday_val
+Tue Tue_weekday_val
+Tues Tue_weekday_val
+Tuesday Tue_weekday_val
+!Wed Wed_weekday_val
+Wednesday Wed_weekday_val
+Thu Thu_weekday_val
+Thursday Thu_weekday_val
+Fri Fri_weekday_val
+Friday Fri_weekday_val
+!Sat Sat_weekday_val
+Saturday Sat_weekday_val
+!Sun Sun_weekday_val
+Sunday Sun_weekday_val
+
+summer
+winter
+spring
+autumn
+
+# misc
+
+FYI for_your_information
+WRT with_regard_to
+2 two
+e.g. for_example
+etc et_cetera
+ASAP as_soon_as_possible
+OOO out_of_office
+MTA mandatory_time_away
+PS post_script
+TBH to_be_honest
+GB gigabyte
+IPO initial_public_offering
+atm at_the_moment
+LOL lol
+HP
+WFH work_from_home
+WBL will_be_late
+RFQ rfq
+BTW by_the_way
+:) smile
+vs. versus
+vs versus
+w/o without
+am be
+may may
+ca can
+an an
+non
+global
+local
+suffix
+prefix
+next
+previous
+important
+name
+location
+call
+person human
+human
+
+# math
+
+calculate
+calculation
+calc calculation
+recalculation
+result
+formula
+number
+digit
+max
+maximum
+min
+minimum
+set
+operation
+analyze
+equal
+match
+mismatch
+correct
+correctly
+correctness
+incorrect
+deduce
+logic
+list
+queue
+exact
+exactly
+total
+statistic
+limit
+estimation
+add
+threshold
+count
+average
+percent
+true
+false
+
+# greetings
+
+Hi greetings
+Hey greetings
+Hello greetings
+"Kind Regards" thank_you
+"Warm Regards" thank_you
+Regards thank_you
+Thanks thank_you
+"Thank you" thank_you
+Thx thank_you
+cheers thank_you
+"many thanks" thank_you
+"thank you very much" thank_you
+okay ok
+okey ok
+ok
+holiday
+vacation
+please
+pls please
+plz please
+
+# numbers
+!zero
+!one
+!two
+!three
+!four
+!five
+!six
+!seven
+!eight
+!nine
+!ten
+!eleven
+!twelve
+!thirteen
+!fourteen
+!fifteen
+!sixteen
+!seventeen
+!eighteen
+!nineteen
+!twenty
+!thirty
+!forty
+!fifty
+!sixty
+!seventy
+!eighty
+!ninety
+!hundred
+!thousand
+!million
+!billion
+!trillion
+
+couple
+multiple
+single
+half
+several
+few
+many
+both
+any
+all
+some
+
+!first
+!third
+!fourth
+!fifth
+!sixth
+!seventh
+!eighth
+!ninth
+!tenth
+!eleventh
+!twelfth
+!thirteenth
+!fourteenth
+!fifteenth
+!sixteenth
+!eighteenth
+!twentieth
+!thirtieth
+!fortieth
+!fiftieth
+!sixtieth
+!seventieth
+!eightieth
+!ninetieth
+!hundredth
+!thousandth
+!millionth
+!billionth
+!trillionth
+
+# q defs
+
+!0N qnull_long
+!0n qnull_float
+!0Nj qnull_long
+!0nf qnull_float
+!0Ng qnull_guid
+!0Nh qnull_short
+!0Ni qnull_integer
+!0nd qnull_date
+!0np qnull_timestamp
+!0Ne qnull_real
+!0Nm qnull_month
+!0Nz qnull_timestamp
+!0Nn qnull_timespan
+!0Nu qnull_minute
+!0Nv qnull_second
+!0Nt qnull_time
+
+!0W qinf_long
+!0w qinf_float
+!0Wj qinf_long
+!0Wf qinf_float
+!0Wg qinf_guid
+!0Wh qinf_short
+!0Wi qinf_integer
+!0Wd qinf_date
+!0Wp qinf_timestamp
+!0We qinf_real
+!0Wm qinf_month
+!0Wz qinf_timestamp
+!0Wn qinf_timespan
+!0Wu qinf_minute
+!0Wv qinf_second
+!0Wt qinf_time
+
+# re
+"$INT24 : $INT60 : $TIMEFLOAT" time_val
+"$INT24 : $INT60 : $INT60" time_val
+"$INT24 : $INT60" time_val
+"$INT12 !AM" am_time_val
+"$INT12 !PM" pm_time_val
+
+.$UNKNOWN idx_ric
+"{check_fn=check_ccy}$CCY / {check_fn=check_ccy}$CCY" ccy_pair
+"{check_fn=check_ccy}$CCY - {check_fn=check_ccy}$CCY" ccy_pair
+{check_fn=check_ccy}$CCY ccy
+{check_fn=check_ccypair}$CCYPAIR ccy_pair
+
+"$INTEGER %" num_percent
+"$FLOAT %" num_percent
+
+"$INT G" gigabytes
+"$INT Gb" gigabytes
+"$INT bytes" bytes_number
+
+{check_fn=check_year}$INT year_val
+{check_fn=check_int_date}$INT integer_date
+
+$ORDINALNUM ordinal_number
+
+.$QNS Q_namespace
+.Q Q_namespace
+.$ZNS Z_namespace
+.z.D Z_namespace
+.z.T Z_namespace
+.z.P Z_namespace
+.z.W Z_namespace
+.z.K Z_namespace
+.z.X Z_namespace
+
+{check_fn=check_ccy}$CCY= fx_ric
+{check_fn=check_ccypair}$CCYPAIR= fx_ric
+{check_fn=check_ccy}$CCY=$EQUALSUFFIX fx_ric
+{check_fn=check_ccypair}$CCYPAIR=$EQUALSUFFIX fx_ric
+$ISIN isin
+.$STOCKSUFFIX stock_ric_suffix
+*.$STOCKSUFFIX stock_ric_suffix
+$INDEXRIC index_ric
+$UNKNOWN= some_ric
+$UNKNOWN=$EQUALSUFFIX some_ric
+
+# telephone nums
+"$INT Gb" gigabytes
+"+ $INTN1or2 $INTN3 $INTN3 $INTN4" telephone_num
+"+ $INTN1 - $INTN3 - $INTN3 - $INTN4" telephone_num
+"+ $INTN1or2 $INTN3 ( $INTN3 ) $INTN4" telephone_num
+"+ $INTN1or2 ( $INTN3 ) $INTN3 - $INTN4" telephone_num
+"+ $INTN2or3 $INTN1 $INTN3 - $INTN4" telephone_num
+"+ $INTN2 $INTN1 $INTN3 $INTN4" telephone_num
+"+ $INTN2 ( $INTN2 ) $INTN1 $INTN3 $INTN4" telephone_num
+"+ $INTN2 ( $INTN1 ) $INTN3 - $INTN4" telephone_num
+"+ $INTN1or2 ( $INTN3 ) $INTN7" telephone_num
+"+ $INTN1or2 $INTN3 $INTN7" telephone_num
+"+ $INTN2 ( $INTN1 ) $INTN10" telephone_num
+"+ $INTN1or2 $INTN2 $INTN3 - $INTN5" telephone_num
+"+ $INTN2 ( $INTN2 ) $INTN3 - $INTN5" telephone_num
+"+ $INTN1 $INTN3 $INTN2 - $INTN5" telephone_num
+"+ $INTN2 $INTN2 $INTN3 $INTN5" telephone_num
+"+ $INTN1or2 $INTN3 $INTN3 $INTN5" telephone_num
+"+ $INTN1 $INTN3 $INTN2 $INTN5" telephone_num
+"+ $INTN2 ( $INTN2 ) $INTN1 $INTN2 $INTN5" telephone_num
+"+ $INTN2or3 $INTN2 $INTN3 $INTN4" telephone_num
+"+ $INTN2 $INTN1or2or3 $INTN4 - $INTN4" telephone_num
+"+ $INTN2 $INTN2 $INTN4 $INTN4" telephone_num
+"+ $INTN2 ( $INTN2 ) $INTN4 $INTN4" telephone_num
+"+ $INTN2 $INTN4 $INTN3 $INTN3" telephone_num
+"+ $INTN1or2 $INTN10" telephone_num
+"+ $INTN1or2 - $INTN10" telephone_num
+"+ $INTN2 $INTN10" telephone_num
+"+ $INTN2 $INTN9" telephone_num
+"+ $INTN3 $INTN8" telephone_num
+"+ $INTN2 $INTN2 $INTN8" telephone_num
+"+ $INTN2or3 $INTN4 $INTN4" telephone_num
+"+ $INTN2 $INTN4 $INTN6" telephone_num
+"+ $INTN2 $INTN5 $INTN4" telephone_num
+"+ $INTN1 $INTN3 $INTN3 $INTN2 $INTN2" telephone_num
+'$INTN3 - $INTN8' telephone_num
+
+. dot_sign
+: ddot_sign
+; dcomma_sign
+, comma_sign
+` squote_sign
+\' equote_sign
+\" quote_sign
++ plus_sign
+- minus_sign
+* star_sign
+/ slash_sign
+\\ rslash_sign
+% percent_sign
+~ tilda_sign
+\! excl_sign
+? question_sign
+\$ dollar_sign
+^ hat_sign
+_ und_sign
+= equal_sign
+< less_sign
+> greater_sign
+\# hash_sign
+of of_prep
+and and_conj
+& and_conj amp_sign
+| or_sign
+@ at_sign
+
+( lp_sign
+) rp_sign
+[ lb_sign
+] rb_sign
+\{ lcb_sign
+\} rcb_sign
+
+$INTN1or2 int1or2_number
+$INT60 int60_number
+$INT31 int31_number
+$INT24 int24_number
+$INT12 int12_number
+$INT int_number
+$QTIME time_val
+{score=0.9}$UNKNOWN unknown_sym
+
+$HOST host

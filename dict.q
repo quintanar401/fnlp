@@ -10,7 +10,7 @@
 
 .dict.padd:{if[-11=type first y; y:enlist y]; .dict.p[x]:$[x in key .dict.p;.dict.p[x],y;y]; .dict.xadd[`.dict.d;x;``id!(::;x)]};
 .dict.ladd:{.dict.xadd[;y;(`$())!()]each `.dict.l`.dict.lr; @[` sv `.dict.l,y;x;,;z]; @[` sv `.dict.lr,y;z;,;x]};
-.dict.xadd:{[a;k;v] if[not k in key a; @[a;k;:;v]]};
+.dict.xadd:{[a;k;v] if[not k in key a; @[a;k;:;v]]; a};
 .dict.cross:{$[count x;{$[count y;x,\:enlist y;x]}x;{$[count x;enlist enlist x;enlist ()]}]};
 
 .dict.numn:{$[z`is_num;(x=count w)&value[w:z`word]within y;0]};
@@ -38,7 +38,7 @@
  };
 .dict.unfold1:{
   f:.dict.cross y;
-  if[`w=z 0; :f enlist z];
+  if[`w=z 0; :f z];
   if[`ref=z 0; :$[`f in fl:last z;f (`fn;value string z 1);`s in f;f z 2;.dict.unfold[x;y;z 1]]];
   if[`n=z 0; :.dict.unfoldN[x;y;z]];
   '"unexpected";
@@ -56,15 +56,31 @@
  };
 
 / x - id
+.dict.addPMaps:{.dict.addPMap each key .dict.p};
 .dict.addPMap:{.dict.addPMapS[x] each .dict.unfold[`$();();x]};
 .dict.addPMapS:{
   trg:$[`w=first y0:y 0;`.dict.pmapW;`.dict.pmapP];
-  .dict.addPMapI[x;1_y;$[count i:where y0~/:(.dict.pmapI p:.dict.xadd[trg;k;0#0] k:p 1)[;0]; p first i; .dict.newPMapI[(trg;(),k);y0]]];
+  .dict.addPMapI[x;1_y;$[count i:where y0~/:(.dict.pmapI p:.dict.xadd[trg;k;0#0] k:y0 1)[;0]; p first i; .dict.newPMapI[(trg;(),k);y0]]];
  };
 .dict.newPMapI:{.dict.pmapI,:enlist (y;0#0;0#`); .[x 0;x 1;,;n:-1+count .dict.pmapI]; n};
 / x - key, y - patt, z - curr id
 .dict.addPMapI:{if[0=count y; :.[`.dict.pmapI;(z;2);,;x]]; v:.z.s[x;1_y;$[count i:where y[0]~/:(.dict.pmapI p:.dict.pmapI[z;1])[;0]; p first i; .dict.newPMapI[(`.dict.pmapI;(z;1));y 0]]];};
 
+/ matching
+.dict.match:{[t;i] if[count v:.dict.matchP[t;i],.dict.matchW[t;i]; v:v idesc count each v[;1]]; v};
+.dict.matchP:{[t;i] raze .dict.matchI[t;i;"f"$()]each raze value[.dict.pmapP] where 0.3<"f"$key[.dict.pmapP] @\: t i};
+.dict.matchW:{[t;i] raze .dict.matchI[t;i;"f"$()]each .dict.pmapW `$t[i]`lword};
+.dict.matchI:{[t;i;w;id]
+  ti:t i;
+  if[`fn=first f:first v:.dict.pmapI id; w1:"f"$f[1] ti];
+  if[`w=first f; w1:(0.9 1 ti[`word]~f2`word)*ti[`lword]~(f2:first f 2)`lword];
+  if[w1<0.3; :()]; w,:w1;
+  :$[count v 1;raze .z.s[t;i+1;w] each v 1;()],$[count v 2;v[2],\:enlist w;()];
+ };
+
+.dict.match[.tok.tok "2010.10.10D10:10";0]
+
 /
+
 first (first .dict.p`QTIMESTAMP)1
 first first .dict.unfold[`$();();`QTIME]

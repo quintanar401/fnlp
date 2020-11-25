@@ -3,3 +3,5 @@
 
 .tok.init `:data
 .dict.init `:data
+
+.dict.addPMaps[]

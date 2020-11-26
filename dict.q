@@ -27,6 +27,8 @@
 / names: n (noun phrases), l (links)
 .dict.loadDictEntry:{if[not (id:`$x 0)in key .dict.d; .dict.d[id]:(``id!(::;id))]; {y[x;z]}[id]'[.dict.entry `$n#'v;trim (1+n:v?\:" ")_'v:1_x]; id};
 .dict.entry.n:{.dict.d[x;`n]:$[`n in key d:.dict.d x;d`n;()],v:.tok.pNounDet each .tok.split y; .dict.padd[x;v]};
+.dict.entry.s:{.dict.d[x;`s]:$[`s in key d:.dict.d x;d`s;()],v:.tok.pSym each .tok.split y; .dict.padd[x;v]};
+.dict.entry.v:{.dict.d[x;`v]:$[`v in key d:.dict.d x;d`v;()],v:.tok.pVerbO each .tok.split y; .dict.padd[x;v]};
 .dict.entry.l:{{.dict.ladd[x]. `$.tok.nos trim " "vs y}[x]each .tok.nos trim ";" vs y};
 
 / Unfold a pattern into all possible variants: x - flags, y - prev res, z - entry
@@ -34,9 +36,11 @@
 .dict.unfoldStart:{
   if[`sym=z 0; :.dict.unfold1[x]/[y;z 1]];
   if[`n=z 0; :.dict.unfoldN[x;y;z]];
+  if[`v=z 0; :.dict.unfoldV[x;y;z]];
   '"unexpected";
  };
-.dict.unfold1:{
+.dict.unfold1:{$[`opt in last z;y;()],.dict.unfold1_[x;y;z]};
+.dict.unfold1_:{
   f:.dict.cross y;
   if[`w=z 0; :f z];
   if[`ref=z 0; :$[`f in fl:last z;f (`fn;value string z 1);`s in f;f z 2;.dict.unfold[x;y;z 1]]];
@@ -52,6 +56,14 @@
   ];
   if[count z 2; y:{.dict.unfold1[x;.dict.cross[y] .dict.OFF;z]}[x]/[y;z 2]];
   if[count z 3; y:{.dict.unfold1[x;.dict.cross[y] .dict.W z 1;z 2]}[x]/[y;z 3]];
+  :y;
+ };
+/ (`v;verb;subj;dobj;pobjs;flags)
+.dict.unfoldV:{
+  if[count z 2; y:.dict.unfoldN[x;y;z 2]];
+  y:.dict.unfold1[x;y;z 1];
+  if[count z 3; y:.dict.unfoldN[x;y;z 3]];
+  if[count z 3; y:{.dict.unfold1[x;.dict.cross[y] .dict.W z 1;z 2]}[x]/[y;z 4]];
   :y;
  };
 

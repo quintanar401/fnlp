@@ -38,9 +38,11 @@
   r:r,t idx+til ni-idx;
   if[(w:raze t[`word]ni+0 1 2)in("&amp;";"&gt;";"&lt;"); c:"&<>"("g"=w 1)+"t"=w 2; :(ni+3;r,enlist t[ni+2],`word`lword`shape`char!(c;c;c:(),c;c))]; / &amp; -> & and etc
   if["/"=t[`char]ni+1; :(neg ni+2;r)]; / </tag>
-  if[not t[`is_alpha]ni+1; :(ni+1;r,enlist t idx)]; / weird isolated <
-  tag:`$ts:t[`lword]ni+1; p:(`$())!(); if[null ti:exec first i from t where i>idx+1, char=">"; '"> is missing in tag ",ts];
-  if[ti>ni+2; / parameters
+  if[("&"=w 0)|not t[`is_alpha]ni+1; :(ni+1;r,enlist t ni)]; / weird isolated <
+  ti:exec first i from t where i>idx+1, char=">"; pp:.tok.toTxt[t;ni+1;count[t]^ti-1];
+  tag:`$ts:lower(pp?" ")#pp; pp:ltrim (count ts)_ pp; p:(`$())!();
+  if[null ti; '"> is missing in tag ",ts];
+  if[count pp; / parameters
     if[not(all enlist["="]~/:w[;1])&3=count last w:(0N 3)#.tok.nos -4!pp:.tok.toTxt[t;ni+2;ti-1]; '"wrong parameters in ",ts]; / name = value is expected
     p:(enlist[`]!enlist pp),(`$w[;0])!@[value;;{'"parameter evaluation in ",x," failed with ",y}ts] each w[;2];
   ];
@@ -52,10 +54,11 @@
   ci:count .tok.tags;
   w:.tok.tagTokIter[t;ti+1;.tok.updR[t ti;`sp`cr;(,;+);r]];
   if[0<w 0; '"tag is not closed: ",ts];
-  if[not(">"=t[`char]idx+1)&tag=`$t[`lword]idx:neg w 0; '"tag ",ts," is improperly closed with ",t[`word] idx];
+  idx:exec first i from t where i>neg w 0, char=">"; pp:.tok.toTxt[t;neg w 0;count[t]^idx-1];
+  if[(null idx)|not tag=`$pp; '"tag ",ts," is improperly closed with ",20 sublist pp];
   update parent:count .tok.tags from `.tok.tags where i>=ci, parent=-1;
   `.tok.tags upsert enlist`tag`start`end`parent`params!(tag;count r;-1+count w 1;-1;p);
-  :(idx+2;.tok.updR[t idx+1;`sp`cr;(,;+);w 1]);
+  :(idx+1;.tok.updR[t idx;`sp`cr;(,;+);w 1]);
  };
 .tok.updR:{[t;cl;f;r] if[not count r; :r]; .[;;;]/[r;(-1+count r;)each cl;f;t cl]};
 .tok.tagTokIter:{[t;idx;r] (.tok.tagTok1[t].)/[{y[0]within x}(0;-1+count t);(idx;r)]};
@@ -74,7 +77,7 @@
 
 / sentence
 / <reference_to_x> - instead of words, <flags|ref_to_x> - extention
-/ ref: (`ref;`ref_name;tokens;flags); flags: s - text, f - function
+/ ref: (`ref;`ref_name;tokens;flags); flags: s - text, f - function, w - words, opt - opional
 / word: (`w;word;token(s);flags)
 / noun: (`n;main;possesive;obj;flags)
 / obj: (`pobj;prep;rest;flags)
@@ -83,7 +86,9 @@
 .tok.pRef:{
   if[count[x]=n:x[`char]?">";'"missing >:",.tok.toTxt[x;0;0W]];
   if[count[t]>n2:(t:1_n#x)[`char]?"|"; fl:`$.tok.nos" "vs .tok.toTxt[t;0;n2-1]; t:(n2+1)_t];
-  :((`ref;`$.tok.toTxt[t;0;0W];.[t;(-1+count t;`sp`cr);:;x[n]`sp`cr];(0#`),fl);(n+1)_x);
+  t:.[t;(-1+count t;`sp`cr);:;x[n]`sp`cr];
+  if[`w in  fl; :(enlist["("],{(`w;`$y`lword;enlist y;x)}[fl] each t;(n+1)_x)];
+  :((`ref;`$.tok.toTxt[t;0;0W];t;(0#`),fl);(n+1)_x);
  };
 .tok.pBrk:{
   c:x[`char]0; r:.tok.pSeq 1_x;
@@ -161,6 +166,6 @@
 last .tok.tagTok[.tok.tok "a b&amp;&gt;c"]
 {.tok.2html[x 0;x 1]} .tok.tagTok[.tok.tok "aa<a v=1 b=\"aa\">a<b>b</b> c</a>d<cc></cc><cc>cc</cc> xx"]
 .tok.tagTok[.tok.tok "b<code> a<a> </code> d"])`start
-.tok.pRef .tok.tok "a_b> a"
+.tok.pNounDet .tok.tok "<w|b c> a"
 
 W

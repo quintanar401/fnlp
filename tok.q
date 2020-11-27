@@ -39,17 +39,17 @@
   if[(w:raze t[`word]ni+0 1 2)in("&amp;";"&gt;";"&lt;"); c:"&<>"("g"=w 1)+"t"=w 2; :(ni+3;r,enlist t[ni+2],`word`lword`shape`char!(c;c;c:(),c;c))]; / &amp; -> & and etc
   if["/"=t[`char]ni+1; :(neg ni+2;r)]; / </tag>
   if[("&"=w 0)|not t[`is_alpha]ni+1; :(ni+1;r,enlist t ni)]; / weird isolated <
-  ti:exec first i from t where i>idx+1, char=">"; pp:.tok.toTxt[t;ni+1;count[t]^ti-1];
+  ti:exec first i from t where i>ni+1, char=">"; pp:.tok.toTxt[t;ni+1;count[t]^ti-1];
   tag:`$ts:lower(pp?" ")#pp; pp:ltrim (count ts)_ pp; p:(`$())!();
   if[null ti; '"> is missing in tag ",ts];
   if[count pp; / parameters
-    if[not(all enlist["="]~/:w[;1])&3=count last w:(0N 3)#.tok.nos -4!pp:.tok.toTxt[t;ni+2;ti-1]; '"wrong parameters in ",ts]; / name = value is expected
+    if[not(all enlist["="]~/:w[;1])&3=count last w:(0N 3)#.tok.nos -4!pp; '"wrong parameters in ",ts]; / name = value is expected
     p:(enlist[`]!enlist pp),(`$w[;0])!@[value;;{'"parameter evaluation in ",x," failed with ",y}ts] each w[;2];
   ];
   if[tag=`code;
     if[null ci:exec first i from t where i>ti, (">"=next char)&("<"=prev prev char)&("/"=prev char)&lword~\:"code"; '"code tag is not closed"];
-    / `.tok.tags upsert enlist`tag`start`end`parent`params!(tag;count r;count r;0;p);
-    :(ci+2;r,enlist t[ci+1],`word`lword`shape`char`code!(-1_1_.tok.toTxt[t;ti;ci-2];"";"";" ";1b));
+    `.tok.tags upsert enlist`tag`start`end`parent`params!(`icode`code "\n"in pp:.tok.toTxt[t;ti;ci-2];count r;count r;-1;p);
+    :(ci+2;r,enlist t[ci+1],`word`lword`shape`char`code!(-1_1_pp;"";"";" ";1b));
   ];
   ci:count .tok.tags;
   w:.tok.tagTokIter[t;ti+1;.tok.updR[t ti;`sp`cr;(,;+);r]];
@@ -68,11 +68,13 @@
 .tok.tagTok:{[t]
   .tok.tags:0#.tok.tags;
   tok:last .tok.tagTokIter[$[10=type t;.tok.tok t;t];0;()];
-  {if[count x;`.tok.tags upsert (`p;x 0;last x;-1;(`$())!())]} each {((0N 2)#x)[;0]}(0,raze exec (start,'1+end) from .tok.tags where parent=-1)_ til count tok;
+  .tok.addPTag[tok] each {((0N 2)#x)[;0]}(0,raze exec (start,'1+end) from .tok.tags where parent=-1, not tag in .tok.2htmlInline)_ til count tok;
   :(`start xasc update id:i from .tok.tags;tok);
  };
+.tok.addPTag:{{if[count x;update parent:count .tok.tags from `.tok.tags where start in x, parent=-1; `.tok.tags upsert (`p;x 0;last x;-1;(`$())!())]}each y:(0,1+where 1<x[`cr]y)cut y};
 / convert tokens back to txt within (is;ie)
 .tok.toTxt:{[t;is;ie] $[count t:select word,sp from t where i within (is;ie); raze t[`word],'{@[x;-1+count x;:;""]}t`sp;""]};
+.tok.toTxt_:{[t;is;ie] $[count t:select word,sp from t where i within (is;ie); raze t[`word],t`sp;""]};
 .tok.str:{$[10=type x;x;98=type x;.tok.toTxt[x;0;0W];.Q.s1 x]};
 
 / sentence
@@ -148,12 +150,12 @@
 / tags + tokens -> html
 .tok.2htmlMap:enlist[`top]!enlist {x};
 .tok.2htmlMap[`p]:{"<p>",x,"</p>\n"};
-.tok.2htmlInline:`b`a;
+.tok.2htmlInline:`b`a`qa`icode;
 .tok.2html:{[tag;tok] .tok.2htmlTag[tag;tok;`tag`start`end`id`params!(`top;0;0W;-1;(`$())!())]};
 .tok.2htmlTag:{[tag;tok;ptag]
   tg:select from tag where parent=ptag`id, start within ptag`start`end;
-  str:{[tg;tk;str;t] str,.tok.toTxt[tk;t`pend;-1+t`start],.tok.2htmlTag[tg;tk;t]}[tag;tok]/["";update pend:ptag[`start]^1+prev end from tg];
-  str,:.tok.toTxt[tok;ptag[`start]^1+last tg`end;ptag`end];
+  str:{[tg;tk;str;t] str,.tok.toTxt_[tk;t`pend;-1+t`start],.tok.2htmlTag[tg;tk;t]}[tag;tok]/["";update pend:ptag[`start]^1+prev end from tg];
+  str,:.tok.toTxt_[tok;ptag[`start]^1+last tg`end;ptag`end];
   prm:$[count prm:ptag`params;" ",prm`;""];
   :$[(t:ptag`tag)in key .tok.2htmlMap; .tok.2htmlMap[t] str;"<",t,prm,">",str,"</",(t:string t),">",$[t in .tok.2htmlInline;"";"\n"]];
  };

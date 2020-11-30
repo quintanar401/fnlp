@@ -1,22 +1,26 @@
-INT <f|{x`is_num}>
-INT00_59 <f|.dict.numn[2;(0;59)]>
-INT00_23 <f|.dict.numn[2;(0;23)]>
-INT0_23  <f|.dict.num[(0;23)]>
-INT01_12 <f|.dict.numn[2;(1;12)]>
-INT01_31 <f|.dict.numn[2;(1;31)]>
-YEAR <f|.dict.numn[4;(1900;2100)]>
+INT      <f|{$[x`is_num;(1f;value x`word);(0f;0)]}> --> .dict.ppFirst
+INT00_59 <f|.dict.numn[2;(0;59)]>                   --> .dict.ppFirst
+INT00_23 <f|.dict.numn[2;(0;23)]>                   --> .dict.ppFirst
+INT0_23  <f|.dict.num[(0;23)]>                      --> .dict.ppFirst
+INT01_12 <f|.dict.numn[2;(1;12)]>                   --> .dict.ppFirst
+INT01_31 <f|.dict.numn[2;(1;31)]>                   --> .dict.ppFirst
+YEAR     <f|.dict.numn[4;(1900;2100)]>              --> .dict.ppFirst
+MONTHNAME <f patt|{.dict.isA[x;`dt_month]}>
 
-QDATE <YEAR>.<INT01_12>.<INT01_31>
-QTIME <INT00_23>:<INT00_59>:<INT00_59>.<INT>
-QSECOND <INT00_23>:<INT00_59>:<INT00_59>
-QMINUTE <INT00_23>:<INT00_59>
-QTIMESTAMP <QDATE>D
-QTIMESTAMP <QDATE>D<INT0_23>
-QTIMESTAMP <QDATE>D<QMINUTE>
-QTIMESTAMP <QDATE>D<QSECOND>
-QTIMESTAMP <QDATE>D<QTIME>
-QTIMESPAN  <INT>D
-QTIMESPAN  <INT>D<INT0_23>
-QTIMESPAN  <INT>D<QMINUTE>
-QTIMESPAN  <INT>D<QSECOND>
-QTIMESPAN  <INT>D<QTIME>
+QDATE      <YEAR>.<INT01_12>.<INT01_31>             --> .dict.ppVal
+QTIME      <INT00_23>:<INT00_59>:<INT00_59>.<INT>   --> .dict.ppVal
+QSECOND    <INT00_23>:<INT00_59>:<INT00_59>         --> .dict.ppVal
+QMINUTE    <INT00_23>:<INT00_59>                    --> .dict.ppVal
+QTIMESTAMP <QDATE>D                                 --> .dict.ppVal
+QTIMESTAMP <QDATE>D<INT0_23>                        --> .dict.ppVal
+QTIMESTAMP <QDATE>D<QMINUTE>                        --> .dict.ppVal
+QTIMESTAMP <QDATE>D<QSECOND>                        --> .dict.ppVal
+QTIMESTAMP <QDATE>D<QTIME>                          --> .dict.ppVal
+QTIMESPAN  <INT>D                                   --> .dict.ppVal
+QTIMESPAN  <INT>D<INT0_23>                          --> .dict.ppVal
+QTIMESPAN  <INT>D<QMINUTE>                          --> .dict.ppVal
+QTIMESPAN  <INT>D<QSECOND>                          --> .dict.ppVal
+QTIMESPAN  <INT>D<QTIME>                            --> .dict.ppVal
+
+DATEMd     <MONTHNAME> <YEAR>                       --> {(first x[0]`val;x[1]`val)}
+DATEyMd    <YEAR> <MONTHNAME> <INT01_31>            --> {(x[0]`val;first x[1]`val;x[2]`val)}

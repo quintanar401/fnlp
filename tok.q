@@ -29,7 +29,7 @@
   update is_title:is_alpha&("X"=shape[;0])&1=sum each "X"=shape, sp:{@[count[x]#enlist"";w;:;y w:where x]}[space;x w+1], cr:sum each "\n"=x w+1, code:0b, fl:` from t};
 .tok.tok_:{v:.tok.tok x; .[v;(-1+count v;`sp);:;()," "]};
 .tok.nos:{x where not x[;0] in " \t\r\n"};
-.tok.split:{.tok.nos trim 1_'(where (x=";")&not (neg sums 0|x=">")+1&sums x="<")cut x:";",x};
+.tok.split:{.tok.nos trim 1_'(where (x=";")&not ({1&x+y}\)(neg x=">")+x="<")cut x:";",x};
 
 / Extract tags and restore the right text structure
 .tok.tags:([] tag:0#`; start:0#0; end:0#0; parent:0#0; params:());
@@ -72,9 +72,18 @@
   :(`start xasc update id:i from .tok.tags;tok);
  };
 .tok.addPTag:{{if[count x;update parent:count .tok.tags from `.tok.tags where start in x, parent=-1; `.tok.tags upsert (`p;x 0;last x;-1;(`$())!())]}each y:(0,1+where 1<x[`cr]y)cut y};
+/ add: tags, (tag;st;end;params) - return t unchanged if t is not possible
+.tok.addTag:{[t;tg]
+  ch:(exec id from t where start within tg[1 2], end<start),exec id from t where start within tg[1 2], end within tg[1 2];
+  if[0<exec count i from t where not id in ch, (start within (1+tg 1;tg 2))|end within (tg 1;-1+tg 2); :t]; / all tags should either be within or outside the range
+  p:-1^first exec id except parent from t where tg[1] within (start;end), tg[2] within (start;end); / invariant: always max 1 parent
+  tg:tg[0 1 2],(p;tg 3;tid:count t);
+  t:update parent:tid from t where id in ch, parent=p; / update parent
+  :t upsert tg;
+ };
 / convert tokens back to txt within (is;ie)
 .tok.toTxt:{[t;is;ie] $[count t:select word,sp from t where i within (is;ie); raze t[`word],'{@[x;-1+count x;:;""]}t`sp;""]};
-.tok.toTxt_:{[t;is;ie] $[count t:select word,sp from t where i within (is;ie); raze t[`word],t`sp;""]};
+.tok.toTxt_:{[t;is;ie] $[count t:select word,sp from t where i within (is;ie); raze t[`word],'t`sp;""]};
 .tok.str:{$[10=type x;x;98=type x;.tok.toTxt[x;0;0W];.Q.s1 x]};
 
 / sentence
@@ -88,9 +97,10 @@
 .tok.pRef:{
   if[count[x]=n:x[`char]?">";'"missing >:",.tok.toTxt[x;0;0W]];
   if[count[t]>n2:(t:1_n#x)[`char]?"|"; fl:`$.tok.nos" "vs .tok.toTxt[t;0;n2-1]; t:(n2+1)_t];
-  t:.[t;(-1+count t;`sp`cr);:;x[n]`sp`cr];
+  t:.[t;(-1+count t;`space`sp`cr);:;x[n]`space`sp`cr];
   if[`w in  fl; :(enlist["("],{(`w;`$y`lword;enlist y;x)}[fl] each t;(n+1)_x)];
-  :((`ref;`$.tok.toTxt[t;0;0W];t;(0#`),fl);(n+1)_x);
+  txt:.tok.toTxt[t;0;0W];
+  :((`ref;`$txt;.[-1#t;(0;`word`lword);:;(txt;txt)];(0#`),fl);(n+1)_x);
  };
 .tok.pBrk:{
   c:x[`char]0; r:.tok.pSeq 1_x;
@@ -106,7 +116,8 @@
 .tok.pLine:{if[count last r:.tok.pSeq $[10=type x;.tok.tok x;x];'"Unmatched sequence: ",.tok.toTxt[r 1;0;0W]]; r 0};
 .tok.pNounDet:{
   n:.tok.pNoun x;
-  if[`w~first first n 2; if[(w:n[2;0;1]) in `a`the`an; n[4],:w; n[1]:1_n 1]];
+  if[`w~first first n1:n 1; if[(w:n[1;0;1]) in `a`the`an; n[4],:w; n[1]:1_n 1]];
+  if[1<count n1; n[1]:({$[`w=first x;@[x;3;,;`adj];x]}each -1_n1),-1#n1];
   :n;
  };
 / a b c; a <b> <c>; a (b c) d; a in/at/on/of b
@@ -116,7 +127,7 @@
   if[-10=type c:(l0:l 0)0;
     if[not c="(";'"unexpected"];
     n2:.tok.pNounAdj[(`n;();();();`$());1_l0];
-    :.tok.pNounAdj[$[()~n2 1;@[n;2 3;,;n2 2 3];@[n;1;,;enlist n2 1]];1_l];
+    :.tok.pNounAdj[$[()~n2 1;@[n;2 3;,;n2 2 3];@[n;1;,;n2 1]];1_l];
   ];
   if[`w=c;
     if[`of=l0 1; n[2],:enlist .tok.pNounDet 1_l; :n];

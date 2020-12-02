@@ -11,16 +11,21 @@ QDATE      <YEAR>.<INT01_12>.<INT01_31>             --> .dict.ppVal
 QTIME      <INT00_23>:<INT00_59>:<INT00_59>.<INT>   --> .dict.ppVal
 QSECOND    <INT00_23>:<INT00_59>:<INT00_59>         --> .dict.ppVal
 QMINUTE    <INT00_23>:<INT00_59>                    --> .dict.ppVal
-QTIMESTAMP <QDATE>D                                 --> .dict.ppVal
-QTIMESTAMP <QDATE>D<INT0_23>                        --> .dict.ppVal
-QTIMESTAMP <QDATE>D<QMINUTE>                        --> .dict.ppVal
-QTIMESTAMP <QDATE>D<QSECOND>                        --> .dict.ppVal
+QTIMESTAMP <QDATE>D                                 -->
+QTIMESTAMP <QDATE>D<INT0_23>                        -->
+QTIMESTAMP <QDATE>D<QMINUTE>                        -->
+QTIMESTAMP <QDATE>D<QSECOND>                        -->
 QTIMESTAMP <QDATE>D<QTIME>                          --> .dict.ppVal
-QTIMESPAN  <INT>D                                   --> .dict.ppVal
-QTIMESPAN  <INT>D<INT0_23>                          --> .dict.ppVal
-QTIMESPAN  <INT>D<QMINUTE>                          --> .dict.ppVal
-QTIMESPAN  <INT>D<QSECOND>                          --> .dict.ppVal
+QTIMESPAN  <INT>D                                   -->
+QTIMESPAN  <INT>D<INT0_23>                          -->
+QTIMESPAN  <INT>D<QMINUTE>                          -->
+QTIMESPAN  <INT>D<QSECOND>                          -->
 QTIMESPAN  <INT>D<QTIME>                            --> .dict.ppVal
 
+DATE       <YEAR>-<INT01_12>-<INT01_31>             -->
+DATE       <YEAR>/<INT01_12>/<INT01_31>             --> {value "."sv string x[0 2 4]@\:`val}
+DATER      <INT01_31>.<INT01_12>.<YEAR>             -->
+DATER      <INT01_31>-<INT01_12>-<YEAR>             -->
+DATER      <INT01_31>/<INT01_12>/<YEAR>             --> {value "."sv string x[4 2 0]@\:`val}
 DATEMd     <MONTHNAME> <YEAR>                       --> {(first x[0]`val;x[1]`val)}
 DATEyMd    <YEAR> <MONTHNAME> <INT01_31>            --> {(x[0]`val;first x[1]`val;x[2]`val)}

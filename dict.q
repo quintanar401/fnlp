@@ -126,13 +126,16 @@
   :(k;sum v`prob;sum count each v`word;v;val);
  };
 .dict.matchAll:{last({if[y>=count x;:(y;z)]; if[0=count v:.dict.match[x;y]; :(y+1;z)]; :(i;z,enlist(y;-1+i:y+v[0] 2;v 0))}[$[10=type x;.tok.tok x;x]].)/[(0;())]};
-
+.dict.matchAllAndTag:{ (.tok.addTag/[x 0;{(`ref;x 0;x 1;enlist[`id]!(),first x 2)} each .dict.matchAll last x];last x:.tok.tagTok x)};
 
 .dict.match[.tok.tok "2010.10.10D10:10";0][;0 1 2 4]
 
 first .dict.match[.tok.tok "Apr 2010";0]
 first .dict.match[.tok.tok "2010 May 20";0]
-.dict.matchAll "10 2010 May 20 april"
+first .dict.match[.tok.tok "2010-11-20";0]
+first .dict.match[.tok.tok "2010/11/20";0]
+first .dict.match[.tok.tok "10-11-2020";0]
+.dict.matchAllAndTag "10 2010 May 20 april"
 
 .tok.addTag[first .tok.tagTok "aa <a>aa cc</a> bbb";(`xx;1;3;::)]
 

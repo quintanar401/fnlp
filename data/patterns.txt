@@ -1,31 +1,44 @@
-INT      <f|{$[x`is_num;(1f;value x`word);(0f;0)]}> --> .dict.ppFirst
-INT00_59 <f|.dict.numn[2;(0;59)]>                   --> .dict.ppFirst
-INT00_23 <f|.dict.numn[2;(0;23)]>                   --> .dict.ppFirst
-INT0_23  <f|.dict.num[(0;23)]>                      --> .dict.ppFirst
-INT01_12 <f|.dict.numn[2;(1;12)]>                   --> .dict.ppFirst
-INT01_31 <f|.dict.numn[2;(1;31)]>                   --> .dict.ppFirst
-YEAR     <f|.dict.numn[4;(1900;2100)]>              --> .dict.ppFirst
-MONTHNAME <f patt|{.dict.isA[x;`dt_month]}>
+INT       <f|{$[x`is_num;(1f;value x`word);(0f;0)]}> --> .dict.ppFirst
+MINUTE    <f|.dict.numn[2;(0;59)]>                   --> .dict.ppFirst
+SECOND    <f|.dict.numn[2;(0;59)]>                   --> .dict.ppFirst
+HOUR      <f|.dict.numn[2;(0;23)]>                   --> .dict.ppFirst
+INT0_255  <f|.dict.num[(0;255)]>                     --> .dict.ppFirst
+INT0_23   <f|.dict.num[(0;23)]>                      --> .dict.ppFirst
+MONTH     <f|.dict.numn[2;(1;12)]>                   --> .dict.ppFirst
+INT1_12   <f|.dict.num[(1;12)]>                      --> .dict.ppFirst
+DAY       <f|.dict.numn[2;(1;31)]>                   --> .dict.ppFirst
+YEAR      <f|.dict.numn[4;(1900;2100)]>              --> .dict.ppFirst
+MONTHNAME <f patt|{.dict.isA[x;`dt_month]&not .dict.isA[x;`num_int]}>
 
-QDATE      <YEAR>.<INT01_12>.<INT01_31>             --> .dict.ppVal
-QTIME      <INT00_23>:<INT00_59>:<INT00_59>.<INT>   --> .dict.ppVal
-QSECOND    <INT00_23>:<INT00_59>:<INT00_59>         --> .dict.ppVal
-QMINUTE    <INT00_23>:<INT00_59>                    --> .dict.ppVal
+QDATE      <YEAR>.<MONTH>.<DAY>                     --> .dict.ppVal
+QTIME      <HOUR>:<MINUTE>:<SECOND>.<INT>           --> .dict.ppVal
+QSECOND    <HOUR>:<MINUTE>:<SECOND>                 --> .dict.ppVal
+QMINUTE    <HOUR>:<MINUTE>                          --> .dict.ppVal
 QTIMESTAMP <QDATE>D                                 -->
-QTIMESTAMP <QDATE>D<INT0_23>                        -->
+QTIMESTAMP <QDATE>D<HOUR>                           -->
 QTIMESTAMP <QDATE>D<QMINUTE>                        -->
 QTIMESTAMP <QDATE>D<QSECOND>                        -->
 QTIMESTAMP <QDATE>D<QTIME>                          --> .dict.ppVal
 QTIMESPAN  <INT>D                                   -->
-QTIMESPAN  <INT>D<INT0_23>                          -->
+QTIMESPAN  <INT>D<HOUR>                             -->
 QTIMESPAN  <INT>D<QMINUTE>                          -->
 QTIMESPAN  <INT>D<QSECOND>                          -->
 QTIMESPAN  <INT>D<QTIME>                            --> .dict.ppVal
 
-DATE       <YEAR>-<INT01_12>-<INT01_31>             -->
-DATE       <YEAR>/<INT01_12>/<INT01_31>             --> {value "."sv string x[0 2 4]@\:`val}
-DATER      <INT01_31>.<INT01_12>.<YEAR>             -->
-DATER      <INT01_31>-<INT01_12>-<YEAR>             -->
-DATER      <INT01_31>/<INT01_12>/<YEAR>             --> {value "."sv string x[4 2 0]@\:`val}
-DATEMd     <MONTHNAME> <YEAR>                       --> {(first x[0]`val;x[1]`val)}
-DATEyMd    <YEAR> <MONTHNAME> <INT01_31>            --> {(x[0]`val;first x[1]`val;x[2]`val)}
+TIMEAM     <INT1_12>am                              --> .dict.ppFirst
+TIMEPM     <INT1_12>pm                              --> .dict.ppFirst
+
+ORDNUM     <f|{if[not x`is_num;:(0f;0)]; (((1=count w)|not "11"~ -2#w)&"1"=last w;value w:x`word)}>st  -->
+ORDNUM     <f|{if[not x`is_num;:(0f;0)]; (((1=count w)|not "12"~ -2#w)&"2"=last w;value w:x`word)}>nd  -->
+ORDNUM     <f|{if[not x`is_num;:(0f;0)]; (((1=count w)|not "13"~ -2#w)&"3"=last w;value w:x`word)}>d   -->
+ORDNUM     <f|{if[not x`is_num;:(0f;0)]; (((1<count w)&"1"=w 0)|not(last w)in "123";value w:x`word)}>th  --> .dict.ppFirst
+
+DATE       <YEAR>-<MONTH>-<DAY>                     -->
+DATE       <YEAR>/<MONTH>/<DAY>                     --> {.dict.fromTmpl[x] (enlist "."sv v),string .dict.fromTmpl'[`YEAR_templ`MONTH_templ`DAY_templ;enlist each v:string y[0 2 4]@\:`val]}
+DATER      <DAY>.<MONTH>.<YEAR>                     -->
+DATER      <DAY>-<MONTH>-<YEAR>                     -->
+DATER      <DAY>/<MONTH>/<YEAR>                     --> {.dict.fromTmpl[x] (enlist "."sv v),string .dict.fromTmpl'[`YEAR_templ`MONTH_templ`DAY_templ;enlist each v:string y[4 2 0]@\:`val]}
+DATEMd     <MONTHNAME> <YEAR>                       --> {.dict.fromTmpl[x] (string first y[0]`val;string .dict.fromTmpl[`YEAR_templ;enlist string y[1]`val])}
+DATEyMd    <YEAR> <MONTHNAME> <DAY>                 --> {.dict.fromTmpl[x] (string .dict.fromTmpl[`YEAR_templ;enlist string y[0]`val];string first y[1]`val;string .dict.fromTmpl[`DAY_templ;enlist string y[2]`val])}
+
+IPADDR     <INT0_255>.<INT0_255>.<INT0_255>.<INT0_255> --> {.dict.fromTmpl[x] string .dict.fromTmpl'[4#`INT_templ;enlist each string y[0 2 4 6]@\:`val]}

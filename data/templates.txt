@@ -1,0 +1,90 @@
+dt_timezone_templ dt_timezone_ARG1
+ s ARG1
+ l isA dt_timezone
+
+YEAR_templ dt_YEAR_ARG1
+ s ARG1
+ l isA dt_year
+ val ARG1
+DATE_templ dt_DATE_ARG1
+ s ARG1
+ l isA dt_date; hasPart ARG2; hasPart ARG3; hasPart ARG4
+ val ARG1
+DATER_templ DATE_templ
+DATEMd_templ dt_DATEMd_ARG1_ARG2
+ s ARG1 ARG2
+ l isA dt_date; hasPart ARG1; hasPart ARG2
+DATEyMd_templ dt_DATEyMd_ARG1_ARG2_ARG3
+ s ARG1 ARG2 ARG3
+ l isA dt_date; hasPart ARG1; hasPart ARG2; hasPart ARG3
+QDATE_templ dt_QDATE_ARG1
+ s ARG1
+ l isA dt_date
+ val ARG1
+QTIME_templ dt_QTIME_ARG1
+ s ARG1
+ l isA dt_time
+ val ARG1
+QMINUTE_templ dt_QMINUTE_ARG1
+ s ARG1
+ l isA dt_time
+ val ARG1
+QSECOND_templ dt_QSECOND_ARG1
+ s ARG1
+ l isA dt_time
+ val ARG1
+QTIMESPAN_templ dt_QTIMESPAN_ARG1
+ s ARG1
+ l isA dt_time
+ val ARG1
+QTIMESTAMP_templ dt_QTIMESTAMP_ARG1
+ s ARG1
+ l isA dt_time; isA dt_date
+ val ARG1
+TIMEPM_templ dt_TIMEPM_ARG1
+ s ARG1pm
+ l isA dt_hour; hasPart ARG2
+INT_templ num_INTARG1
+ s ARG1
+ l isA num_int
+ val ARG1
+ORDNUM_templ num_ORDNUMARG1
+ s ARG1
+ l isA num_ord
+ val ARG1
+SECOND_templ dt_SECOND_ARG1
+ s ARG1
+ l isA num_int; isA dt_second
+ val ARG1
+MINUTE_templ dt_MINUTE_ARG1
+ s ARG1
+ l isA num_int; isA dt_minute
+ val ARG1
+HOUR_templ dt_HOUR_ARG1
+ s ARG1
+ l isA num_int; isA dt_hour
+ val ARG1
+INT0_255_templ num_INT0_255_ARG1
+ s ARG1
+ l isA num_int
+ val ARG1
+INT0_23_templ num_INT0_23_ARG1
+ s ARG1
+ l isA num_int
+ val ARG1
+MONTH_templ dt_MONTH_ARG1
+ s ARG1
+ l isA num_int; isA dt_month
+ val ARG1
+INT1_12_templ num_INT1_12_ARG1
+ s ARG1
+ l isA num_int
+ val ARG1
+DAY_templ dt_DAY_ARG1
+ s ARG1
+ l isA num_int; isA dt_day
+ val ARG1
+
+IPADDR_templ IPADDR_ARG1_ARG2_ARG3_ARG4
+ s ARG1.ARG2.ARG3.ARG4
+ l hasPart ARG1; hasPart ARG2; hasPart ARG3; hasPart ARG4

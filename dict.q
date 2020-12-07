@@ -1,4 +1,5 @@
 .dict.p:(`$())!(); / patterns
+.dict.tmpl:(`$())!(); / templates
 .dict.pp:(`$())!(); / post proc
 .dict.d:1#.dict;   / dictionary
 .dict.lr.isA:.dict.l.isA:(`$())!(); / links
@@ -17,26 +18,37 @@
 
 .dict.numn:{$[z`is_num;((x=count w)&v within y;v:value w:z`word);(0f;0)]};
 .dict.num:{$[y`is_num;(v within x;v:value y`word);(0f;0)]};
-.dict.ppVal:{value raze (raze x[`word])`word};
-.dict.ppFirst:{x[`val]0};
+.dict.ppVal:{.dict.fromTmpl[x;enlist raze (raze y[`word])`word]};
+.dict.ppFirst:{.dict.fromTmpl[x;enlist string y[`val]0]};
 
 .dict.isA:{y in .dict.l.isA first x};
 
 .dict.init:{[p]
   {{if[1=count v:y 1; if[`ref=first v:v 0; if[`f in last v; y:@[y;1;:;enlist @[v;2;{y[0;`word]:string x;y}x]]]]];
     .dict.padd[x;y]; if[count z:trim z;.dict.pp[x]:value z]}'[`$n#'x;.tok.pSym each trim v[;0];(v:"-->" vs/: (1+n:x?\:" ")_'x)[;1]]} .tok.nos trim read0 ` sv p,`patterns.txt;
+  .dict.loadTmpl ` sv p,`templates.txt;
   .dict.loadDict ` sv p,`dict.txt;
+  .data.load p;
  };
 
+.dict.loadTmpl:{[p] {id:`$(n:x[0]?" ")#x 0; .dict.tmpl[id]:@[x;0;trim n _]} each .tok.nos each trim (where not " "=x[;0])cut x:read0 p};
+
 .dict.loadDict:{.dict.loadDictEntry each .tok.nos each trim (where not " "=x[;0])cut x:read0 x};
+.dict.fromTmpl:{
+  if[not x in key .dict.tmpl;'"wrong template: ",string x];
+  if[1=count v:.dict.tmpl x; :.dict.fromTmpl[`$v 0;y]];
+  v:{ssr/[y;"ARG",/:string reverse 1+til count x;x]}[reverse y]each v;
+  :$[(id:`$v 0)in key .dict.d; id; .dict.loadDictEntry v];
+ };
 / entry fmt: key,defs...
 / defs: name value(s)
 / names: n (noun phrases), l (links)
-.dict.loadDictEntry:{if[not (id:`$x 0)in key .dict.d; .dict.d[id]:(``id!(::;id))]; {y[x;z]}[id]'[.dict.entry `$n#'v;trim (1+n:v?\:" ")_'v:1_x]; id};
+.dict.loadDictEntry:{if[not (id:`$x 0)in key .dict.d; .dict.d[id]:(``id!(::;id))]; {if[y~(::);'"wrong cmd in ",string x]; y[x;z]}[id]'[.dict.entry`$n#'v;trim (1+n:v?\:" ")_'v:1_x]; id};
 .dict.entry.n:{.dict.d[x;`n]:$[`n in key d:.dict.d x;d`n;()],v:.tok.pNounDet each .tok.split y; .dict.padd[x;v]};
 .dict.entry.s:{.dict.d[x;`s]:$[`s in key d:.dict.d x;d`s;()],v:.tok.pSym each .tok.split y; .dict.padd[x;v]};
 .dict.entry.v:{.dict.d[x;`v]:$[`v in key d:.dict.d x;d`v;()],v:.tok.pVerbO each .tok.split y; .dict.padd[x;v]};
 .dict.entry.l:{{.dict.ladd[x]. `$.tok.nos trim " "vs y}[x]each .tok.nos trim ";" vs y};
+.dict.entry.val:{.dict.d[x;`val]:value y};
 
 / Unfold a pattern into all possible variants: x - flags, y - prev res, z - entry
 .dict.unfold:{raze .dict.unfoldStart[x;y] each .dict.p z};
@@ -89,7 +101,7 @@
 .dict.strPMap:{{raze{$[`fn=x 0;{"{",x,"}"};::] .tok.toTxt_[x 2;0;0W]}each x}each .dict.getPMap x};
 .dict.getDefRepr:{.tok.toTxt[;0;0W]raze x[;2] where not {last[x]in -1_x}each{$[not `w=y 0;`$();z;x,`$first y[2]`lword;`$()]}\[`$();x;`adj in/: last each x]};
 
-/ (id;prob;len;steps;value)
+/ (id;prob;len;steps)
 / steps: (prob; type; word; value)
 
 / matching
@@ -109,7 +121,7 @@
   r:$[count vv:raze (m:.dict.pmapI[value[.dict.pmapR] n])[;2];vv,\:enlist w;()];
   :$[count vv:raze m[;1]; raze .dict.matchI[t;i+v 2;w]each vv;()],r;
  };
- value[.dict.pmapR] 0
+
 .dict.matchI:{[t;i;w;id]
   ti:t i;
   if[`fn=ty:first f:first v:.dict.pmapI id;
@@ -122,25 +134,31 @@
  };
 .dict.matchPP:{
   v:flip`prob`typ`word`val!flip x 1;
-  val:$[(k:x 0) in key .dict.pp;.dict.pp[k] v;()];
-  :(k;sum v`prob;sum count each v`word;v;val);
+  if[(k:x 0) in key .dict.pp; k:.dict.pp[k][`$string[k],"_templ"] v];
+  :(k;sum v`prob;sum count each v`word;v);
  };
-.dict.matchAll:{last({if[y>=count x;:(y;z)]; if[0=count v:.dict.match[x;y]; :(y+1;z)]; :(i;z,enlist(y;-1+i:y+v[0] 2;v 0))}[$[10=type x;.tok.tok x;x]].)/[(0;())]};
-.dict.matchAllAndTag:{ (.tok.addTag/[x 0;{(`ref;x 0;x 1;enlist[`id]!(),first x 2)} each .dict.matchAll last x];last x:.tok.tagTok x)};
+.dict.matchAll:{last({if[y>=count x;:(y;z)]; if[0=count v:.dict.match[x;y]; :(y+1;z)]; :(i;z,enlist(y;-1+i:y+v[0] 2;{x where x[;2]=x[0;2]} v))}[$[10=type x;.tok.tok x;x]].)/[(0;())]};
+.dict.matchAllAndTag:{ (.tok.addTag/[x 0;{(`ref;x 0;x 1;enlist[`ids]!enlist x 2)} each .dict.matchAll last x];last x:.tok.tagTok x)};
 
-.dict.match[.tok.tok "2010.10.10D10:10";0][;0 1 2 4]
 
 first .dict.match[.tok.tok "Apr 2010";0]
 first .dict.match[.tok.tok "2010 May 20";0]
 first .dict.match[.tok.tok "2010-11-20";0]
 first .dict.match[.tok.tok "2010/11/20";0]
 first .dict.match[.tok.tok "10-11-2020";0]
-.dict.matchAllAndTag "10 2010 May 20 april"
+first .dict.match[.tok.tok "Europe/London";0]
+.dict.match[.tok.tok "10";0]
+first .dict.matchAllAndTag "10 2010 May 20 april"
+first .dict.match[.tok.tok "190.0.0.128";0]
+first .dict.match[.tok.tok "10pm";0]
+first .dict.match[.tok.tok string .z.P;0]
+.dict.match[.tok.tok "23d";0]
 
 .tok.addTag[first .tok.tagTok "aa <a>aa cc</a> bbb";(`xx;1;3;::)]
 
 /
-R
+.dict.l[`hasPart]
+dt_DATE_2010.11.20
 .dict.pmapI 8
 first (first .dict.p`MONTHNAME)1
 first first .dict.unfold[`$();();`MONTHNAME]

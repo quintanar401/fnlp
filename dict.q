@@ -137,9 +137,10 @@
   if[(k:x 0) in key .dict.pp; k:.dict.pp[k][`$string[k],"_templ"] v];
   :(k;sum v`prob;sum count each v`word;v);
  };
-.dict.matchAll:{last({if[y>=count x;:(y;z)]; if[0=count v:.dict.match[x;y]; :(y+1;z)]; :(i;z,enlist(y;-1+i:y+v[0] 2;{x where x[;2]=x[0;2]} v))}[$[10=type x;.tok.tok x;x]].)/[(0;())]};
-.dict.matchAllAndTag:{ (.tok.addTag/[x 0;{(`ref;x 0;x 1;enlist[`ids]!enlist x 2)} each .dict.matchAll last x];last x:.tok.tagTok x)};
+.dict.matchAll:{last({if[y>=count x;:(y;z)]; if[0=count v:.dict.match[x;y]; :(y+1;z)]; :(i;z,enlist(y;-1+i:y+v[0] 2;{x x0?distinct x0:x[;0]}{x where x[;2]=x[0;2]} v))}[$[10=type x;.tok.tok x;x]].)/[(0;())]};
+.dict.matchAllAndTag:{ (.tok.addTag/[x 0;{(`ref;x 0;x 1;enlist[`ids]!enlist x 2)} each .dict.matchAll last x];last x:$[10=type x;.tok.tagTok x;x])};
 
+.dict.getDescr:{d:.dict.d x; ($[`txt in key d;d`txt;"unknown"];$[`h in key d;.tok.2html . .tok.delP d`h;""];x)};
 
 first .dict.match[.tok.tok "Apr 2010";0]
 first .dict.match[.tok.tok "2010 May 20";0]

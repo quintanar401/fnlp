@@ -46,9 +46,10 @@
     if[not(all enlist["="]~/:w[;1])&3=count last w:(0N 3)#.tok.nos -4!pp; '"wrong parameters in ",ts]; / name = value is expected
     p:(enlist[`]!enlist pp),(`$w[;0])!@[value;;{'"parameter evaluation in ",x," failed with ",y}ts] each w[;2];
   ];
-  if[tag=`code;
-    if[null ci:exec first i from t where i>ti, (">"=next char)&("<"=prev prev char)&("/"=prev char)&lword~\:"code"; '"code tag is not closed"];
-    `.tok.tags upsert enlist`tag`start`end`parent`params!(`icode`code "\n"in pp:.tok.toTxt[t;ti;ci-2];count r;count r;-1;p);
+  if[tag in `code`qul`qqul`qa;
+    if[null ci:exec first i from t where i>ti, (">"=next char)&("<"=prev prev char)&("/"=prev char)&lword~\:ts; 'ts," tag is not closed"];
+    pp:.tok.toTxt[t;ti;ci-2];
+    `.tok.tags upsert enlist`tag`start`end`parent`params!($[tag=`code;`icode`code "\n"in pp;tag];count r;count r;-1;p);
     :(ci+2;r,enlist t[ci+1],`word`lword`shape`char`code!(-1_1_pp;"";"";" ";1b));
   ];
   ci:count .tok.tags;
@@ -85,6 +86,7 @@
 .tok.toTxt:{[t;is;ie] $[count t:select word,sp from t where i within (is;ie); raze t[`word],'{@[x;-1+count x;:;""]}t`sp;""]};
 .tok.toTxt_:{[t;is;ie] $[count t:select word,sp from t where i within (is;ie); raze t[`word],'t`sp;""]};
 .tok.str:{$[10=type x;x;98=type x;.tok.toTxt[x;0;0W];.Q.s1 x]};
+.tok.delP:{x[0]:update tag:`nop from x 0 where tag=`p, parent=-1; x};
 
 / sentence
 / <reference_to_x> - instead of words, <flags|ref_to_x> - extention
@@ -159,16 +161,31 @@
 .tok.pSym:{(`sym;.tok.pLine x;`$())};
 
 / tags + tokens -> html
-.tok.2htmlMap:enlist[`top]!enlist {x};
-.tok.2htmlMap[`p]:{"<p>",x,"</p>\n"};
+.tok.2htmlMap:`nop`top!2#{x`str};
+.tok.2htmlMap[`p]:{"<p ",x[`prm],">",x[`str],"</p>\n"};
+.tok.2htmlMap[`table]:{"<table class='table'>\n",x[`str],"\n</table>\n"};
+.tok.2htmlMap[`qul]:{
+  tmpl:$[`tmpl in key p:`params;p`tmpl;"$nn - $hh"];
+  v:{ hhRef:$[x like "*$nn*";{x};.tok.2htmlRef y];
+      "<li>",$[not y in key .dict.d;"Unknown entry",string y;ssr[;"$nn";.tok.2htmlRef[y;.h.xs v 0]] ssr[x;"$hh";hhRef (v:.dict.getDescr y)1]],"</li>\n"
+    }[tmpl] each asc $[`qul in key x;x`qul;`$.tok.nos " " vs x[`tok][`word] x`start];
+  :"<ul>",raze[v],"</ul>";
+ };
+.tok.2htmlMap[`qqul]:{
+  if[not 11=type v:(),@[value;x[`tok][`word] x`start;0]; :"<p>Wrong Q expression in qqul.</p>"];
+  if[0=count v; :"<p>Nothing found.</p>"];
+  :.tok.2htmlMap[`qul] x,enlist[`qul]!enlist v;
+ };
+.tok.2htmlRef:{"<a href='#blank'>",y,"</a>"};
+.tok.2htmlMap[`ref]:{$[`=id:(x`params)`id;x`str;.tok.2htmlRef[id;x`str]]};
 .tok.2htmlInline:`b`a`qa`icode;
 .tok.2html:{[tag;tok] .tok.2htmlTag[tag;tok;`tag`start`end`id`params!(`top;0;0W;-1;(`$())!())]};
 .tok.2htmlTag:{[tag;tok;ptag]
   tg:select from tag where parent=ptag`id, start within ptag`start`end;
-  str:{[tg;tk;str;t] str,.tok.toTxt_[tk;t`pend;-1+t`start],.tok.2htmlTag[tg;tk;t]}[tag;tok]/["";update pend:ptag[`start]^1+prev end from tg];
-  str,:.tok.toTxt_[tok;ptag[`start]^1+last tg`end;ptag`end];
+  str:{[tg;tk;str;t] str,(.h.xs .tok.toTxt_[tk;t`pend;-1+t`start]),.tok.2htmlTag[tg;tk;t]}[tag;tok]/["";update pend:ptag[`start]^1+prev end from tg];
+  str,:.h.xs .tok.toTxt_[tok;ptag[`start]^1+last tg`end;ptag`end];
   prm:$[count prm:ptag`params;" ",prm`;""];
-  :$[(t:ptag`tag)in key .tok.2htmlMap; .tok.2htmlMap[t] str;"<",t,prm,">",str,"</",(t:string t),">",$[t in .tok.2htmlInline;"";"\n"]];
+  :$[(t:ptag`tag)in key .tok.2htmlMap; .tok.2htmlMap[t] ptag,`tok`str`prm!(tok;str;prm);"<",t,prm,">",str,"</",(t:string t),">",$[t in .tok.2htmlInline;"";"\n"]];
  };
 
 \

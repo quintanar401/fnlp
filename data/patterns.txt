@@ -33,6 +33,11 @@ ORDNUM     <f|{if[not x`is_num;:(0f;0)]; (((1=count w)|not "12"~ -2#w)&"2"=last 
 ORDNUM     <f|{if[not x`is_num;:(0f;0)]; (((1=count w)|not "13"~ -2#w)&"3"=last w;value w:x`word)}>d   -->
 ORDNUM     <f|{if[not x`is_num;:(0f;0)]; (((1<count w)&"1"=w 0)|not(last w)in "123";value w:x`word)}>th  --> .dict.ppFirst
 
+WNUM00     <f patt|{.dict.isA[x;`num_xty]}> <f patt|{.dict.isA[x;`num_x]}> --> {.dict.fromTmpl[x] string sum .dict.ppGetVal each y[`val][;0]}
+WNUMX00    <f patt|{.dict.isA[x;`num_xx]}> <f patt|{.dict.isA[x;`num_x00]}> --> {.dict.fromTmpl[x] string prd .dict.ppGetVal each y[`val][;0]}
+WNUMXXX    <f patt|{.dict.isA[x;`num_xxx]}> <f patt|{.dict.isA[x;`num_xxx]}> --> {.dict.fromTmpl[x] string sum .dict.ppGetVal each y[`val][;0]}
+WNUMXXXx   <f patt|{.dict.isA[x;`num_xxx]}> <f patt|{any .dict.isA[x;]each`num_xx`num_x}> --> {.dict.fromTmpl[x] string sum .dict.ppGetVal each y[`val][;0]}
+
 DATE       <YEAR>-<MONTH>-<DAY>                     -->
 DATE       <YEAR>/<MONTH>/<DAY>                     --> {.dict.fromTmpl[x] (enlist "."sv v),string .dict.fromTmpl'[`YEAR_templ`MONTH_templ`DAY_templ;enlist each v:string y[0 2 4]@\:`val]}
 DATER      <DAY>.<MONTH>.<YEAR>                     -->

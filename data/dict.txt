@@ -34,3 +34,111 @@ dt_november
 dt_december
  n Dec;December
  l isA dt_month
+
+num_int
+num_xty
+ com Represents twenty and etc for expressions like twenty one
+num_x
+ com Represents numbers 1-9 for expressions like twenty one
+num_xx
+ com Represents numbers 1-99 for expressions like twenty one hundred
+num_x00
+ com Represents hundred, thousand and etc for expressions like twenty one hundred
+num_xxx
+ com Represents numbers like twenty one hundred
+num_zero
+ n zero
+ l is num_INT0
+num_one
+  n one
+  l is num_INT1; isA num_x; isA num_xx
+num_two
+  n two
+  l is num_INT2; isA num_x; isA num_xx
+num_three
+  n three
+  l is num_INT3; isA num_x; isA num_xx
+num_four
+  n four
+  l is num_INT4; isA num_x; isA num_xx
+num_five
+  n five
+  l is num_INT5; isA num_x; isA num_xx
+num_six
+  n six
+  l is num_INT6; isA num_x; isA num_xx
+num_seven
+  n seven
+  l is num_INT7; isA num_x; isA num_xx
+num_eight
+  n eight
+  l is num_INT8; isA num_x; isA num_xx
+num_nine
+  n nine
+  l is num_INT9; isA num_x; isA num_xx
+num_ten
+  n ten
+  l is num_INT10; isA num_xx
+num_eleven
+  n eleven
+  l is num_INT11; isA num_xx
+num_twelve
+  n twelve
+  l is num_INT12; isA num_xx
+num_thirteen
+  n thirteen
+  l is num_INT13; isA num_xx
+num_fourteen
+  n fourteen
+  l is num_INT14; isA num_xx
+num_fifteen
+  n fifteen
+  l is num_INT15; isA num_xx
+num_sixteen
+  n sixteen
+  l is num_INT16; isA num_xx
+num_seventeen
+  n seventeen
+  l is num_INT17; isA num_xx
+num_eighteen
+  n eighteen
+  l is num_INT18; isA num_xx
+num_nineteen
+  n nineteen
+  l is num_INT19; isA num_xx
+num_twenty
+  n twenty
+  l is num_INT20; isA num_xty; isA num_xx
+num_thirty
+  n thirty
+  l is num_INT30; isA num_xty; isA num_xx
+num_fourty
+  n forty
+  l is num_INT40; isA num_xty; isA num_xx
+num_fifty
+  n fifty
+  l is num_INT50; isA num_xty; isA num_xx
+num_sixty
+  n sixty
+  l is num_INT60; isA num_xty; isA num_xx
+num_seventy
+  n seventy
+  l is num_INT70; isA num_xty; isA num_xx
+num_eighty
+  n eighty
+  l is num_INT90; isA num_xty; isA num_xx
+num_ninety
+  n ninety
+  l is num_INT90; isA num_xty; isA num_xx
+num_hundred
+  n hundred
+  l is num_INT100; isA num_x00
+num_thousand
+  n thousand
+  l is num_INT1000; isA num_x00
+num_million
+  n million
+  l is num_INT1000000; isA num_x00
+num_billion
+  n bilion
+  l is num_INT1000000000; isA num_x00

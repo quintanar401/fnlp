@@ -20,8 +20,13 @@
 .dict.num:{$[y`is_num;(v within x;v:value y`word);(0f;0)]};
 .dict.ppVal:{.dict.fromTmpl[x;enlist raze (raze y[`word])`word]};
 .dict.ppFirst:{.dict.fromTmpl[x;enlist string y[`val]0]};
+.dict.ppGetVal:{ / find value
+  v:{r:(); if[`val in key d:.dict.d x;r,:enlist(y;d`val)]; r,:raze .z.s[;y]each .dict.l.is x; r,:raze .z.s[;y+1]each .dict.l.isA x; r}[x;0];
+  : last v first idesc v[;0];
+ };
 
 .dict.isA:{y in .dict.l.isA first x};
+.dict.is:{y in .dict.l.is first x};
 
 .dict.init:{[p]
   {{if[1=count v:y 1; if[`ref=first v:v 0; if[`f in last v; y:@[y;1;:;enlist @[v;2;{y[0;`word]:string x;y}x]]]]];
@@ -30,11 +35,13 @@
   .dict.loadDict ` sv p,`dict.txt;
   .data.load p;
  };
+.dict.postInit:{[p] {.dict.match[.tok.tok x;0]} each read0 ` sv p,`values.txt;};
 
 .dict.loadTmpl:{[p] {id:`$(n:x[0]?" ")#x 0; .dict.tmpl[id]:@[x;0;trim n _]} each .tok.nos each trim (where not " "=x[;0])cut x:read0 p};
 
 .dict.loadDict:{.dict.loadDictEntry each .tok.nos each trim (where not " "=x[;0])cut x:read0 x};
 .dict.fromTmpl:{
+  if[10=type y;y:enlist y];
   if[not x in key .dict.tmpl;'"wrong template: ",string x];
   if[1=count v:.dict.tmpl x; :.dict.fromTmpl[`$v 0;y]];
   v:{ssr/[y;"ARG",/:string reverse 1+til count x;x]}[reverse y]each v;
@@ -44,11 +51,13 @@
 / defs: name value(s)
 / names: n (noun phrases), l (links)
 .dict.loadDictEntry:{if[not (id:`$x 0)in key .dict.d; .dict.d[id]:(``id!(::;id))]; {if[y~(::);'"wrong cmd in ",string x]; y[x;z]}[id]'[.dict.entry`$n#'v;trim (1+n:v?\:" ")_'v:1_x]; id};
-.dict.entry.n:{.dict.d[x;`n]:$[`n in key d:.dict.d x;d`n;()],v:.tok.pNounDet each .tok.split y; .dict.padd[x;v]};
-.dict.entry.s:{.dict.d[x;`s]:$[`s in key d:.dict.d x;d`s;()],v:.tok.pSym each .tok.split y; .dict.padd[x;v]};
-.dict.entry.v:{.dict.d[x;`v]:$[`v in key d:.dict.d x;d`v;()],v:.tok.pVerbO each .tok.split y; .dict.padd[x;v]};
+.dict.entry.n:{.dict.d[x;`n]:$[`n in key d:.dict.d x;d`n;()],v:raze .tok.pNounDet each .tok.split y; .dict.padd[x;v]};
+.dict.entry.s:{.dict.d[x;`s]:$[`s in key d:.dict.d x;d`s;()],v:raze .tok.pSym each .tok.split y; .dict.padd[x;v]};
+.dict.entry.v:{.dict.d[x;`v]:$[`v in key d:.dict.d x;d`v;()],v:raze .tok.pVerbO each .tok.split y; .dict.padd[x;v]};
 .dict.entry.l:{{.dict.ladd[x]. `$.tok.nos trim " "vs y}[x]each .tok.nos trim ";" vs y};
 .dict.entry.val:{.dict.d[x;`val]:value y};
+.dict.entry.look:{.dict.match[.tok.tok y;0]};
+.dict.entry.com:{.dict.d[x;`com]:y};
 
 / Unfold a pattern into all possible variants: x - flags, y - prev res, z - entry
 .dict.unfold:{raze .dict.unfoldStart[x;y] each .dict.p z};
@@ -107,8 +116,8 @@
 / matching
 .dict.match:{[t;i]
   if[count v:.dict.matchP[t;i],.dict.matchW[t;i];
-    v:.dict.matchPP each v;
-    v,:.dict.matchPP each raze {raze .dict.matchR[x;y;z]each til count .dict.pmapR}[t;i] each v;
+    v:v2:.dict.matchPP each v;
+    while[count v2:.dict.matchPP each raze {raze .dict.matchR[x;y;z]each til count .dict.pmapR}[t;i] each v2; v,:v2];
     v:v idesc v[;1];
   ];
   :v;
@@ -121,7 +130,6 @@
   r:$[count vv:raze (m:.dict.pmapI[value[.dict.pmapR] n])[;2];vv,\:enlist w;()];
   :$[count vv:raze m[;1]; raze .dict.matchI[t;i+v 2;w]each vv;()],r;
  };
-
 .dict.matchI:{[t;i;w;id]
   ti:t i;
   if[`fn=ty:first f:first v:.dict.pmapI id;
@@ -153,13 +161,11 @@ first .dict.matchAllAndTag "10 2010 May 20 april"
 first .dict.match[.tok.tok "190.0.0.128";0]
 first .dict.match[.tok.tok "10pm";0]
 first .dict.match[.tok.tok string .z.P;0]
-.dict.match[.tok.tok "23d";0]
-
-.tok.addTag[first .tok.tagTok "aa <a>aa cc</a> bbb";(`xx;1;3;::)]
+last first .dict.match[.tok.tok "one hundred forty two thousand";0]
 
 /
 .dict.l[`hasPart]
 dt_DATE_2010.11.20
-.dict.pmapI 8
+.dict.pmapI 52
 first (first .dict.p`MONTHNAME)1
 first first .dict.unfold[`$();();`MONTHNAME]

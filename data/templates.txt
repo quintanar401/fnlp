@@ -6,17 +6,21 @@ YEAR_templ dt_YEAR_ARG1
  s ARG1
  l isA dt_year
  val ARG1
+
 DATE_templ dt_DATE_ARG1
  s ARG1
  l isA dt_date; hasPart ARG2; hasPart ARG3; hasPart ARG4
  val ARG1
 DATER_templ DATE_templ
+
 DATEMd_templ dt_DATEMd_ARG1_ARG2
  s ARG1 ARG2
  l isA dt_date; hasPart ARG1; hasPart ARG2
+
 DATEyMd_templ dt_DATEyMd_ARG1_ARG2_ARG3
  s ARG1 ARG2 ARG3
  l isA dt_date; hasPart ARG1; hasPart ARG2; hasPart ARG3
+
 QDATE_templ dt_QDATE_ARG1
  s ARG1
  l isA dt_date
@@ -44,6 +48,7 @@ QTIMESTAMP_templ dt_QTIMESTAMP_ARG1
 TIMEPM_templ dt_TIMEPM_ARG1
  s ARG1pm
  l isA dt_hour; hasPart ARG2
+
 INT_templ num_INTARG1
  s ARG1
  l isA num_int
@@ -52,6 +57,18 @@ ORDNUM_templ num_ORDNUMARG1
  s ARG1
  l isA num_ord
  val ARG1
+WNUM00_templ num_WNUMARG1
+ look ARG1
+ l is num_INTARG1; isA num_xx
+WNUMX00_templ num_WNUMARG1
+ look ARG1
+ l is num_INTARG1; isA num_xxx
+WNUMXXX_templ num_WNUMARG1
+ look ARG1
+ l is num_INTARG1; isA num_xxx
+WNUMXXXx_templ num_WNUMARG1
+ look ARG1
+ l is num_INTARG1
 SECOND_templ dt_SECOND_ARG1
  s ARG1
  l isA num_int; isA dt_second

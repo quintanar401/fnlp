@@ -115,15 +115,17 @@
   r:$[(c:t[`char]0)in"([{"; .tok.pBrk t;c="<";.tok.pRef t;c in ")]}";:x;((`w;`$t[0]`lword;1#t;`$());1_t)];
   :(x[0],enlist r 0;r 1);
  };
-.tok.pLine:{if[count last r:.tok.pSeq $[10=type x;.tok.tok x;x];'"Unmatched sequence: ",.tok.toTxt[r 1;0;0W]]; r 0};
-.tok.pNounDet:{
+.tok.pUnfold:{{$[-10=type f:first y;$[count x;raze x,/:\:;::]$["{"=f;raze .tok.pUnfold each enlist each 1_y;enlist each enlist[f],/:.tok.pUnfold 1_y];$[0=count x;enlist;x,\:]enlist y]}/[();x]};
+.tok.pLine:{if[count last r:.tok.pSeq $[10=type x;.tok.tok x;x];'"Unmatched sequence: ",.tok.toTxt[r 1;0;0W]]; .tok.pUnfold r 0};
+.tok.pNounDet:{.tok.pNounDet0 each .tok.pLine x};
+.tok.pNounDet0:{
   n:.tok.pNoun x;
   if[`w~first first n1:n 1; if[(w:n[1;0;1]) in `a`the`an; n[4],:w; n[1]:1_n 1]];
   if[1<count n1; n[1]:({$[`w=first x;@[x;3;,;`adj];x]}each -1_n1),-1#n1];
   :n;
  };
 / a b c; a <b> <c>; a (b c) d; a in/at/on/of b
-.tok.pNoun:{ .tok.pNounAdj[(`n;();();();`$());$[0=type x;x;.tok.pLine x]]};
+.tok.pNoun:{ .tok.pNounAdj[(`n;();();();`$());x]};
 .tok.pNounAdj:{[n;l]
   if[0=count l; :n];
   if[-10=type c:(l0:l 0)0;
@@ -132,17 +134,18 @@
     :.tok.pNounAdj[$[()~n2 1;@[n;2 3;,;n2 2 3];@[n;1;,;n2 1]];1_l];
   ];
   if[`w=c;
-    if[`of=l0 1; n[2],:enlist .tok.pNounDet 1_l; :n];
-    if[l0[1]in `at`in`on; n[3],:enlist (`pobj;l0 1;.tok.pNounDet 1_l); :n];
+    if[`of=l0 1; n[2],:enlist .tok.pNounDet0 1_l; :n];
+    if[l0[1]in `at`in`on; n[3],:enlist (`pobj;l0 1;.tok.pNounDet0 1_l); :n];
     n[1],:enlist l0; :.tok.pNounAdj[n;1_l];
   ];
   if[`ref=c; n[1],:enlist l0; :.tok.pNounAdj[n;1_l]];
   '"unexpected";
  };
-.tok.pVerbO:{
-  v:first l:.tok.pLine x;
+.tok.pVerbO:{.tok.pVerbO0 each .tok.pLine x;};
+.tok.pVerbO0:{[l]
+  v:first l;
   if[-10=type first l0:l 1;
-    o:.tok.pNounDet 1_l0;
+    o:.tok.pNounDet0 1_l0;
     p:.tok.pVerbP 2_l;
     :(`v;v;();o;p;`$());
   ];
@@ -152,20 +155,20 @@
   if[-10=type first l0:l 0;
     if[not `w~first l0 1; '"Bad pobj fmt: ",.tok.str l];
     if[not (p:l0[1;1]) in `at`on`in`of; '"Bad pobj fmt: ",.tok.str l];
-    :enlist[(`pobj;p;.tok.pNounDet 2_l0;`$())],.tok.pVerbP 1_l;
+    :enlist[(`pobj;p;.tok.pNounDet0 2_l0;`$())],.tok.pVerbP 1_l;
   ];
   if[not `w~first l0; '"Bad pobj fmt: ",.tok.str l];
   if[not l0[1] in `at`on`in`of; '"Bad pobj fmt: ",.tok.str l];
-  :enlist (`pobj;l0 1;.tok.pNounDet 1_l;`$());
+  :enlist (`pobj;l0 1;.tok.pNounDet0 1_l;`$());
  };
-.tok.pSym:{(`sym;.tok.pLine x;`$())};
+.tok.pSym:{(`sym;;`$())each .tok.pLine x};
 
 / tags + tokens -> html
 .tok.2htmlMap:`nop`top!2#{x`str};
 .tok.2htmlMap[`p]:{"<p ",x[`prm],">",x[`str],"</p>\n"};
 .tok.2htmlMap[`table]:{"<table class='table'>\n",x[`str],"\n</table>\n"};
 .tok.2htmlMap[`qul]:{
-  tmpl:$[`tmpl in key p:`params;p`tmpl;"$nn - $hh"];
+  tmpl:$[`tmpl in key p:x`params;p`tmpl;"$nn - $hh"];
   v:{ hhRef:$[x like "*$nn*";{x};.tok.2htmlRef y];
       "<li>",$[not y in key .dict.d;"Unknown entry",string y;ssr[;"$nn";.tok.2htmlRef[y;.h.xs v 0]] ssr[x;"$hh";hhRef (v:.dict.getDescr y)1]],"</li>\n"
     }[tmpl] each asc $[`qul in key x;x`qul;`$.tok.nos " " vs x[`tok][`word] x`start];
@@ -178,6 +181,8 @@
  };
 .tok.2htmlRef:{"<a href='#blank'>",y,"</a>"};
 .tok.2htmlMap[`ref]:{$[`=id:(x`params)`id;x`str;.tok.2htmlRef[id;x`str]]};
+.tok.2htmlCode:{raze{"<div class='",x,"'>",ssr[.h.xn x;" ";"&nbsp;"],"</div>\n"}each "\n" vs y};
+.tok.2htmlMap[`code`icode]:{s:`q^lower $[`src in key p:y`params;`$p`src;`q]; $[s=`q;.lex.2html0;.tok.2htmlCode][x;y[`tok][`word] y`start]}@\:("k-line";"k-inline");
 .tok.2htmlInline:`b`a`qa`icode;
 .tok.2html:{[tag;tok] .tok.2htmlTag[tag;tok;`tag`start`end`id`params!(`top;0;0W;-1;(`$())!())]};
 .tok.2htmlTag:{[tag;tok;ptag]

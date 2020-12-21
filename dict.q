@@ -27,6 +27,7 @@
 
 .dict.isA:{y in .dict.l.isA first x};
 .dict.is:{y in .dict.l.is first x};
+.dict.links:{raze{if[count l:.dict.l[y]x; :raze{enlist[x],y}'[(string[y]," "),/:string each l;(2#" "),/:/:.dict.links each l]];()}[x]each 1_key .dict.l};
 
 .dict.init:{[p]
   {{if[1=count v:y 1; if[`ref=first v:v 0; if[`f in last v; y:@[y;1;:;enlist @[v;2;{y[0;`word]:string x;y}x]]]]];
@@ -44,6 +45,7 @@
   if[10=type y;y:enlist y];
   if[not x in key .dict.tmpl;'"wrong template: ",string x];
   if[1=count v:.dict.tmpl x; :.dict.fromTmpl[`$v 0;y]];
+  v:{ssr/[y;"SARG",/:string reverse 1+til count x;{x[where x in " "]:"_";x}each x]}[reverse y]each v;
   v:{ssr/[y;"ARG",/:string reverse 1+til count x;x]}[reverse y]each v;
   :$[(id:`$v 0)in key .dict.d; id; .dict.loadDictEntry v];
  };
@@ -134,10 +136,10 @@
   ti:t i;
   if[`fn=ty:first f:first v:.dict.pmapI id;
     if[not pat:`patt in last f; w1:"f"$first val:f[1] ti; val:val 1];
-    if[pat; ty:`rec; w1:0f; val:.dict.match[t;i]; val[;1]:val[;1]*f[1] each val; if[count val; val:val first idesc val[;1]; w1:val 1]];
+    if[pat; ty:`rec; w1:0f; val:.dict.match[t;i]; val[;1]:val[;1]*f[1] each val; if[count val; val:val first idesc val[;1]; w1:val 1; ti:raze val[3]`word]];
   ];
   if[`w=ty; w1:(0.9 1 ti[`word]~f2`word)*ti[`lword]~(f2:first f 2)`lword; val:()];
-  if[w1<0.3; :()]; w,:enlist (w1;ty;enlist ti; val);
+  if[w1<0.3; :()]; w,:enlist (w1;ty;$[99=type ti;enlist ti;ti]; val);
   :$[count v 1;raze .z.s[t;i+1;w] each v 1;()],$[count v 2;v[2],\:enlist w;()];
  };
 .dict.matchPP:{
@@ -159,9 +161,13 @@ first .dict.match[.tok.tok "Europe/London";0]
 .dict.match[.tok.tok "10";0]
 first .dict.matchAllAndTag "10 2010 May 20 april"
 first .dict.match[.tok.tok "190.0.0.128";0]
-first .dict.match[.tok.tok "10pm";0]
+.dict.match[.tok.tok "10pm Europe/London";0]
 first .dict.match[.tok.tok string .z.P;0]
-last first .dict.match[.tok.tok "one hundred forty two thousand";0]
+.dict.match[.tok.tok "one hundred 3 hundred";0]
+.dict.match[.tok.tok "one hundred forty two";0]
+.dict.match[.tok.tok "10:30:30 Europe/London";0]
+.dict.match[.tok.tok "10:20";0]
+.dict.links`$"dt_QMINUTE_10:20"
 
 /
 .dict.l[`hasPart]

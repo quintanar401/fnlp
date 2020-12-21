@@ -1,6 +1,10 @@
-dt_timezone_templ dt_timezone_ARG1
+dt_timezone_templ dt_timezone_SARG1
  s ARG1
  l isA dt_timezone
+
+geo_city_templ geo_city_SARG1
+ s ARG1
+ l isA geo_city; inReg dt_timezone_SARG2
 
 YEAR_templ dt_YEAR_ARG1
  s ARG1
@@ -23,19 +27,19 @@ DATEyMd_templ dt_DATEyMd_ARG1_ARG2_ARG3
 
 QDATE_templ dt_QDATE_ARG1
  s ARG1
- l isA dt_date
+ l isA dt_date; hasPart ARG2; hasPart ARG3; hasPart ARG4
  val ARG1
 QTIME_templ dt_QTIME_ARG1
  s ARG1
- l isA dt_time
+ l isA dt_time; hasPart ARG2; hasPart ARG3; hasPart ARG4; hasPart ARG5
  val ARG1
 QMINUTE_templ dt_QMINUTE_ARG1
  s ARG1
- l isA dt_time
+ l isA dt_time; hasPart ARG2; hasPart ARG3
  val ARG1
 QSECOND_templ dt_QSECOND_ARG1
  s ARG1
- l isA dt_time
+ l isA dt_time; hasPart ARG2; hasPart ARG3; hasPart ARG4
  val ARG1
 QTIMESPAN_templ dt_QTIMESPAN_ARG1
  s ARG1
@@ -66,9 +70,16 @@ WNUMX00_templ num_WNUMARG1
 WNUMXXX_templ num_WNUMARG1
  look ARG1
  l is num_INTARG1; isA num_xxx
+WNUMXXXm_templ num_WNUMARG1
+  look ARG1
+  l is num_INTARG1; isA num_xxx
 WNUMXXXx_templ num_WNUMARG1
  look ARG1
  l is num_INTARG1
+MILLIS_templ dt_MILLIS_ARG1
+ s ARG1
+ l isA num_int; isA dt_millisecond
+ val ARG1
 SECOND_templ dt_SECOND_ARG1
  s ARG1
  l isA num_int; isA dt_second

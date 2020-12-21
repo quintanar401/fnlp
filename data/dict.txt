@@ -35,6 +35,11 @@ dt_december
  n Dec;December
  l isA dt_month
 
+dt_timezone
+  com timezone like Europe/London or GMT
+geo_city
+  com city like London
+
 num_int
 num_xty
  com Represents twenty and etc for expressions like twenty one

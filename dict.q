@@ -25,8 +25,10 @@
   : last v first idesc v[;0];
  };
 
-.dict.isA:{y in .dict.l.isA first x};
-.dict.is:{y in .dict.l.is first x};
+.dict.isA:{(any .dict.is[;y]each v)|y in v:.dict.l.isA first x};
+.dict.is_isA:{.dict.isA[x;y]|any .z.s[;y] each .dict.l.is first x};
+.dict.is:{(any .z.s[;y]each v)|(y=f)|y in v:.dict.l.is f:first x};
+.dict.isNoun:{`n in key .dict.d first x};
 .dict.links:{raze{if[count l:.dict.l[y]x; :raze{enlist[x],y}'[(string[y]," "),/:string each l;(2#" "),/:/:.dict.links each l]];()}[x]each 1_key .dict.l};
 
 .dict.init:{[p]
@@ -55,9 +57,10 @@
 .dict.loadDictEntry:{if[not (id:`$x 0)in key .dict.d; .dict.d[id]:(``id!(::;id))]; {if[y~(::);'"wrong cmd in ",string x]; y[x;z]}[id]'[.dict.entry`$n#'v;trim (1+n:v?\:" ")_'v:1_x]; id};
 .dict.entry.n:{.dict.d[x;`n]:$[`n in key d:.dict.d x;d`n;()],v:raze .tok.pNounDet each .tok.split y; .dict.padd[x;v]};
 .dict.entry.s:{.dict.d[x;`s]:$[`s in key d:.dict.d x;d`s;()],v:raze .tok.pSym each .tok.split y; .dict.padd[x;v]};
+.dict.entry.w:{.dict.d[x;`w]:$[`s in key d:.dict.d x;d`w;()],v:raze .tok.pWord each .tok.split y; .dict.padd[x;v]};
 .dict.entry.v:{.dict.d[x;`v]:$[`v in key d:.dict.d x;d`v;()],v:raze .tok.pVerbO each .tok.split y; .dict.padd[x;v]};
 .dict.entry.l:{{.dict.ladd[x]. `$.tok.nos trim " "vs y}[x]each .tok.nos trim ";" vs y};
-.dict.entry.val:{.dict.d[x;`val]:value y};
+.dict.entry.val:{.dict.d[x;`val]:@[value;y;{'".dict.entry.val for ",string[x]," and ",y," with ",z}[x;y]]};
 .dict.entry.look:{.dict.match[.tok.tok y;0]};
 .dict.entry.com:{.dict.d[x;`com]:y};
 
@@ -82,7 +85,7 @@
 / (`n;main;possesive;obj;flags)
 .dict.unfoldN:{
   if[count z 1;
-    if[not `noun in x; y:y,raze .dict.cross[y] each (();.dict.A;.dict.THE)];
+    / if[not `noun in x; y:y,raze .dict.cross[y] each (();.dict.A;.dict.THE)];
     y:.dict.unfold1[`noun,x]/[y;z 1]; / main
   ];
   if[count z 2; y:{.dict.unfold1[x;.dict.cross[y] .dict.OF;z]}[x]/[y;z 2]];
@@ -100,7 +103,7 @@
 
 / x - id
 .dict.addPMaps:{.dict.addPMap each key .dict.p};
-.dict.addPMap:{.dict.addPMapS[x] each v:.dict.unfold[`$();();x]; if[count v; .dict.d[x;`txt]:.dict.getDefRepr v 0]};
+.dict.addPMap:{.dict.addPMapS[x] each v:.dict.unfold[`$();();x]; if[count v; .dict.d[x;`txt`patt]:(.dict.getDefRepr v 0;raze{$[`fn in x[;0];();enlist .tok.toTxt_[raze x[;2];0;0W]]} each v)]};
 .dict.addPMapS:{
   trg:$[`w=first y0:y 0;`.dict.pmapW;`patt in last y0;`.dict.pmapR;`.dict.pmapP];
   .dict.addPMapI[x;1_y;$[count i:where y0~/:(.dict.pmapI p:.dict.xadd[trg;k;0#0] k:y0 1)[;0]; p first i; .dict.newPMapI[(trg;(),k);y0]]];

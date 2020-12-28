@@ -147,3 +147,59 @@ num_million
 num_billion
   n bilion
   l is num_INT1000000000; isA num_x00
+
+gr_det
+  com determiners like the, this, my
+gr_det_def
+  com definite determiners - the, this
+  l is gr_det
+gr_det_indef
+  com indefinite determiners - a,an
+  l is gr_det
+gr_det_the
+  w the
+  l isA gr_det_def
+gr_det_this
+  w this
+  l isA gr_det_def
+gr_det_that
+  w that
+  l isA gr_det_def
+gr_det_these
+  w these
+  l isA gr_det_def
+gr_det_my
+  w my
+  l isA gr_det_def
+gr_det_his
+  w his
+  l isA gr_det_def
+gr_det_her
+  w her
+  l isA gr_det_def
+gr_det_its
+  w its
+  l isA gr_det_def
+gr_det_their
+  w their
+  l isA gr_det_def
+gr_det_our
+  w our
+  l isA gr_det_def
+gr_det_a
+  w a; an
+  l isA gr_det_indef
+gr_det2
+  com Numeric determiners like last, first
+gr_det2_last
+  w last
+  l isA gr_det2
+gr_det2_first
+  w first
+  l isA gr_det2
+gr_det2_next
+  w next
+  l isA gr_det2
+gr_det2_previous
+  w previous
+  l isA gr_det2

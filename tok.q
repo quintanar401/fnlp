@@ -50,7 +50,7 @@
     if[null ci:exec first i from t where i>ti, (">"=next char)&("<"=prev prev char)&("/"=prev char)&lword~\:ts; 'ts," tag is not closed"];
     pp:.tok.toTxt[t;ti;ci-2];
     `.tok.tags upsert enlist`tag`start`end`parent`params!($[tag=`code;`icode`code "\n"in pp;tag];count r;count r;-1;p);
-    :(ci+2;r,enlist t[ci+1],`word`lword`shape`char`code!(-1_1_pp;"";"";" ";1b));
+    :(ci+2;r,enlist t[ci+1],`word`lword`shape`char`code!((neg 1+"\n"=pp -2+count pp)_(1+"\n"=pp 1)_pp;"";"";" ";1b));
   ];
   ci:count .tok.tags;
   w:.tok.tagTokIter[t;ti+1;.tok.updR[t ti;`sp`cr;(,;+);r]];
@@ -141,7 +141,7 @@
   if[`ref=c; n[1],:enlist l0; :.tok.pNounAdj[n;1_l]];
   '"unexpected";
  };
-.tok.pVerbO:{.tok.pVerbO0 each .tok.pLine x;};
+.tok.pVerbO:{.tok.pVerbO0 each .tok.pLine x};
 .tok.pVerbO0:{[l]
   v:first l;
   if[-10=type first l0:l 1;
@@ -149,7 +149,7 @@
     p:.tok.pVerbP 2_l;
     :(`v;v;();o;p;`$());
   ];
-  :(`v;v;();.tok.pNounDet 1_l;();`$());
+  :(`v;v;();.tok.pNounDet0 1_l;();`$());
  };
 .tok.pVerbP:{[l]
   if[-10=type first l0:l 0;
@@ -161,7 +161,8 @@
   if[not l0[1] in `at`on`in`of; '"Bad pobj fmt: ",.tok.str l];
   :enlist (`pobj;l0 1;.tok.pNounDet0 1_l;`$());
  };
-.tok.pSym:{(`sym;;`$())each .tok.pLine x};
+.tok.pSym:{(`sym;;`$())each {{@[x;-1+count x;,;`exact]}each x} each .tok.pLine x};
+.tok.pWord:{(`sym;;`$())each .tok.pLine x};
 
 / tags + tokens -> html
 .tok.2htmlMap:`nop`top!2#{x`str};
@@ -181,12 +182,17 @@
  };
 .tok.2htmlRef:{"<a href='#blank'>",y,"</a>"};
 .tok.2htmlMap[`ref]:{$[`=id:(x`params)`id;x`str;.tok.2htmlRef[id;x`str]]};
-.tok.2htmlCode:{raze{"<div class='",x,"'>",ssr[.h.xn x;" ";"&nbsp;"],"</div>\n"}each "\n" vs y};
-.tok.2htmlMap[`code`icode]:{s:`q^lower $[`src in key p:y`params;`$p`src;`q]; $[s=`q;.lex.2html0;.tok.2htmlCode][x;y[`tok][`word] y`start]}@\:("k-line";"k-inline");
+.tok.2htmlCode:{raze{"<div class='",y,"'>",ssr[.h.xs x;" ";"&nbsp;"],"</div>\n"}[y]each "\n" vs x};
+.tok.2htmlMap[`code`icode]:{
+  s:`q^lower $[`src in key p:y`params;`$p`src;`q];
+  x:x,"_",string s;
+  v:$[s=`q;.lex.2html0;.tok.2htmlCode][y[`tok][`word] y`start;x];
+  :$["l"=x 2;"<div class='k-lines-",string[s],">",v,"</div>";v];
+  }@/:("k-line";"k-inline");
 .tok.2htmlInline:`b`a`qa`icode;
 .tok.2html:{[tag;tok] .tok.2htmlTag[tag;tok;`tag`start`end`id`params!(`top;0;0W;-1;(`$())!())]};
 .tok.2htmlTag:{[tag;tok;ptag]
-  tg:select from tag where parent=ptag`id, start within ptag`start`end;
+  tg:`start xasc select from tag where parent=ptag`id, start within ptag`start`end;
   str:{[tg;tk;str;t] str,(.h.xs .tok.toTxt_[tk;t`pend;-1+t`start]),.tok.2htmlTag[tg;tk;t]}[tag;tok]/["";update pend:ptag[`start]^1+prev end from tg];
   str,:.h.xs .tok.toTxt_[tok;ptag[`start]^1+last tg`end;ptag`end];
   prm:$[count prm:ptag`params;" ",prm`;""];
